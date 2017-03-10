@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.iteratec.iteraplan.model.user">
+
+  <class name="DataSource" table="DATASOURCE" lazy="false">
+    <id name="id" column="ID" type="java.lang.Integer">
+		<generator class="native" />
+    </id>
+    <property name="key" column="LOOKUP" unique="true" not-null="true" length="255" />
+    <property name="driver" column="DRIVER" not-null="true" length="255" />
+    <property name="url" column="URL" not-null="true" length="255" />
+    <property name="user" column="USERNAME" length="255" />
+    <property name="password" column="USERPASSWORD" length="255" />
+    <property name="expiryDate" column="EXPIRYDATE" type="date" />
+  </class>
+
+  <query name="getDataSourceByKey">
+    <![CDATA[select datasource from DataSource datasource where datasource.key like :key escape '|']]>
+  </query>
+
+</hibernate-mapping>

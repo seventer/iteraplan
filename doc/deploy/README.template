@@ -1,0 +1,25 @@
+General Information:
+==========================
+Application Name: @application-name@
+Version: @version-info@
+Build ID: @build-id@
+
+
+Installation:
+==========================
+Instructions on how to use the installer for setting up iteraplan Enterprise Edition
+are available in the iteraplan Operating Manual (http://wiki.iteraplan.de).
+In order to continue using the data set from an existing older iteraplan installation,
+a migration of your existing data is typically necessary. In general, a migration
+is required with every new major release (when the number after the first dot changes).
+In order to obtain support for migrating your existing data, please contact 
+iteratec GmbH directly at @support-email@.  
+ 
+
+Problem Resolution:
+==========================
+Please report errors, suggestions and feature requests to 
+@support-email@.
+Please include following information with your e-mail to allow us to respond
+to your request as fast as possible: Include Application Name, Version and 
+Build ID of the application (see above). 

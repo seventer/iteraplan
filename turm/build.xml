@@ -1,0 +1,439 @@
+<project name="TURM" default="war" basedir=".">
+    <description>
+    ###############################################################################
+    
+    Project Build-File
+    
+    This file contains targets for creating, deploying and distributing
+    the application. Please note, that all properties referenced in this
+    file are loaded from the file "build.properties".
+    
+    You can override these properties locally by putting them into a file
+    "build_local.properties" in the same folder or by setting them on the
+    command line of the Ant call.
+    
+    ###############################################################################
+    </description>
+
+<!--
+##########################################################################
+     properties and paths
+##########################################################################
+-->
+ 
+   <property environment="os" />
+ 
+   <!-- load local properties first so that they can override the default ones -->
+    <property file="${basedir}/build_local.properties" />
+    <!-- load default settings for build process -->
+    <property file="${basedir}/build.properties" />
+
+    <!-- load database settings based on rdbms name defined above
+         these files should also use ${database.name} in the JDBC URLs if possible -->
+    <property name="database.configurationDir" value="${config}/database/${database.rdbmsName}" />
+    <property file="${database.configurationDir}/db.properties" />
+
+    <!-- if tomcat.installDir has not yet been set, we try setting it to the
+         CATALINA_HOME environment variable - in Eclipse environments one can
+         set this property in the Ant configuration instead (Window->Preferences->
+         Ant->Runtime) -->
+    <property name="tomcat.installDir" value="${os.CATALINA_HOME}" />
+
+	<!--
+    <path id="project.classpath">
+        <pathelement path="${build.classes.main}" />
+        <pathelement path="${build.classes.test}" />
+        <pathelement path="${build}" />
+        <pathelement path="${src.messages}" />
+        <pathelement path="${config}" />
+    </path>
+	-->
+	
+    <path id="project.classpath">
+        <pathelement path="${build.classes.main}" />
+        <pathelement path="${build.classes.test}" />
+        <pathelement path="${build}" />
+        <pathelement path="${src.messages}" />
+        <fileset dir="${lib.dev}">
+            <include name="**/*.jar" />
+        </fileset>
+        <pathelement path="${config}" />
+         <fileset dir="${lib.rt}">
+             <include name="**/*.jar" />
+         </fileset>
+    </path>
+
+<!--
+##########################################################################
+     taskdefs
+##########################################################################
+-->
+ 
+    <!-- Ant-Contrib for things like <if> -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="${lib.dev}/ant-contrib.jar" />
+        </classpath>
+    </taskdef>
+
+    <!-- SVN task for getting the revision number -->
+    <taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask">
+        <classpath>
+            <fileset dir="${lib.dev}/svnant">
+                <include name="*.jar" />
+            </fileset>
+        </classpath>
+    </taskdef>
+
+    <!-- Tomcat -->
+    <path id="tomcat.classpathTasks">
+    	<path refid="project.classpath" />
+    	<fileset dir="${tomcat.installDir}/lib">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+    <taskdef name="deployToTomcat" classname="org.apache.catalina.ant.DeployTask" classpathref="tomcat.classpathTasks" />
+    <taskdef name="removeFromTomcat" classname="org.apache.catalina.ant.UndeployTask" classpathref="tomcat.classpathTasks" />
+ 
+<!--
+##########################################################################
+     targets
+##########################################################################
+-->
+	<target name="configureExplodedWar">
+        <copy file="${templatesDir}/context.xml.template" tofile="${explodedWarDir}/META-INF/context.xml" overwrite="true">
+            <filterset>
+                <filter token="WEBAPP_PATH" value="${tomcat.appPath}" />
+                <filter token="DB.DRIVER.CLASS" value="${database.driver}" />
+                <filter token="DB.CONNECT.URL" value="${database.url}" />
+                <filter token="DB.USER.NAME" value="${database.login}" />
+                <filter token="DB.USER.PASSWORD" value="${database.password}" />
+                <filter token="DB.JNDI.DATASOURCE" value="${database.jndi.datasource}" />
+            	<filter token="DB.VALIDATIONQUERY" value="${database.validationquery}" />
+            </filterset>
+        </copy>
+        <copy file="${templatesDir}/web.xml.template" tofile="${explodedWarDir}/WEB-INF/web.xml" overwrite="true">
+            <filterset>
+                <filter token="WEB.SECURITY.TRANSPORT" value="${security.transport}" />
+            	<filter token="DB.DATA.SOURCE" value="${database.jndi.datasource}" />
+            </filterset>
+        </copy>
+        <copy file="${templatesDir}/applicationContext-spring-security.xml.template" tofile="${explodedWarDir}/WEB-INF/applicationContext-spring-security.xml" overwrite="true">
+            <filterset>
+                <filter token="DB.JNDI.DATASOURCE" value="${database.jndi.datasource}" />
+            </filterset>
+        </copy>
+        <copy file="${templatesDir}/turm.properties.template" tofile="${explodedWarDir}/WEB-INF/classes/turm.properties" overwrite="true">
+            <filterset>
+                <filter token="DB.JNDI.DATASOURCE" value="${database.jndi.datasource}" />
+            </filterset>
+        </copy>
+        <copy file="${templatesDir}/log4j.properties.template.production" tofile="${explodedWarDir}/WEB-INF/classes/log4j.properties" overwrite="true">
+            <filterset>
+                <filter token="LOG_FILE" value="${deploy.logfile}" />
+            </filterset>
+        </copy>
+	</target>
+	
+	<target name="createDatabaseSchema" description="creates the database schema for turm">
+		<sql driver="${database.driver}" url="${database.url}" userid="${database.login}" password="${database.password}" encoding="iso-8859-1" classpathref="project.classpath" onerror="continue">
+			<transaction src="${sqlDir}/${database.rdbmsName}/createSchema.sql" />
+		</sql>
+	</target>
+	
+	<target name="createInitialData" description="fills the turm database with an initial user and role">
+		<sql driver="${database.driver}" url="${database.url}" userid="${database.login}" password="${database.password}" encoding="iso-8859-1" classpathref="project.classpath" onerror="continue">
+			<transaction src="${sqlDir}/${database.rdbmsName}/insertInitialData.sql" />
+		</sql>
+	</target>
+	
+	
+	<!-- -->
+ 
+    <target name="help" description="Print the help message">
+       <echo message="**** TURM ****" />
+       <echo message="Use 'ant -projecthelp' to obtain a list of available targets." />
+    </target>
+
+    <target name="define.properties">
+        <tstamp>
+            <format property="TIMESTAMP-FULL" pattern="yyyy-MM-dd-HH-mm-ss" />
+        </tstamp>
+        <if>
+            <!-- svnant 1.0.0 crashes if target is not working copy -->
+            <available file="${basedir}/.svn" />
+            <then>
+                <svn>
+                    <status path="${basedir}" revisionProperty="svn.revision" />
+                </svn>
+            </then>
+            <else>
+                <property name="svn.revision" value="UNKNOWN" />
+            </else>
+        </if>
+        <property name="build.id" value="Build-v${version.info}-r${svn.revision} (${TIMESTAMP-FULL})" />
+    </target>
+
+    <target name="prepare" depends="define.properties">
+		<description description="Set up the build environement" />
+		<mkdir dir="${build}" />
+		<mkdir dir="${build.classes}" />
+		<mkdir dir="${build.classes.main}" />
+		<mkdir dir="${build.classes.test}" />
+		<mkdir dir="${build.manifest}" />
+		<mkdir dir="${deploy.artifactDir}" />
+		<copy file="${config}/turm.properties.template" tofile="${build}/turm.properties" overwrite="true">
+		    <filterset>
+		        <filter token="DB.JNDI.DATASOURCE" value="${database.jndi.datasource}" />
+		    </filterset>
+		</copy>
+		<copy file="${config}/applicationContext-iturm.xml" todir="${build}" overwrite="true" />
+		<copy file="${config}/applicationContext-spring-security.xml.template" tofile="${build}/applicationContext-spring-security.xml" overwrite="true">
+		    <filterset>
+		        <filter token="DB.JNDI.DATASOURCE" value="${database.jndi.datasource}" />
+		    </filterset>
+		</copy>
+		<copy file="${config}/log4j.properties.template.${deploy.type}" tofile="${build}/log4j.properties" overwrite="true">
+			<filterset>
+				<filter token="LOG_FILE" value="${deploy.logfile}"/>
+			</filterset>
+		</copy>
+    </target>
+
+    <target name="build" depends="prepare">
+        <echo message="Compiling Main Sources ..." />
+        <javac srcdir="${javasrc.mainsrc}" destdir="${build.classes.main}" includes="**/*.java**" debug="on" source="${javac.source.compliance}" target="${javac.target.compliance}" encoding="${source.encoding}" includeantruntime="false">
+            <classpath refid="project.classpath" />
+        </javac>
+        <javac srcdir="${javasrc.testsrc}" destdir="${build.classes.test}" includes="**/*.java**" debug="on" source="${javac.source.compliance}" target="${javac.target.compliance}" encoding="${source.encoding}" includeantruntime="false">
+            <classpath refid="project.classpath" />
+        </javac>
+    </target>
+     
+    <target name="jar" depends="build" description="Generate the jar file of the project classes">
+        <delete>
+            <fileset dir="${deploy.artifactDir}" includes="${deploy.jarFilename}" />
+        </delete>
+        <jar jarfile="${deploy.artifactDir}/${deploy.jarFilename}">
+            <fileset dir="${build.classes.main}" includes="**/*.class, **/*.properties" />
+        </jar>
+    </target>
+
+    <target name="prepareWar">
+        <mkdir dir="${build}/libs"/>
+        <copy flatten="true" todir="${build}/libs">
+            <fileset dir="${lib.rt}" includes="**/*.jar"/>
+        </copy>
+        <copy file="${config}/context.xml.template" tofile="${build}/context.xml" overwrite="true">
+            <filterset>
+                <filter token="WEBAPP_PATH" value="${tomcat.appPath}" />
+                <filter token="DB.DRIVER.CLASS" value="${database.driver}" />
+                <filter token="DB.CONNECT.URL" value="${database.url}" />
+                <filter token="DB.USER.NAME" value="${database.login}" />
+                <filter token="DB.USER.PASSWORD" value="${database.password}" />
+                <filter token="DB.JNDI.DATASOURCE" value="${database.jndi.datasource}" />
+            	<filter token="DB.VALIDATIONQUERY" value="${database.validationquery}" />
+            </filterset>
+        </copy>
+        <copy file="${config}/web.xml.template" tofile="${build}/web.xml" overwrite="true">
+            <filterset>
+                <filter token="WEB.SECURITY.TRANSPORT" value="${deploy.security.transport}" />
+				<filter token="DB.DATA.SOURCE" value="${database.jndi.datasource}" />
+            </filterset>
+        </copy>
+    </target>
+ 
+    <target name="war" depends="prepareWar, jar, configureExplodedWar" description="Generate the war-packaged version of the project">
+        <manifest file="${build.manifest}/MANIFEST.MF">
+            <attribute name="Built-By" value="${user.name}" />
+            <attribute name="Implementation-Title" value="${appname}" />
+            <attribute name="Implementation-Vendor" value="iteratec GmbH" />
+            <attribute name="Implementation-Vendor-Id" value="de.iteratec" />
+            <attribute name="Implementation-Name" value="${appname}" />
+            <attribute name="Build-Time" value="${TIMESTAMP-FULL}" />
+            <attribute name="Build-Id" value="${build.id}" />
+        </manifest>
+        <war warfile="${deploy.artifactDir}/${deploy.warFilename}" webxml="${build}/web.xml" manifest="${build.manifest}/MANIFEST.MF">
+            <zipfileset dir="${src}/javascript" prefix="javascript"/>
+            <zipfileset dir="${src}/jsp" prefix="jsp"/>
+            <zipfileset dir="${src}/images" prefix="images"/>
+            <zipfileset dir="${src}/css" prefix="css"/>
+            <classes dir="${build}">
+                <include name="log4j.properties" />
+            </classes>
+            <classes dir="${build}">
+                <include name="turm.properties" />
+            </classes>
+            <classes dir="${src}/messages">
+                <include name="**/*.properties" />
+            </classes>
+            <webinf dir="${build}">
+                <include name="applicationContext-*.xml" />
+            </webinf>
+            <metainf dir="${build}">
+                <include name="context.xml" />             
+            </metainf>
+            <lib dir="${build}/libs">
+                <include name="**/*.jar" />
+            </lib>
+            <lib dir="${deploy.artifactDir}">
+                <include name="*.jar" />
+            </lib>
+        </war>
+    </target>
+
+    <target name="clean" description="Deletes build folders">
+        <delete dir="${build}" />
+    </target>
+ 
+    <target name="cleanAll" depends="clean" description="Deletes build and deployment folders">
+        <delete dir="${deploy.artifactDir}" />
+        <delete dir="${deploy.local}" />     
+    </target>
+
+    <target name="deploy.local" depends="war" description="Creates a WAR and extracts the contents into the local webapp directory.">
+        <mkdir dir="${deploy.local}"/>
+        <unwar dest="${deploy.local}" src="${deploy.artifactDir}/${deploy.warFilename}" overwrite="true"/>        
+        <copy file="${deploy.local}/META-INF/context.xml" tofile="${deploy.local.context}/${deploy.appname}.xml" overwrite="true" />
+    </target>
+ 
+    <target name="deploy.local.simple" description="Just copies the 'webcontent' to the local deploy directory. No libs and classes.">
+         <copy todir="${deploy.local}/jsp" overwrite="true" encoding="${source.encoding}">
+             <fileset dir="${src}/jsp" includes="**/*" />
+         </copy>
+         <copy todir="${deploy.local}/images" overwrite="true">
+             <fileset dir="${src}/images" includes="**/*" />
+         </copy>
+         <copy todir="${deploy.local}/css" overwrite="true" encoding="${source.encoding}">
+             <fileset dir="${src}/css" includes="**/*" />
+         </copy>
+         <copy todir="${deploy.local}/javascript" overwrite="true" encoding="${source.encoding}">
+             <fileset dir="${src}/javascript" includes="**/*" />
+         </copy>
+    </target>
+ 
+    <target name="tomcat.deploy" depends="war" description="Deploys the WAR file on a local Tomcat installation">
+        <deployToTomcat url="${tomcat.managerUrl}" username="${tomcat.adminUser}" password="${tomcat.adminPassword}" path="${tomcat.appPath}" war="file:///${deploy.artifactDir}/${deploy.warFilename}" />
+    </target>
+
+    <target name="tomcat.remove" description="Removes the WAR file from a local Tomcat installation.">
+        <removeFromTomcat url="${tomcat.managerUrl}" username="${tomcat.adminUser}" 
+        	password="${tomcat.adminPassword}" path="${tomcat.appPath}"  failOnError="false" />
+    </target>
+	
+	<target name="build.exploded.dist" depends="dist">
+		<mkdir dir="${build}/explodedDist"/>
+		<unwar dest="${build}/explodedDist" src="${deploy.artifactDir}/${appname}-${version.info}.zip" overwrite="true"/>        
+	</target>
+
+	<target name="dist" depends="war" description="creates a ZIP file that contains files and a build skript to create a TURM war.">
+		<mkdir dir="${build}/explodedWar"/>
+		<unwar dest="${build}/explodedWar" src="${deploy.artifactDir}/${deploy.warFilename}" overwrite="true"/>        
+		<zip destfile="${deploy.artifactDir}/${appname}-${version.info}.zip">			
+			<zipfileset dir="${build}/explodedWar" prefix="explodedWar"/>
+			<zipfileset dir="${sqlsrc}" prefix="sql"/>
+			<zipfileset dir="${src}/skripts/deploy" includes="build.xml,build.properties"/>
+			<zipfileset dir="${config}" includes="applicationContext-spring-security.xml.template, applicationContext-iturm.xml, context.xml.template, web.xml.template, turm.properties.template, log4j.properties.template.production" prefix="templates"/>			
+			<zipfileset dir="${lib.dev}/jdbc" includes="*.jar" prefix="lib"/>
+		</zip>
+	</target>
+
+	<target name="database.createTestData" depends="build" description="Creates test data used for functional tests.">
+		<java classname="de.iteratec.turm.CreateTestData" fork="true" failonerror="true">
+			<classpath refid="project.classpath" />
+			<sysproperty key="de.iteratec.turm.test.databaseUrl" value="${database.url}"/>
+			<sysproperty key="de.iteratec.turm.test.databaseUser" value="${database.login}"/>
+			<sysproperty key="de.iteratec.turm.test.databasePassword" value="${database.password}"/>
+			<sysproperty key="de.iteratec.turm.test.jdbcDriverClass" value="${database.driver}"/>
+		</java>
+	</target>
+
+	<target name="javadoc" depends="prepare" description="Generate javadoc documentation for the project">
+		<javadoc source="${javac.source.compliance}" encoding="${source.encoding}" packagenames="de.iteratec.turm.*" 
+			sourcepath="${javasrc.mainsrc}" destdir="${javadoc.dir}" author="true" version="true" use="true" 
+			windowtitle="${javadoc.windowtitle} ${version.info}" doctitle="${javadoc.doctitle}" bottom="${javadoc.bottom}">
+			<classpath>
+				<path refid="project.classpath" />
+			</classpath>
+		</javadoc>
+	</target>
+
+    <target name="test.junit" depends="build" description="Runs all JUnit tests">
+        <mkdir dir="${test.junit.xmlReportDir}"/>     
+        <junit showoutput="yes" printsummary="yes" fork="yes" haltonfailure="no" failureproperty="test.failure">
+            <classpath>
+                <path refid="project.classpath" />
+            </classpath>
+            <formatter type="xml" usefile="yes" />
+            <batchtest todir="${test.junit.xmlReportDir}">
+                <fileset dir="${javasrc.testsrc}">
+                    <include name="**/*Test.java" />
+                </fileset>
+            </batchtest>
+        </junit>
+        <echo message="Creating test report in ${test.junit.htmlReportDir}" />
+        <mkdir dir="${test.junit.htmlReportDir}"/>     
+        <junitreport todir="${test.junit.htmlReportDir}">
+            <fileset dir="${test.junit.xmlReportDir}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="frames" todir="${test.junit.htmlReportDir}" />
+        </junitreport>
+        <fail if="test.failure" message="Stopping since at least one test failed." />
+     </target>
+
+    <target name="test.functional" depends="define.properties, database.createTestData" description="Runs all HTMLunit tests and creates a HTML report for the result">
+        <echo message="Compiling test cases to ${test.htmlunit.buildDir}" />
+        <mkdir dir="${test.htmlunit.buildDir}"/>
+        <javac destdir="${test.htmlunit.buildDir}" includes="**/*.java**" debug="on" source="${javac.source.compliance}" target="${javac.target.compliance}" encoding="${source.encoding}" includeantruntime="false">
+            <src path="${test.htmlunit.srcDir}" />
+            <classpath refid="project.classpath" />
+        </javac>
+
+    	<echo message="Copying properties to ${test.htmlunit.buildDir}" />
+        <copy todir="${test.htmlunit.buildDir}" overwrite="true">
+            <fileset dir="${test.htmlunit.srcDir}" includes="**/*.properties" />
+        </copy>
+
+    	<echo message="Running test, reporting to ${test.htmlunit.xmlReportDir}" />
+        <mkdir dir="${test.htmlunit.xmlReportDir}"/>
+        <junit showoutput="yes" printsummary="yes" haltonfailure="no" failureproperty="test.failure">
+            <sysproperty key="de.iteratec.turm.baseURL" value="${test.htmlunit.baseUrl}"/>
+			<sysproperty key="de.iteratec.turm.test.databaseUrl" value="${database.url}"/>
+			<sysproperty key="de.iteratec.turm.test.databaseUser" value="${database.login}"/>
+			<sysproperty key="de.iteratec.turm.test.databasePassword" value="${database.password}"/>
+			<sysproperty key="de.iteratec.turm.test.jdbcDriverClass" value="${database.driver}"/>
+            <classpath>
+                <pathelement path="${test.htmlunit.buildDir}" />
+                <fileset dir="${test.htmlunit.libDir}">
+                    <include name="**/*.jar" />
+                </fileset>
+                <path refid="project.classpath" />
+            </classpath>
+            <formatter type="xml" usefile="yes" />
+            <batchtest todir="${test.htmlunit.xmlReportDir}" fork="yes">
+                <fileset dir="${test.htmlunit.srcDir}">
+                    <include name="**/*Test.java" />
+                </fileset>
+            </batchtest>
+        </junit>
+
+    	<echo message="Creating HTML report in ${test.htmlunit.htmlReportDir}" />
+        <mkdir dir="${test.htmlunit.htmlReportDir}"/>
+        <junitreport todir="${test.htmlunit.htmlReportDir}">
+            <fileset dir="${test.htmlunit.xmlReportDir}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="frames" todir="${test.htmlunit.htmlReportDir}" />
+        </junitreport>
+        <if>
+            <isset property="test.htmlunit.haltOnFailure"/>
+            <then>
+                <fail if="test.failure" message="Stopping since at least one test failed." />
+            </then>
+        </if>
+    </target>
+ 
+    <target name="test.all" depends="test.junit, test.functional" description="perform functional and unit test"/>
+ 
+</project>

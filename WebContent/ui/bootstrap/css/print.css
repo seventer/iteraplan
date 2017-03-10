@@ -1,0 +1,53 @@
+@MEDIA print {
+	.page {
+		padding: 0px;
+		margin:  0px;
+		background: none;
+		margin-top: 0px;
+	}
+	.navbar {
+		display: none;
+		background: none;
+	}
+	#contextMenu {
+		display: none;
+		background: none;
+		width: 0px;
+	}
+	#searchHeader
+	{	
+		display: none;
+		background: none;
+	}
+	#mainContent
+	{
+		width: 100%;
+	}
+	#transactionbar {
+		display: none;
+		background: none;
+	}
+	
+	/* Hides all tabs and shows all tab content container */
+	#tab_ConfigTabs
+	{
+		display: none;
+	}	
+	#cont_ConfigTabs .hidden
+	{
+		visibility: visible;
+		display: block;
+	} 
+	#cont_ConfigTabs .collapse
+	{
+		height: auto;
+	}
+	#tabFastExportModul
+	{
+		display: none;
+	}
+	.tabHistoryNotLoaded
+	{
+		display: none;
+	}
+}

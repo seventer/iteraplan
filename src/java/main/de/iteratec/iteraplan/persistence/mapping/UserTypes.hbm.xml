@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+  <typedef name="enumIsrStatus" class='de.iteratec.iteraplan.persistence.util.StringEnumUserType'>
+    <param name="enum">de.iteratec.iteraplan.model.InformationSystemRelease$TypeOfStatus</param>
+  </typedef>
+
+  <typedef name="enumTcrStatus" class='de.iteratec.iteraplan.persistence.util.StringEnumUserType'>
+    <param name="enum">de.iteratec.iteraplan.model.TechnicalComponentRelease$TypeOfStatus</param>
+  </typedef>
+
+  <typedef name="enumPermFunctional" class='de.iteratec.iteraplan.persistence.util.StringEnumUserType'>
+    <param name="enum">de.iteratec.iteraplan.model.user.TypeOfFunctionalPermission</param>
+  </typedef>
+
+  <typedef name="enumEditPermissionType" class='de.iteratec.iteraplan.persistence.util.StringEnumUserType'>
+    <param name="enum">de.iteratec.iteraplan.model.user.Role2BbtPermission$EditPermissionType</param>
+  </typedef>
+
+  <typedef name="enumBbType" class='de.iteratec.iteraplan.persistence.util.StringEnumUserType'>
+    <param name="enum">de.iteratec.iteraplan.model.TypeOfBuildingBlock</param>
+  </typedef>
+
+  <typedef name="enumDirection" class='de.iteratec.iteraplan.persistence.util.StringEnumUserType'>
+    <param name="enum">de.iteratec.iteraplan.model.Direction</param>
+  </typedef>
+
+  <typedef name="enumSavedQueryType" class='de.iteratec.iteraplan.persistence.util.StringEnumUserType'>
+    <param name="enum">de.iteratec.iteraplan.model.queries.ReportType</param>
+  </typedef>
+
+
+</hibernate-mapping>

@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+    metadata-complete="false"
+    version="2.5">
+
+  <display-name>
+    iteraplan
+  </display-name>
+
+  <description>
+    Der einfache und flexible Einstieg in das Bebauungsmanagement. Siehe http://www.iteratec.de/
+  </description>
+
+  <context-param>
+    <param-name>org.restlet.component</param-name>
+    <param-value>restletComponent</param-value>
+  </context-param>
+  
+  <context-param>
+    <description>The Spring configuration files.</description>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>/WEB-INF/applicationCon*.xml</param-value>
+  </context-param>
+
+  <context-param>
+	<param-name>spring.profiles.active</param-name>
+	<param-value>de.iteratec.iteraplan.deployment</param-value>
+  </context-param>
+
+  <!-- Filters -->
+
+  <filter>
+    <description>
+      The generic Spring Security filter. This filter is configured by the
+      configuration file specified by the contextConfigLocation parameter.
+   	</description>
+    <filter-name>Spring Security Filter Chain Proxy</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    <init-param>
+      <param-name>targetBeanName</param-name>
+      <param-value>filterChainProxy</param-value>
+    </init-param>
+  </filter>
+
+  <filter>
+    <description>
+      Sets the character encoding of incoming requests to UTF-8 if not
+      specified otherwise.
+    </description>
+	<filter-name>Set Character Encoding</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+	  <param-value>UTF-8</param-value>
+	</init-param>
+	<init-param>
+	  <param-name>forceEncoding</param-name>
+	  <param-value>true</param-value>
+	</init-param>
+  </filter>
+  
+  <filter>
+    <filter-name>contextFilter</filter-name>
+    <filter-class>de.iteratec.iteraplan.presentation.ContextFilter</filter-class>
+  </filter>
+
+  <!-- Needed for Restlet framework. Spring MVC uses the OpenSessionInViewInterceptor rather than this filter. --> 
+  <filter> 
+	<filter-name>openSessionInViewFilter</filter-name> 
+	<filter-class>org.springframework.orm.hibernate3.support.OpenSessionInViewFilter</filter-class> 
+  </filter>   
+  <!-- Filter mappings -->
+  
+  <filter-mapping>
+    <filter-name>Set Character Encoding</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <filter-mapping>
+    <filter-name>Spring Security Filter Chain Proxy</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <filter-mapping>
+    <filter-name>contextFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <filter-mapping>
+    <filter-name>openSessionInViewFilter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping>
+  <!-- Listeners -->
+  
+  <listener>
+    <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+  </listener>
+  
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+  <listener>
+    <listener-class>de.iteratec.iteraplan.presentation.ContextListener</listener-class>
+  </listener>
+  
+  <listener>
+    <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
+  </listener>
+
+  <servlet>
+    <servlet-name>restletServlet</servlet-name>
+    <servlet-class>org.restlet.ext.spring.SpringServerServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <!-- The front controller of this Spring Web application, responsible for handling all application requests -->
+  <servlet>
+  <servlet-name>springmvc</servlet-name>
+  <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <!--
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value></param-value>
+    </init-param>
+    -->
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <!-- Serves static resource content from .jar files such as spring-js.jar -->
+  <servlet>
+    <servlet-name>Resource Servlet</servlet-name>
+    <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
+  </servlet>
+  
+  <!-- Serves javascript-resources as bundles -->
+  <servlet>
+		<servlet-name>JavascriptServlet</servlet-name>
+		<servlet-class>net.jawr.web.servlet.JawrServlet</servlet-class>
+		
+		<!-- Location in classpath of the config file -->
+		<init-param>
+      <param-name>configLocation</param-name>
+      <param-value>/jawr.properties</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+  </servlet>
+  
+  <!-- Serves image resources -->
+	<servlet>
+		<servlet-name>ImageServlet</servlet-name>
+		<servlet-class>net.jawr.web.servlet.JawrServlet</servlet-class>
+		
+		<!-- Location in classpath of the config file -->
+		<init-param>
+			<param-name>configLocation</param-name>
+			<param-value>/jawr.properties</param-value>
+		</init-param>
+		<init-param>
+			<param-name>type</param-name>
+			<param-value>img</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+  <!-- Serves CSS-resources as bundles -->
+  <servlet>
+		<servlet-name>CSSServlet</servlet-name>
+		<servlet-class>net.jawr.web.servlet.JawrServlet</servlet-class>
+		
+		<!-- Location in classpath of the config file -->
+		<init-param>
+			<param-name>configLocation</param-name>
+			<param-value>/jawr.properties</param-value>
+		</init-param>
+		<init-param>
+			<param-name>type</param-name>
+			<param-value>css</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+  </servlet>
+
+  <!-- Servlet mappings -->
+  <servlet-mapping>
+    <servlet-name>restletServlet</servlet-name>
+    <url-pattern>/api/*</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Map all *.do requests to the DispatcherServlet for handling -->
+  <servlet-mapping>
+    <servlet-name>springmvc</servlet-name>
+    <url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>springmvc</servlet-name>
+    <url-pattern>*.flow</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Map all /dwr/* requests to the DispatcherServlet for handling -->
+  <servlet-mapping>
+    <servlet-name>springmvc</servlet-name>
+     <url-pattern>/dwr/*</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Map all other requests to the DispatcherServlet for handling -->
+  <servlet-mapping>
+    <servlet-name>springmvc</servlet-name>
+    <url-pattern>/show/*</url-pattern>
+  </servlet-mapping>
+
+  <!-- Map all /resources requests to the Resource Servlet for handling -->
+  <servlet-mapping>
+    <servlet-name>Resource Servlet</servlet-name>
+    <url-pattern>/resources/*</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Map javascript requests to the appropriate JAWR servlet -->
+  <servlet-mapping>
+	<servlet-name>JavascriptServlet</servlet-name>
+	<url-pattern>*.js</url-pattern>
+  </servlet-mapping> 
+  
+  <!-- Map CSS requests to the appropriate JAWR servlet -->
+  <servlet-mapping>
+	<servlet-name>CSSServlet</servlet-name>
+	<url-pattern>*.css</url-pattern>
+  </servlet-mapping> 
+  
+  <!-- The image servlet will be able to serve "png", "jpg" and "gif" files -->
+  <servlet-mapping>
+	<servlet-name>ImageServlet</servlet-name>
+	<url-pattern>*.png</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+	<servlet-name>ImageServlet</servlet-name>
+	<url-pattern>*.jpg</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+	<servlet-name>ImageServlet</servlet-name>
+	<url-pattern>*.gif</url-pattern>
+  </servlet-mapping> 
+
+  <!-- Have remaining whitespace in JSP output trimmed by the servlet container -->
+  <jsp-config>
+    <jsp-property-group>
+      <url-pattern>*.jsp</url-pattern>
+      <trim-directive-whitespaces>true</trim-directive-whitespaces>
+    </jsp-property-group>
+  </jsp-config>
+
+  <session-config>
+    <!-- 10 hours -->
+    <session-timeout>600</session-timeout>
+  </session-config>
+
+  <welcome-file-list>
+    <welcome-file>jsp/index.jsp</welcome-file>
+  </welcome-file-list>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Secured Area</web-resource-name>
+      <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <user-data-constraint>
+      <transport-guarantee>@WEB.SECURITY.TRANSPORT@</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+  <security-role>
+    <role-name>*</role-name>
+  </security-role>
+  
+  <resource-ref>
+    <description>
+      Resource reference to a factory for javax.sql.Connection instances that
+      is used for talking to the authentication database that is configured in 
+      the &lt;Context&gt; configuration for the web application.
+    </description>
+    <res-ref-name>@DB.DATA.SOURCE@</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
+  </resource-ref>
+  
+  <error-page> 
+    <error-code>@HTTP.ERRORCODE.FILTERED@</error-code> 
+    <location>/onError.do</location>
+  </error-page>
+  <error-page>
+    <error-code>403</error-code>
+    <location>/errorNotAuthenticated.do</location> 
+  </error-page>
+  
+  <mime-mapping>
+  	<extension>cxx</extension>
+  	<mime-type>text/css</mime-type>
+  </mime-mapping>
+  
+</web-app>

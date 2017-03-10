@@ -1,0 +1,31 @@
+.tabnav {
+	padding: 1em 1em 0.3em 1em;
+	margin: 0 0 2.3em 0;
+	border-bottom: 1px solid #777;
+	list-style-type: none;
+	text-align: left;
+	background-color: #F0F0F0;
+}
+
+.tabnav li {
+	display: inline;
+	margin-right: 0.2em;
+	background-color: #F6FFD5;
+	border: 1px solid gray;
+	padding: 0.3em 0.5em 0.3em 0.5em;
+}
+
+.tabnav li:hover {
+	background-color: #FFF;
+}
+
+.tabnav li.selected {
+	background-color: #FFF;
+	border-bottom: 1px solid white;
+	padding-top: 0.5em;
+}
+
+.tabnav li a {
+	color: black;
+	text-decoration: none;
+}

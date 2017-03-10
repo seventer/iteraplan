@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="compositeDiagram" type="compositeDiagramXML" />
+
+	<xs:complexType name="compositeDiagramXML">
+		<xs:sequence>
+			<xs:element name="graphicFormat" type="xs:string" minOccurs="1" maxOccurs="1" />
+			<xs:element name="partReports" type="partReportsXML" minOccurs="1"/>
+			<xs:element name="showSavedQueryInfo" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+			<xs:element name="version" type="xs:string" />
+		</xs:sequence>
+		<xs:attribute name="reportType" type="reportTypeXML" use="required" />
+	</xs:complexType>
+	
+	<xs:complexType name="partReportsXML">
+		<xs:sequence>
+			<xs:element name="partReportId" type="xs:int" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="reportTypeXML">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="GENERIC" />
+			<xs:enumeration value="PORTFOLIO" />
+			<xs:enumeration value="MASTERPLAN" />
+			<xs:enumeration value="INFORMATIONFLOW" />
+			<xs:enumeration value="CLUSTER" />
+			<xs:enumeration value="PIEBAR" />
+			<xs:enumeration value="COMPOSITE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+</xs:schema>

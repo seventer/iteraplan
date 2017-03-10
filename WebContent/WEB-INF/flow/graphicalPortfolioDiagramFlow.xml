@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+      http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+	start-state="start" parent="baseGraphicFlow">
+	
+	
+	<decision-state id="start">
+		<if test="requestParameters['_eventId']=='init'" then="init" />
+		<if test="requestParameters['_eventId']=='fromInterchange'" then="fromInterchange" />
+		<if test="requestParameters['_eventId']=='loadSavedQuery'" then="pre-load" />
+		<if test="requestParameters['_eventId']=='closeAll'" then="closeAll" />
+		<if test="requestParameters['_eventId']==null" then="init" />		
+	</decision-state>
+	
+	<action-state id="init">
+			<evaluate expression="portfolioGraphicFrontendService.getInitialMemBean()"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="firststep" />
+	</action-state>
+	
+	<action-state id="fromInterchange">
+			<evaluate expression="portfolioGraphicFrontendService.fromInterchange(requestParameters['bbType'],requestParameters['idList'])"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="secondstep" />
+	</action-state>
+	
+	<action-state id="pre-load">
+		<evaluate expression="portfolioGraphicFrontendService.getInitialMemBean()"
+			result="flowScope.memBean" />
+		<transition on="success" to="loadSavedQuery">
+			<set name="flowScope.FLOW_LABEL"
+				value="portfolioGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+			<set name="memBean.savedQueryId"
+				value="requestParameters.savedQueryId"
+				type="java.lang.Integer" />
+		</transition>			
+	</action-state>
+	
+	<action-state id="loadSavedQuery">
+		<evaluate expression="portfolioGraphicFrontendService.loadSavedQuery(flowScope.memBean)" 
+				result="flowScope.memBean"/>
+		<transition on="success" to="secondstep">
+			<evaluate expression="portfolioGraphicFrontendService.updateCheckAllBox(flowScope.memBean)" />
+		</transition>			
+	</action-state>
+	
+	<view-state id="firststep" model="memBean" view="graphicalreporting/portfoliographic">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL"
+				value="portfolioGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+		</on-entry>
+		
+		<transition on="selectPortfolioType" to="firststep">
+			<evaluate expression="portfolioGraphicFrontendService.changeQueryType(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+				result="flowScope.memBean"/>
+		</transition>
+				
+		<transition on="expandFirstLevel" to="firststep">
+			<evaluate expression="portfolioGraphicFrontendService.expandFirstLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="expandSecondLevel" to="firststep">
+			<evaluate expression="portfolioGraphicFrontendService.expandSecondLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />		
+		</transition>
+		<transition on="shrinkLevel" to="firststep">
+			<evaluate expression="portfolioGraphicFrontendService.shrinkLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="addReportExtension" to="firststep">
+			<evaluate expression="portfolioGraphicFrontendService.addReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="removeReportExtension" to="firststep">
+			<evaluate expression="portfolioGraphicFrontendService.removeReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+
+		<transition on="requestReport" to="firststep">
+			<evaluate expression="portfolioGraphicFrontendService.requestEntityList(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+
+		<transition on="requestAndConfirmReport" to="secondstep">
+			<evaluate expression="portfolioGraphicFrontendService.requestEntityList(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+			<evaluate expression="portfolioGraphicFrontendService.stepOneToStepTwo(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+
+		<transition on="refreshReport" to="firststep">
+			<evaluate result="flowScope.memBean"
+				expression="portfolioGraphicFrontendService.refreshReport(flowScope.memBean, flowRequestContext, flowExecutionContext, true)" />
+		</transition>
+		<transition on="saveQuery" to="firststep">
+			<evaluate expression="portfolioGraphicFrontendService.saveQuery(flowScope.memBean)" />
+		</transition>
+		<transition on="loadSavedQuery" to="secondstep">
+			<evaluate expression="portfolioGraphicFrontendService.loadSavedQuery(flowScope.memBean)"
+			result="flowScope.memBean" />
+			<evaluate expression="portfolioGraphicFrontendService.updateCheckAllBox(flowScope.memBean)" />
+		</transition>		
+		<transition on="deleteSavedQuery" to="firststep">
+			<evaluate expression="portfolioGraphicFrontendService.deleteSavedQuery(flowScope.memBean)" />
+		</transition>
+		
+		
+		<transition on="goToPortfolioExportStep2" to="secondstep">
+			<evaluate result="flowScope.memBean" 
+				expression="portfolioGraphicFrontendService.stepOneToStepTwo(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+	</view-state>
+	
+	
+	
+	<view-state id="secondstep" model="memBean" view="graphicalreporting/portfoliographic">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL"
+				value="portfolioGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+		</on-entry>
+		
+		<transition on="refreshReport" to="secondstep">
+			<evaluate result="flowScope.memBean"
+				expression="portfolioGraphicFrontendService.refreshReport(flowScope.memBean, flowRequestContext, flowExecutionContext, false)" />
+		</transition>
+		<transition on="generateExport" to="secondstep">
+			<evaluate expression="portfolioGraphicFrontendService.generateGraphicFileResponse(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="triggerDownloadEvent" to="secondstep">
+			<evaluate expression="portfolioGraphicFrontendService.triggerDownloadEvent(flowRequestContext, 'generateExport')" />
+		</transition>
+		
+		<transition on="saveQuery" to="secondstep">
+			<evaluate expression="portfolioGraphicFrontendService.saveQuery(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		<transition on="saveQueryAs" to="secondstep">
+			<evaluate expression="portfolioGraphicFrontendService.saveQueryAs(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		<transition on="goToPortfolioExportStep1" to="firststep">
+			<evaluate expression="portfolioGraphicFrontendService.stepTwoToStepOne(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="loadSavedQuery" to="pre-load" />
+	</view-state>
+	
+	
+	<end-state id="close" view="externalRedirect:contextRelative:/show/graphicalreporting/portfoliodiagram" />
+		
+	<end-state id="closeAll" view="externalRedirect:contextRelative:/graphicalreporting/init.do">
+		<on-entry>
+			<evaluate expression="portfolioGraphicFrontendService.closeAllFlows(flowRequestContext)"></evaluate>
+		</on-entry>
+	</end-state>
+	
+	
+	
+</flow>

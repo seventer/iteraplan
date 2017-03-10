@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+      http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+	  start-state="start" parent="baseFlow">
+
+	<input name="id" type="java.lang.Integer" />
+		
+	<decision-state id="start">
+		<if test="requestParameters['_eventId']=='show'" then="show" />
+		<if test="requestParameters['_eventId']=='closeAll'" then="closeAll" />
+		<if test="requestParameters['_eventId']==null" then="show" />		
+	</decision-state>
+
+	<view-state id="show" model="memBean" view="objectrelatedpermission/show">
+		<on-entry>
+			<evaluate expression="objectRelatedPermissionFrontendService.getMemBean(id)"
+				result="flowScope.memBean" />
+			<set name="flowScope.FLOW_LABEL"
+				value="objectRelatedPermissionFrontendService.getFlowLabel(flowScope.memBean.dto.currentUserEntity.identityString)"
+				type="java.lang.String" />
+		</on-entry>
+		<transition on="edit" to="edit">
+			<evaluate
+				expression="objectRelatedPermissionFrontendService.getEditMemBean(flowScope.memBean, id, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+	</view-state>
+
+	<view-state id="edit" model="memBean" view="objectrelatedpermission/edit">
+		<transition on="save" to="show" history="invalidate">
+			<evaluate
+				expression="objectRelatedPermissionFrontendService.saveBuildingBlockPermission(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="removeBBP" to="edit">
+			<evaluate
+				expression="objectRelatedPermissionFrontendService.removeBuildingBlockPermission(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="changeQueryType" to="edit">
+			<evaluate
+				expression="objectRelatedPermissionFrontendService.changeQueryType(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="expandFirstLevel" to="edit">
+			<evaluate
+				expression="objectRelatedPermissionFrontendService.expandFirstLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="expandSecondLevel" to="edit">
+			<evaluate
+				expression="objectRelatedPermissionFrontendService.expandSecondLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />		
+		</transition>
+		<transition on="shrinkLevel" to="edit">
+			<evaluate
+				expression="objectRelatedPermissionFrontendService.shrinkLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="refreshReport" to="edit">
+			<evaluate
+				expression="objectRelatedPermissionFrontendService.refreshReport(flowScope.memBean, flowRequestContext, flowExecutionContext, true)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="addReportExtension" to="edit">
+			<evaluate expression="objectRelatedPermissionFrontendService.addReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="removeReportExtension" to="edit">
+			<evaluate expression="objectRelatedPermissionFrontendService.removeReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="requestReport" to="edit">
+			<evaluate expression="objectRelatedPermissionFrontendService.requestReport(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="resetReport" to="edit">
+			<evaluate
+				expression="objectRelatedPermissionFrontendService.getEditMemBean(flowScope.memBean, id, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="addPermissions" to="edit">
+			<evaluate
+				expression="objectRelatedPermissionFrontendService.addPermissions(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="cancel" to="show" validate="false">
+			<evaluate
+				expression="objectRelatedPermissionFrontendService.leaveEditMode(flowExecutionContext)" />
+		</transition>
+	</view-state>
+	
+	<end-state id="close"
+		view="externalRedirect:contextRelative:/objectrelatedpermission/init.do" />
+	<end-state id="confirmed" commit="true"
+		view="externalRedirect:contextRelative:/objectrelatedpermission/init.do" />
+	<end-state id="closeAll" view="externalRedirect:contextRelative:/objectrelatedpermission/init.do">
+		<on-entry>
+			<evaluate expression="objectRelatedPermissionFrontendService.closeAllFlows(flowRequestContext)"></evaluate>
+		</on-entry>
+	</end-state>
+
+</flow>

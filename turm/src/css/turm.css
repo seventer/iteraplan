@@ -1,0 +1,127 @@
+body {
+	background-color: #FFF;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	margin: 0;
+}
+
+a {
+	color: #000;
+}
+
+table.listTable,table.default {
+	border-collapse: collapse;
+	border: #777 solid 1px;
+	text-align: left;
+	margin-bottom: 0.5em;
+	width: 27.5em;
+}
+
+table.default td:first-child {
+	width: 12em;
+}
+
+table.default td {
+	padding: 0.2em;
+}
+
+table.listTable th:first-child {
+	font-style: italic;
+	width: 10em;
+}
+
+table.listTable th {
+	font-weight: normal;
+	background-color: #CCC;
+}
+
+table.listTable td:first-child {
+	font-style: italic;
+	width: 20%;
+}
+
+table.listTable td {
+	font-weight: normal;
+	background-color: #FFF;
+}
+
+td.leftColumn {
+	vertical-align: top;
+	width: 50%;
+	padding-right: 1em;
+	border-right: 1px #777 solid;
+}
+
+td.rightColumn {
+	vertical-align: top;
+	width: 50%;
+	padding-left: 1em;
+}
+
+* .bold {
+	font-weight: bold;
+}
+
+div.errors {
+	color: #F00;
+}
+
+div.messages {
+	color: #0C0;
+}
+
+div.title {
+	font-style: italic;
+	font-weight: bold;
+	font-size: 14pt;
+	padding: 0 0 0.5em 0.8em;
+	background-color: #F0F0F0;
+}
+
+div.header {
+	background-color: #F0F0F0;
+	padding: 0.5em 0.5em 0em 0;
+	text-align: right;
+}
+
+div.content {
+	margin-left: 1em;
+}
+
+* .hidden {
+	display: none;
+}
+
+* .visible {
+	display: inline;
+}
+
+img.link {
+	cursor: pointer;
+}
+
+img.link:hover {
+	cursor: pointer;
+}
+
+form {
+	display: inline;
+}
+
+* .jsLink {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+* .jsLink:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+select.addRemove {
+	width: 20em;
+}
+
+input.text {
+	width: 20em;
+}

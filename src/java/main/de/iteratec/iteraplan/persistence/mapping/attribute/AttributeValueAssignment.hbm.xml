@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.iteratec.iteraplan.model.attribute">
+  <class name="AttributeValueAssignment" table="AVA" lazy="false">
+  	<cache usage="read-write"/>
+    <id name="id" column="ID" type="java.lang.Integer">
+       <generator class="org.hibernate.id.enhanced.TableGenerator">
+        <param name="segment_value">ava</param>
+      </generator>
+    </id>
+    <version name="olVersion" column="VERSION" type="integer" unsaved-value="negative" />
+    <many-to-one name="attributeValue" column="ID_AV" foreign-key="FK_AVA_AV" not-null="true" unique-key="UNIQUE_AVA"/>
+    <many-to-one name="buildingBlock" column="ID_BB" foreign-key="FK_AVA_BB" not-null="true" unique-key="UNIQUE_AVA"/>
+  </class>
+
+  <query name="getAssignmentsForBuildingBlock">
+    <![CDATA[from AttributeValueAssignment ava
+              where ava.buildingBlock.id = :id]]>
+  </query>
+
+  <query name="getAssignmentsForBuildingBlockByAttributeValue">
+    <![CDATA[from AttributeValueAssignment ava
+              where ava.buildingBlock.id = :bbID
+              and ava.attributeValue.id = :avID]]>
+  </query>
+
+</hibernate-mapping>

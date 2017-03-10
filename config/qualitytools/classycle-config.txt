@@ -1,0 +1,64 @@
+
+#############################################################
+#
+# iteratec - iteraplan
+#
+# See http://classycle.sourceforge.net/ddf.html for usage.
+#
+#############################################################
+
+#show allResults
+show onlyFailures
+  
+######### Define sets and layers #############
+
+{package} = de.iteratec.iteraplan
+
+[common] = ${package}.common.*
+
+[business] = ${package}.businesslogic.*
+[services] = ${package}.businesslogic.service.*
+
+[persistence] = ${package}.persistence.*
+[daos] = ${package}.persistence.dao.*
+
+[gui] = ${package}.presentation.*
+[gui-webclient] = ${package}.presentation.dialogs.*
+[gui-spring] = ${package}.presentation.dialog.*
+ 
+[model-xml] = ${package}.model.xml.*
+[model-dto] = ${package}.model.dto.*
+[model] = ${package}.model.* excluding [model-xml] [model-dto]
+
+[all-other] = ${package}.* excluding [model] [common]
+
+#layer basic = [model] [daos]
+#layer dependency = [all-other]
+
+######### check existences #############
+
+check sets [services] [daos] [gui] [model] [all-other] [common] [persistence] [business]
+
+######### check layering #############
+
+#check layeringOf basic dependency
+
+######### check cycles #############
+
+check absenceOfClassCycles > 1 in [services]
+check absenceOfClassCycles > 1 in [daos]
+
+#check absenceOfPackageCycles > 1 in ${package}.*
+
+######### package dependencies #############
+
+check [model] independentOf [all-other] 
+
+check [common] independentOf [all-other] 
+
+check [business] independentOf [gui] 
+check [gui] independentOf [persistence] 
+check [persistence] independentOf [business]
+check [persistence] independentOf [gui]
+
+check [gui-spring] independentOf [gui-webclient]

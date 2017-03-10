@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<!--
+
+  @(#)package.html
+
+  Copyright 2007 iteratec GmbH
+  Germany, 82008 Unterhaching.  All Rights Reserved.
+
+-->
+</head>
+<body>
+
+This package contains the servlets, which in turn contain most of the logic.
+
+<ul>
+  <li>{@link de.iteratec.turm.servlets.PasswordServlet}
+    <ul>
+      <li>Responsible for changing a users password. Access to this class should not be restriced to logged in users.</li>
+    </ul>
+  </li>
+  <li>{@link de.iteratec.turm.servlets.RoleServlet}
+    <ul>
+      <li>Responsible for CRUD operations on roles and the assignement from roles to users.</li>
+    </ul>
+  </li>
+  <li>{@link de.iteratec.turm.servlets.UserServlet}
+    <ul>
+      <li>Responsible for CRUD operations on users and the assignement from users to roles.</li>
+    </ul>
+  </li>
+  <li>{@link de.iteratec.turm.servlets.TurmServlet}
+    <ul>
+      <li>Superclass of all servlets. Contains common logic needed by all servlets.</li>
+    </ul>
+  </li>
+</ul>
+
+TODO: introduce a business logic layer, which contains the logic. That way
+unit testing should become easier.
+
+</body>
+</html>

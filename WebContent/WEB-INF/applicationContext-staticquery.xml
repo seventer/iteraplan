@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+  <!-- ************************************************* -->
+  <!-- Spring Bean configurations for consistency checks -->
+  <!-- ************************************************* -->
+  <bean id="consistencyCheckParent" abstract="true"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.AbstractConsistencyCheck">
+    <property name="consistencyCheckDAO" ref="consistencyCheckDAO" />
+    <property name="consistencyCheckService" ref="consistencyCheckService" />
+  </bean>
+
+
+  <bean id="BuildingBlocksWithAttributeValuesOutOfRange" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckBuildingBlocksWithAttributeValuesOutOfRange">
+  </bean>
+  
+  <bean id="BuildingBlocksRecentlyUpdated" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckBuildingBlocksRecentlyUpdated">
+  </bean>
+ 
+ <bean id="BuildingBlocksWithNoAssociations" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckBuildingBlocksWithNoAssociations">
+  </bean>
+
+  <bean id="InformationSystemInterfacesConnectingCurrentAndNonCurrentInformationSystemReleases" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckInformationSystemInterfacesConnectingCurrentAndNonCurrentInformationSystemReleases">
+  </bean>
+
+  <bean id="InformationSystemInterfacesConnectingCurrentAndNonCurrentInformationSystemReleases2" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckInformationSystemInterfacesConnectingCurrentAndNonCurrentInformationSystemReleases2">
+  </bean>
+
+  <bean id="BuildingBlocksWithMandatoryAttributeTypesNotAssigned" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckBuildingBlocksWithMandatoryAttributeTypesNotAssigned">
+    <property name="attributeTypeService" ref="attributeTypeService" />
+    <property name="buildingBlockTypeService" ref="buildingBlockTypeService" />
+    <property name="buildingBlockServiceLocator" ref="bbServiceLocator" />
+  </bean>
+
+  <bean id="TcReleasesActiveWithoutStatusCurrent" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckTcReleasesActiveWithoutStatusCurrent">
+  </bean>
+
+  <bean id="TcReleasesInactiveWithoutStatusInactive" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckTcReleasesInactiveWithoutStatusInactive">
+  </bean>
+
+  <bean id="TcReleasesUnsynchronizedWithAssociatedIsReleases" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckTcReleasesUnsynchronizedWithAssociatedIsReleases">
+  </bean>
+
+  <bean id="TcReleasesWithStatusCurrentOrInactiveButNotYetLaunched" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckTcReleasesWithStatusCurrentOrInactiveButNotYetLaunched">
+  </bean>
+
+  <bean id="TcReleasesWithStatusUndefined" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckTcReleasesWithStatusUndefined">
+  </bean>
+
+  <bean id="TechnicalComponentReleasesSharingNoArchitecturalDomainWithTheirChildren" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckTechnicalComponentReleasesSharingNoArchitecturalDomainWithTheirChildren">
+  </bean>
+
+  <bean id="TcrSharingNoArchitecturalDomainWithTheirSuccessors" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckTcrSharingNoArchitecturalDomainWithTheirSuccessors">
+  </bean>
+
+  <bean id="TcrUsingOtherTcrNotReleased" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckTcrUsingOtherTcrNotReleased">
+  </bean>
+
+  <bean id="IsrConnectedToInfrastrElemViaTcrButNotDirectly" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckIsrConnectedToInfrastrElemViaTcrButNotDirectly">
+  </bean>
+
+  <bean id="IsiConnectedToInformationSystemViaBusinessObjectButNotDirectly" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckIsiConnectedToInformationSystemViaBusinessObjectButNotDirectly">
+  </bean>
+  
+  <bean id="BoUsedByInformationSystemButNotTransported" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckBoUsedByInformationSystemButNotTransported">
+  </bean>
+    
+
+  <bean id="InformationSystemReleasesActiveWithoutStatusCurrent" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckInformationSystemReleasesActiveWithoutStatusCurrent">
+  </bean>
+
+  <bean id="InformationSystemReleasesConnectedButNotSimulataneouslyActive" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckInformationSystemReleasesConnectedButNotSimulataneouslyActive">
+  </bean>
+
+  <bean id="InformationSystemReleasesInactiveWithoutStatusInactive" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckInformationSystemReleasesInactiveWithoutStatusInactive">
+  </bean>
+
+  <bean id="InformationSystemReleasesLongerActiveThanSuperordinateRelease" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckInformationSystemReleasesLongerActiveThanSuperordinateRelease">
+  </bean>
+
+  <bean id="InformationSystemReleasesPlannedWithoutAssociatedProjects" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckInformationSystemReleasesPlannedWithoutAssociatedProjects">
+  </bean>
+
+  <bean id="InformationSystemReleasesWithStatusCurrentOrInactiveButNotYetLaunched" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckInformationSystemReleasesWithStatusCurrentOrInactiveButNotYetLaunched">
+  </bean>
+
+  <bean id="InformationSystemReleasesWithoutStatusPlannedButAssociatedToProject" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckInformationSystemReleasesWithoutStatusPlannedButAssociatedToProject">
+  </bean>
+
+  <bean id="MoreThanOneReleaseOfTcWithStatusCurrent" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckMoreThanOneReleaseOfTcWithStatusCurrent">
+    <property name="technicalComponentDAO" ref="technicalComponentDAO" />
+  </bean>
+
+  <bean id="MoreThanOneReleaseOfInformationSystemWithStatusCurrent" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckMoreThanOneReleaseOfInformationSystemWithStatusCurrent">
+    <property name="informationSystemDAO" ref="informationSystemDAO" />
+  </bean>
+
+  <bean id="ProjectsUnsynchronizedWithAssociatedInformationSystemReleases" parent="consistencyCheckParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.consistency.CheckProjectsUnsynchronizedWithAssociatedInformationSystemReleases">
+  </bean>
+
+  <!-- ************************************************* -->
+  <!-- Spring Bean configurations for supporting queries -->
+  <!-- ************************************************* -->
+  <bean id="permissionQueryParent" abstract="true"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.additional.AbstractPermissionQuery">
+    <property name="permissionQueryDAO" ref="permissionQueryDAO" />
+  </bean>
+
+  <bean id="RolesWithFunctionalPermission" parent="permissionQueryParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.additional.PermissionQueryRolesWithFunctionalPermission">
+  </bean>
+
+  <bean id="RolesWithWritePermissionForBuildingBlockType" parent="permissionQueryParent"
+    class="de.iteratec.iteraplan.businesslogic.reports.staticquery.additional.PermissionQueryRolesWithWritePermissionForBuildingBlockType">
+  </bean>
+
+</beans>

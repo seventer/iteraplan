@@ -1,0 +1,3 @@
+This folder contains the IteraQl2.g ANTLR grammar, used to define the language syntax,
+to generate a parser for that syntax and to bind the parsed string to the object tree
+of package de.iteratec.iteraplan.elasticeam.iteraql2.qt.

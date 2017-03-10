@@ -1,0 +1,794 @@
+<project name="iteraplan" default="help" basedir=".">
+	<description>
+###############################################################################
+
+Project Build-File
+
+This file contains targets for creating, deploying and distributing
+the application. Please note, that all properties referenced in this
+file are loaded from the file "build.properties".
+
+You can override these properties locally by putting them into a file
+"build_local.properties" in the same folder or by setting them on the
+command line of the Ant call.
+
+###############################################################################
+	</description>
+
+	<!--	
+	##########################################################################
+		 PROPERTIES and PATHS
+	##########################################################################	
+	-->
+
+	<property environment="os" />
+
+	<!-- load local properties first so that they can override the default ones -->
+	<property file="${basedir}/build_local.properties" />
+	<!-- load default settings for build process -->
+	<property file="${basedir}/build.properties" />
+
+	<!-- load database settings based on rdbms name defined above
+	     these files should also use ${database.name} in the JDBC URLs if possible -->
+	<property name="db.configurationDir" value="${basedir}/config/database/${database.rdbmsName}" />
+	<property file="${db.configurationDir}/db.properties" />
+
+	<!-- load settings for login config after DB settings are set -->
+	<property file="${basedir}/build_local.login.properties" />
+	<property file="${basedir}/build.login.properties" />
+
+	<!-- Paths for base, main and test seperate -->
+
+	<path id="classpath.base">
+		<pathelement path="${build.classes.base}" />
+		<pathelement path="${src.java.base}" />
+	</path>
+
+	<path id="classpath.tools">
+		<pathelement path="${build.classes.tools}" />
+		<pathelement path="${src.java.tools}" />
+	</path>
+
+	<path id="classpath.graphics">
+		<pathelement path="${src.java.graphics}" />
+		<pathelement path="${build.classes.graphics}" />
+		<path refid="classpath.base" />
+	</path>
+
+	<path id="classpath.elasticeam">
+		<pathelement path="${src.java.elasticeam}" />
+		<pathelement path="${build.classes.elasticeam}" />
+		<path refid="classpath.base" />
+	</path>
+
+	<path id="classpath.main">
+		<pathelement path="${build.classes.main}" />
+		<pathelement path="${src.java.main}" />
+		<path refid="classpath.base" />
+		<path refid="classpath.graphics" />
+		<path refid="classpath.elasticeam" />
+	</path>
+
+	<path id="classpath.test">
+		<path refid="classpath.main" />
+		<pathelement path="${build.classes.test}" />
+		<pathelement path="${build.classes.tools}" />
+		<pathelement path="${src.java.test}" />
+	</path>
+
+	<path id="classpath.project.junit">
+		<pathelement path="${src.java.test}" />
+		<pathelement path="${src.java.graphics}" />
+		<path refid="classpath.main" />
+		<pathelement path="${build.classes.test}" />
+		<pathelement path="${build.classes}" />
+		<pathelement path="${build.classes.tools}" />
+		<pathelement path="${build.generated.hibernate}" />
+		<pathelement path="${webinf}" />
+		<pathelement path="${webinf.classes}" />
+
+		<!-- include all database JDBC driver jarfiles: -->
+		<fileset dir="${lib.jdbc}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="classpath.project">
+		<path refid="classpath.test" />
+		<pathelement path="${build.classes}" />
+		<pathelement path="${build.classes.tools}" />
+		<pathelement path="${build.generated.hibernate}" />
+		<pathelement path="${webinf}" />
+		<pathelement path="${webinf.classes}" />
+		<!-- include only database-specific JDBC driver jarfiles: -->
+		<fileset dir="${lib.jdbc}/${database.rdbmsName}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<path id="classpath.project.extended">
+		<path refid="classpath.project" />
+		<path refid="classpath.tools" />
+		<!-- include ALL database-specific JDBC driver jarfiles: -->
+		<fileset dir="${lib.jdbc}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<!-- Global definition of Filesets which are reused -->
+	
+	<path id="customization.WebContent">
+		<fileset dir="${basedir}/config/customization" includes="*/WebContent/**" />
+	</path>
+	<path id="customization.Templates">
+		<fileset dir="${basedir}/config/customization/servlet-container-auth/templates" />
+	</path>
+
+	<fileset dir="${src.java.test}" id="fileset.test.junit">
+		<exclude name="de/iteratec/iteraplan/webtests/**/*.java" />
+		<include name="**/*Test.java" />
+	</fileset>
+	
+	<!--	
+	##########################################################################
+		 BUILD FILE IMPORTS
+	##########################################################################	
+	-->
+	
+	<import file="build-db-misc.xml" />
+	<import file="build-quality-doc.xml" />
+	<import file="build-test.xml" />
+
+	
+	<!--	
+	##########################################################################
+		 GENERAL targets
+	##########################################################################	
+	-->
+		
+	<target name="help" description="Print the help message">
+		<echo message="Use 'ant -projecthelp' to obtain a list of available targets." />
+	</target>
+	
+	<target name="systemProperties">
+		<echo message="Java Runtime Environment
+	        version: ${java.version}" />
+		<echo message="Java Runtime Environment
+	        vendor: ${java.vendor}" />
+		<echo message="Java Runtime Environment
+	        vendor URL: ${java.vendor.url}" />
+		<echo message="Java installation
+	        directory: ${java.home}" />
+		<echo message="Java Virtual Machine
+	        specification version:
+	        ${java.vm.specification.version}" />
+		<echo message="Java Virtual Machine
+	        specification vendor:
+	        ${java.vm.specification.vendor}" />
+		<echo message="Java Virtual Machine
+	        specification name:
+	        ${java.vm.specification.name}" />
+		<echo message="Java Virtual Machine
+	        implementation version:
+	        ${java.vm.version}" />
+		<echo message="Java Virtual Machine
+	        implementation vendor:
+	        ${java.vm.vendor}" />
+		<echo message="Java Virtual Machine
+	        implementation name: ${java.vm.name}" />
+		<echo message="Java Runtime Environment
+	        specification version:
+	        ${java.specification.version}" />
+		<echo message="Java Runtime Environment
+	        specification vendor:
+	        ${java.specification.vendor}" />
+		<echo message="Java Runtime Environment
+	        specification name:
+	        ${java.specification.name}" />
+		<echo message="Java class format version
+	        number: ${java.class.version}" />
+		<echo message="Java class path:
+	        ${java.class.path}" />
+		<echo message="List of paths to search when
+	        loading libraries: ${java.library.path}" />
+		<echo message="Path of extension directory
+	        or directories: ${java.ext.dirs}" />
+		<echo message="Default temp file path:
+	        ${java.io.tmpdir}" />
+		<echo message="Operating system name:
+	        ${os.name}" />
+		<echo message="Operating system family
+	        architecture: ${os.family}" />
+		<echo message="Operating system os.OS
+	        architecture: ${os.OS}" />
+		<echo message="Operating system
+	        architecture: ${os.arch}" />
+		<echo message="Operating system version:
+	        ${os.version}" />
+		<echo message="Maven home:
+			MAVEN_HOME=${os.MAVEN_HOME} M2_HOME=${os.M2_HOME}" />
+	</target>
+	
+	<target name="init.eclipse" description="Generates standard properties files for Eclipse.">
+
+		<!-- ${webinf.classes}/log4j.properties -->
+		<copy file="${resources.templates}/log4j.properties.template.development" tofile="${webinf.classes}/log4j.properties" overwrite="false" encoding="${source.encoding}" description="Replace the tokens in the template file.">
+			<filterset>
+				<filter token="LOG_FILE" value="${log.path}/${log.filename}" />
+				<filter token="AUDIT.LOGGING.PATH" value="${auditLog.path}/${auditLogging.filename}" />
+			</filterset>
+		</copy>
+
+		<!-- ${resources.develop}/iteraplan.properties -->
+		<copy file="${resources.templates}/iteraplan.properties.template" tofile="${webinf.classes}/iteraplan.properties" overwrite="false" encoding="${source.encoding}" description="Replace the tokens in the template file.">
+			<filterset>
+				<filter token="LASTMODIFICATION.LOGGING.ENABLED" value="${lastmodificationLoggingEnabled}" />
+				<filter token="ITERAPLAN.VERSION" value="${iteraplan.version}" />
+			</filterset>
+		</copy>
+
+		<!-- ${resources.templates}/iteraplan-db.properties -->
+		<copy file="${resources.templates}/iteraplan-db.properties.template" tofile="${webinf.classes}/iteraplan-db.properties" overwrite="false" encoding="${source.encoding}" description="Replace the tokens in the template file.">
+			<filterset>
+				<filter token="DB_VALIDATIONQUERY" value="${database.validationquery}" />
+				<filter token="DB_DIALECT" value="${hibernate.dialect}" />
+				<filter token="DB_DRIVER" value="${database.driver}" />
+				<filter token="DB_URL" value="${database.url}" />
+				<filter token="DB_USER" value="${database.login}" />
+				<filter token="DB_PASSWORD" value="${database.password}" />
+				<filter token="DB_JNDI_DATASOURCE" value="${login.datasource}" />
+			</filterset>
+		</copy>
+
+		<!-- ${basedir}/build_local.properties -->
+		<copy file="${resources.templates}/build_local.properties.template" tofile="${basedir}/build_local.properties" overwrite="false" encoding="${source.encoding}" description="Create a local property file for the main build.">
+		</copy>
+
+		<!-- ${basedir}/build_local.login.properties -->
+		<copy file="${resources.templates}/build_local.login.properties.template" tofile="${basedir}/build_local.login.properties" overwrite="false" encoding="${source.encoding}" description="Create a local login property file for the main build.xml">
+		</copy>
+
+		<!-- ${basedir}/turm/build_local.properties -->
+		<copy file="${basedir}/turm/build.properties" tofile="${basedir}/turm/build_local.properties" overwrite="false" encoding="${source.encoding}" description="Create a local property file for the turm build.xml">
+			<filterchain>
+				<linecontainsregexp>
+					<regexp pattern="^database" description="copy only frequently used properties" />
+				</linecontainsregexp>
+				<concatfilter prepend="${resources.templates}/build_local.properties.header" />
+			</filterchain>
+		</copy>
+
+
+	</target>
+	
+	<target name="generateLicenseHeader.check" depends="init.mvn" description="call mvn license:check">
+		<artifact:mvn mavenhome="${maven.home}" xmlns:artifact="urn:maven-artifact-ant" fork="true">
+			<arg value="license:check" />
+		</artifact:mvn>
+	</target>
+
+	<target name="generateLicenseHeader" depends="init.mvn" description="call mvn license:format">
+		<artifact:mvn mavenhome="${maven.home}" xmlns:artifact="urn:maven-artifact-ant" fork="true">
+			<arg value="license:format" />
+		</artifact:mvn>
+	</target>
+	
+	<!-- helper Target for developer convenience -->
+	<target name="quality.allChecks" 
+		depends="quality.pmd, quality.findbugs, doc.javadoc, test.compile.jsps, test.junitreport" 
+		description="Runs all quality checks and tests that are run by Jenkins by acceptance criteria after a commit"/>
+	
+	<target name="check.customizationFull" 
+		description="checks if there are customized files which have to be updated prior to release"
+		depends="init.taskdefinitions">
+		
+		<!-- check operating system and set fileset delimiter correspondingly -->
+		<propertyregex property="isWindows"
+			input="${os.name}"
+			regexp=".*windows.*"
+			select="true"
+			casesensitive="false"/>
+		<if>
+			<equals arg1="${isWindows}" arg2="true" />
+			<then>
+				<property name="delim" value=";" />
+				<echo>Running ANT on Windows...</echo>
+			</then>
+			<else>
+				<property name="delim" value=":" />
+				<echo>Running ANT on Linux...</echo>
+			</else>
+		</if>
+		
+		<!-- loop through every item in ${basedir}/config/customization/.../WebContents/...
+		and compare revision number with corresponding item in ${basedir}/WebContents/... -->
+		<property name="list.WebContent" refid="customization.WebContent" />
+		<echo level="verbose">Checking for obsolete customized files in folder structure WebContent...</echo>
+		<!-- call create.standardPath.WebContent for each item -->
+		<foreach 
+			list="${list.WebContent}" 
+			target="create.standardPath.WebContent" 
+			param="customizedfile"
+			delimiter="${delim}"
+			inheritall="true"
+			inheritrefs="true"
+			parallel="false"/>
+		
+		<!-- same as above for .../customization/servlet-container-auth/templates/...
+		resp. ${basedir}/src/resources/templates/... -->
+		<property name="list.Templates" refid="customization.Templates"/>
+		<echo level="verbose">Checking for obsolete customized files in folder structure templates...</echo>
+		<!-- call create.standardPath.Templates for each item -->
+		<foreach 
+			list="${list.Templates}" 
+			target="create.standardPath.Templates" 
+			param="customizedfile"
+			delimiter="${delim}"
+			inheritall="true"
+			inheritrefs="true"
+			parallel="false"/>		
+	</target>
+	
+	<!--	
+	##########################################################################
+		 iTURM targets
+	##########################################################################	
+	-->
+	<target name="build.iturm.war.exploded" description="Calls the 'build.exploded.dist' target of the iturm buildfile to build an unzipped version of the distribution">
+		<ant antfile="build.xml" dir="${turm.basedir}" target="build.exploded.dist">
+			<property name="lib.dev" value="${turm.basedir}/lib/dev" />
+			<property name="lib.rt" value="${turm.basedir}/lib/rt" />
+			<property name="src" value="${turm.basedir}/src" />
+			<property name="build" value="${turm.basedir}/build" />
+		</ant>
+	</target>
+			
+	<!--	
+	##########################################################################
+		 DEPLOY targets
+	##########################################################################	
+	-->
+	
+	<target name="deploy.local.full" depends="build.war-prepare" description="Deploy the (exploded) application into ${deploy.local.dir}.">
+		<copy file="${deploy.explodedWar}/META-INF/context.xml" tofile="${deploy.local.contextDir}/${deploy.appname}.xml" overwrite="true" />
+		<mkdir dir="${deploy.local.dir}" />
+		<copy todir="${deploy.local.dir}">
+			<fileset dir="${deploy.explodedWar}" includes="**/*" />
+		</copy>
+	</target>
+
+	<target name="tomcat.deploy" depends="dist.war" description="Deploys iteraplan as WAR file on a local Tomcat installation">
+		<tomcat.deployToTomcat url="${tomcat.managerUrl}" username="${tomcat.adminUser}" password="${tomcat.adminPassword}" path="${tomcat.appPath}" war="file:///${deploy.artifactDir}/${deploy.warFilename}" />
+	</target>
+	
+	<target name="deploy.local.base" description="Deploy non-compilable files into the specified directory">
+		<mkdir dir="${deploy.local.dir}" />
+		<copy todir="${deploy.local.dir}/">
+			<fileset dir="${webcontent}" />
+		</copy>
+	</target>
+	
+	
+	
+	<!--	
+	##########################################################################
+		 DISTRIBUTION targets
+	##########################################################################	
+	-->
+				
+	<target name="dist" depends="build.tools, build.war-prepare, build.buildInfoFile" description="Create a binary distribution of the application.">
+
+		<!-- create the distribution directory -->
+		<delete dir="${distdir}" />
+		<mkdir dir="${distdir}" />
+
+		<!-- copy necessary things for tomcat -->
+		<copy todir="${distdir.prerequisites}" overwrite="yes">
+			<fileset file="${src.server}/.keystore" />
+			<fileset file="${webcontent}/visio/vbaCert.cer" />
+		</copy>
+
+		<!-- copy database drivers for JNDI Datasources -->
+		<copy todir="${distdir.prerequisites}/security" overwrite="yes">
+			<fileset dir="${lib.jdbc}">
+				<include name="oracle/${lib.oracle.jar}" if="isEnterpriseEdition" />
+				<include name="mysql5/${lib.mysql.jar}" if="isEnterpriseEdition" />
+				<include name="sqlserver/${lib.mysql.jar}" if="isEnterpriseEdition" />
+			</fileset>
+		</copy>
+
+		<!-- create readme file -->
+		<copy file="${doc}/README.template" tofile="${distdir}/README" overwrite="yes" encoding="${source.encoding}">
+			<filterset>
+				<filter token="application-name" value="${appname}" />
+				<filter token="version-info" value="${version.info}" />
+				<filter token="build-id" value="${build.id}" />
+				<filter token="support-email" value="${support.email}" />
+			</filterset>
+		</copy>
+
+		<!-- copy release information -->
+		<copy tofile="${distdir}/RELEASE_${version.major}_${version.feature}.txt" file="${doc}/RELEASE.txt" />
+
+		<!-- copy buildinfo file -->
+		<copy file="${build}/buildenv.properties" todir="${distdir}" />
+
+		<!-- copy license files -->
+		<copy todir="${distdir}/licenses">
+			<fileset dir="${src.antinstaller}/licenses" />
+		</copy>
+		<copy file="${iteraplan.license}" todir="${distdir}" />
+
+		<!-- copy iteraplan.properties, but filter only the token build.id and build.version.
+		     The rest is done during the install process with ant installer -->
+
+		<copy file="${build.templates}/iteraplan.properties.template" tofile="${build}/iteraplan.properties.template">
+			<filterset>
+				<filter token="BUILD.ID" value="${build.id}" />
+				<filter token="BUILD.VERSION" value="${version.info}" />
+			</filterset>
+		</copy>
+
+		<!-- make another copy iteraplan.properties, this time only to make sure the database
+		     creation target can run at all - it shouldn't really use the configuration, but
+		     since the file is read during initialization it has to be found on the classpath,
+		     so we will put it into the application/WEBINF/classes dir further below -->
+		<copy file="${build.templates}/iteraplan.properties.template" tofile="${build}/iteraplan.properties">
+			<filterset>
+				<filter token="BUILD.ID" value="${build.id}" />
+				<filter token="BUILD.VERSION" value="${version.info}" />
+				<filter token="LASTMODIFICATION.LOGGING.ENABLED" value="false" />
+				<filter token="AUDIT.LOGGING.ENABLED" value="false" />
+				<filter token="HIBERNATE.SEARCH.INDEX" value="indexes" />
+				<filter token="HISTORY.ENABLED" value="${history.enabled}" />
+				<filter token="ADMIN.EMAIL" value="${admin.email}" />
+			</filterset>
+		</copy>
+
+		<!-- Check if installer customization is applied.
+		     Currently, we use it to increase the massupdate limits (sry, 2010-04-27) -->
+		<if>
+			<not>
+				<contains string="${iteraplan.customizations}" substring="installer" />
+			</not>
+			<then>
+				<echo message="You are running the dist target without having the installer customization enabled! You may want to review your effective build properties." level="error" />
+			</then>
+		</if>
+
+		<if>
+			<isset property="isEnterpriseEdition" />
+			<then>
+				<!-- build schemas for oracle and mysql -->
+				<ant antfile="build.xml" target="db.generate" inheritAll="false">
+					<property name="database.rdbmsName" value="oracle" />
+				</ant>
+				<copy file="${build.generated.hibernate}/schema-export.sql" toFile="${build.generated.hibernate}/schema-export-oracle.sql" />
+				<ant antfile="build.xml" target="db.generate" inheritAll="false">
+					<property name="database.rdbmsName" value="mysql5" />
+				</ant>
+				<copy file="${build.generated.hibernate}/schema-export.sql" toFile="${build.generated.hibernate}/schema-export-mysql5.sql" />
+				<ant antfile="build.xml" target="db.generate" inheritAll="false">
+					<property name="database.rdbmsName" value="sqlserver" />
+				</ant>
+				<copy file="${build.generated.hibernate}/schema-export.sql" toFile="${build.generated.hibernate}/schema-export-sqlserver.sql" />
+			</then>
+		</if>
+
+		<!-- create ant installer files -->
+		<antcall target="dist.antinstaller" inheritall="true" inheritrefs="true" />
+
+		<!-- add all files to zip -->
+		<zip destfile="${dist}/${distfilenamezip}" includes="${distdir}">
+			<zipfileset dir="${distdir}" prefix="${distfilename}" />
+		</zip>
+
+		<!-- copy distribution zip to artifacts dir (for luntbuild) -->
+		<copy file="${dist}/${distfilenamezip}" todir="${deploy.artifactDir}" />
+
+		<echo message="Build-Id of distribution is '${build.id}'" />
+	</target>
+	
+	<target name="dist.antinstaller" depends="init,build.iturm.war.exploded" description="Create ant installer files">
+		<taskdef name="installer" classname="org.tp23.antinstaller.taskdefs.Installer">
+			<classpath>
+				<pathelement path="${src.antinstaller}/lib/ant-ext.jar" />
+				<pathelement path="${src.antinstaller}/lib/ant-installer.jar" />
+			</classpath>
+		</taskdef>
+
+		<!-- create the build directory and make sure distribution directory exists-->
+		<delete dir="${build}/antinstaller" />
+		<mkdir dir="${build}/antinstaller" />
+		<mkdir dir="${distdir}" />
+
+		<!-- create ant installer files -->
+		<manifest file="${build}/antinstaller/MANIFEST.MF">
+			<attribute name="Built-By" value="${user.name}" />
+			<attribute name="Implementation-Title" value="${appname}" />
+			<attribute name="Implementation-Vendor" value="iteratec GmbH" />
+			<attribute name="Implementation-Vendor-Id" value="de.iteratec" />
+			<attribute name="Implementation-Name" value="${appname}" />
+			<attribute name="Build-Time" value="${TIMESTAMP-FULL}" />
+			<attribute name="Build-Id" value="${build.id}" />
+			<attribute name="Main-Class" value="org.tp23.antinstaller.selfextract.SelfExtractor" />
+			<attribute name="Look-And-Feel" value="org.tp23.jgoodies.plaf.plastic.PlasticXPLookAndFeel" />
+			<attribute name="Class-Path" value="lib/${lib.mysql.jar} lib/${lib.oracle.jar} lib/${lib.sqlserver.jar} lib/log4j-1.2.15.jar" />
+		</manifest>
+ 
+		<condition property="enable-sqlserver-option">
+			<istrue value="${database.sqlserver.supported}" />
+		</condition>
+		<if>
+			<isset property="enable-sqlserver-option" />
+			<then>
+				<property name="antinstaller.template.file" value="antinstall-config-sqlserver.xml.template" />
+			</then>
+			<else>
+				<property name="antinstaller.template.file" value="antinstall-config.xml.template" />
+			</else>
+		</if>
+		<copy file="${src.antinstaller}/${antinstaller.template.file}" tofile="${build}/antinstaller/antinstall-config.xml" overwrite="yes" encoding="${source.encoding}">
+			<filterset>
+				<filter token="LOG_FILE_NAME" value="${appname}-${version.info}.log" />
+				<filter token="LOGIN_LOG_FILE_NAME" value="${appname}-${version.info}-login.csv" />
+				<filter token="AUDIT_LOG_FILE_NAME" value="${auditLogging.filename}" />
+			</filterset>
+		</copy>
+		<copy file="${src.antinstaller}/build.properties.template" tofile="${build}/antinstaller/build.properties" overwrite="yes" encoding="${source.encoding}">
+			<filterset>
+				<filter token="LOG_FILE_NAME" value="${appname}-${version.info}.log" />
+				<filter token="LOGIN_LOG_FILE_NAME" value="${appname}-${version.info}-login.csv" />
+				<filter token="AUDIT_LOG_FILE_NAME" value="${auditLogging.filename}" />
+			</filterset>
+		</copy>
+
+		<if>
+			<isset property="isEnterpriseEdition" />
+			<then>
+				<!-- copy database drivers for JNDI Datasources and log4j jar -->
+				<copy todir="${distdir}/lib" overwrite="yes">
+					<fileset file="${lib.jdbc}/oracle/${lib.oracle.jar}" />
+					<fileset file="${lib.jdbc}/mysql5/${lib.mysql.jar}" />
+					<fileset file="${lib.jdbc}/sqlserver/${lib.sqlserver.jar}" />
+					<fileset file="${src.antinstaller}/lib/log4j*.jar" />
+				</copy>
+			</then>
+		</if>
+
+		<!-- compile input verification (database connectivity test) classes -->
+		<mkdir dir="${build}/antinstaller/bin" />
+		<javac destdir="${build}/antinstaller/bin" optimize="off" debug="on" failonerror="true" srcdir="${src.antinstaller}/java" includes="**/*.java" source="${javac.source.compliance}" target="${javac.target.compliance}" encoding="${source.encoding}" includeantruntime="false">
+			<classpath>
+				<fileset dir="${src.antinstaller}/lib">
+					<include name="ant-installer.jar" />
+					<include name="log4j*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+
+		<!-- Copy all Maven-referenced libraries to a tmp directory, because I didn't manage to filter the fileset via Ant. This is needed below when 
+		     the servlet-api JAR is included into the Installer -->
+		<mkdir dir="${build}/antinstaller/tmp-libs"/>
+		<copy todir="${build}/antinstaller/tmp-libs">
+			<flattenmapper />
+        	<fileset refid="mvn.test.fileset"/>
+		</copy>
+
+		<!-- create ant installer -->
+		<installer file="${distdir}/iteraplanInstaller.jar" compress="true" extractType="SelfExtractor" installConfig="${build}/antinstaller/antinstall-config.xml" buildFile="${src.antinstaller}/build.xml" antInstallLib="${src.antinstaller}/lib" antLib="${src.antinstaller}/antlib" manifest="${build}/antinstaller/MANIFEST.MF" validateConfig="false" failOnError="true" duplicate="preserve">
+
+			<!-- files for ant installer itself -->
+			<zipfileset fullpath="resources/License.txt" file="${src.antinstaller}/licence.txt" />
+			<zipfileset dir="${src.antinstaller}/cp" includes="resources/*" />
+			<zipfileset dir="${src.antinstaller}/cp" includes="resources/icons/*" />
+			<zipfileset dir="${build}/antinstaller" includes="build.properties" />
+			<zipfileset file="${src.antinstaller}/antcontriblib/ant-contrib.jar" prefix="various/lib" />
+			<zipfileset file="${src.antinstaller}/log4j.properties" prefix="" />
+
+			<!-- files that will be customized -->
+			<zipfileset dir="${config}/database" prefix="various/config/database" />
+			<zipfileset file="${build.templates}/context.xml.template" prefix="various" />
+			<zipfileset dir="${build.templates}" includes="log4j.properties.template.production" prefix="various" />
+			<zipfileset dir="${build}" includes="iteraplan.properties.template" prefix="various" />
+			<zipfileset dir="${build.templates}" includes="iteraplan-db.properties.template" prefix="various" />
+			<zipfileset dir="${build.templates}" includes="web.xml.template" prefix="various" />
+
+
+			<!-- schemas for mysql and oracle and ms sql server -->
+			<zipfileset file="${build.generated.hibernate}/schema-export-*.sql" prefix="various" />
+
+			<!-- iteraplan files -->
+			<zipfileset dir="${deploy.explodedWar}" prefix="application" />
+
+			<!-- iTURM files -->
+			<zipfileset dir="${turm.basedir}/build/explodedDist" prefix="iturm" />
+			<!-- iTURM calls the driver 'mysql' while iteraplan calls it mysql5... -->
+			<zipfileset dir="${turm.basedir}/sql/mysql" prefix="iturm/sql/mysql5" />
+
+			<!-- input verification (database connectivity test) classes -->
+			<zipfileset dir="${build}/antinstaller/bin" prefix="" />
+
+			<!-- jdbc driver files -->
+			<zipfileset fullpath="lib/${lib.oracle.jar}" file="${lib.jdbc}/oracle/${lib.oracle.jar}" />
+			<zipfileset fullpath="lib/${lib.mysql.jar}" file="${lib.jdbc}/mysql5/${lib.mysql.jar}" />
+			<zipfileset fullpath="lib/${lib.sqlserver.jar}" file="${lib.jdbc}/sqlserver/${lib.sqlserver.jar}" />
+			<!-- we need this as some of the Spring Beans might import Servlet Interfaces
+			     and would fail the AppContext initialization outside Tomcat without the Java EE Jar -->
+			<zipfileset prefix="lib" file="${build}/antinstaller/tmp-libs/servlet-api*.jar" />
+
+		</installer>
+	</target>
+
+	<target name="dist.source" depends="build.sourceDist" description="Package sources of the OSS version into a source distribution.">
+		<!-- create the build directory and make sure distribution directory exists-->
+		<mkdir dir="${distdir}" />
+
+		<!-- remove bogus binary files from source dist directory before packaging -->
+		<delete dir="${srcDist.unzipped}/build" />
+		<zip destfile="${srcDist.zip.dir}/${srcDist.zip.file}">
+			<zipfileset dir="${srcDist.unzipped}" />
+		</zip>
+
+		<!-- copy distribution zip to artifacts dir (for luntbuild) -->
+		<copy file="${srcDist.zip.dir}/${srcDist.zip.file}" todir="${deploy.artifactDir}" />
+	</target>
+	
+			
+	
+	<!--	
+	##########################################################################
+		 DATABASE targets
+	##########################################################################	
+	-->
+	
+	<target name="dist.createHibernateIndexes" depends="buildAll, build.tools, clean.hibernate.search" description="Creates the Hibernate Search indexes, required for Bundle packages">
+		<echo message="Creating Hibernate Search indexes in directory: ${hibernate.search.index}" />
+		<java classname="de.iteratec.iteraplan.indexes.HibernateSearchIndexCreator" fork="true" failonerror="true">
+			<classpath refid="classpath.project" />
+			<classpath refid="mvn.classpath.test" />
+			
+			<!-- Hibernate Search requires its Search listener, which is only active in the deployment profile for Spring-->
+			<sysproperty key="spring.profiles.active" value="de.iteratec.iteraplan.deployment"/>
+		</java>
+	</target>
+	
+	<target name="db.reset" depends="db.createDatabaseSchema, db.createBankData" description="Calls createDatabaseSchema and createBankData and thus resets the db.">
+	</target>
+	
+	<target name="db.createBankData" depends="buildAll, build.tools, build.deployment.copyResources" description="Fills database with example bank data">
+			<copy todir="${build.classes.tools}" overwrite="true" encoding="${source.encoding}">
+				<!-- Language files and log4j -->
+				<fileset dir="${src.java.tools}" includes="**/*.properties" />
+				<fileset dir="${src.java.tools}" includes="**/*.xmi" />
+			</copy>
+			<echo message="Importing XMI BankData into the database" />
+			<java classname="de.iteratec.iteraplan.xmi.XmiImport" fork="true" failonerror="true">
+				<classpath refid="classpath.project" />
+				<classpath refid="mvn.classpath.test" />
+
+				<arg value="BANK_DATA" />
+			</java>
+			<!-- Cleanup after hibernate Search -->
+			<antcall target="clean.hibernate.search" inheritall="true" inheritrefs="true" />
+	</target>
+
+	<target name="db.createInitialData" depends="buildAll, build.tools, build.deployment.copyResources" description="Fills the database with initial data">
+		<copy todir="${build.classes.tools}" overwrite="true" encoding="${source.encoding}">
+			<!-- Language files and log4j -->
+			<fileset dir="${src.java.tools}" includes="**/*.properties" />
+			<fileset dir="${src.java.tools}" includes="**/*.xmi" />
+		</copy>
+		<echo message="Importing XMI InitialData into the database" />
+		<java classname="de.iteratec.iteraplan.xmi.XmiImport" fork="true" failonerror="true">
+			<classpath refid="classpath.project" />
+			<classpath refid="mvn.classpath.test" />
+
+			<arg value="INITIAL_DATA" />
+		</java>
+		<!-- Cleanup after hibernate Search -->
+		<antcall target="clean.hibernate.search" inheritall="true" inheritrefs="true" />
+	</target>
+	
+	<target name="db.createDatabaseSchema" depends="db.generate" description="Creates the database schema in the database, running all SQL in one connection -- this target can fail if the schema has changed or is created for the first time.">
+		<!-- We run extra SQL before and after the hibernate generated SQL in case the particular RDBMS needs
+		     additional configuration. -->
+		<echo message="trying to run schema-export.sql for user '${database.login}' and database url '${database.url}'" />
+		<echo message="Note: The schemaexport generates drop statements which cause errors on empty DBs, we need to ignore errors due to this." level="warning"/>
+		<echo message="      This is a bit nasty since there are many of these errors. Please take a closer look if this step fails repeatedly!!" level="warning" />
+		
+		<sql driver="${database.driver}" url="${database.url}" userid="${database.login}" password="${database.password}" encoding="${source.encoding}" classpathref="classpath.project" onerror="continue">
+			<transaction src="${db.configurationDir}/preSchema.sql" />
+			<transaction src="${build.generated.hibernate}/schema-export.sql" />
+			<transaction src="${db.configurationDir}/postSchema.sql" />
+		</sql>
+	</target>
+				
+	
+	<!--	
+	##########################################################################
+		 HSQLDB targets
+	##########################################################################	
+	-->
+	
+	<target name="hsqldb.startServer" description="Starts a HSQLDB server for the configured database.">
+		<echo message="HSQLDB Server starting for database ${database.name}..." />
+		<!-- Don't spawn so we can read the server output and stop the server from the console view in Eclipse. -->
+		<java classname="org.hsqldb.Server" fork="true" spawn="false" classpathref="classpath.project.extended">
+			<arg value="-database.0" />
+			<arg value="${hsqldb.databaseLocation}/${database.name}" />
+			<arg value="-dbname.0" />
+			<arg value="${database.name}" />
+		</java>
+	</target>
+
+	<target name="hsqldb.startServer.spawned" description="Starts a HSQLDB server for the configured database by spawning a new process.">
+		<echo message="HSQLDB Server starting for database ${database.name}..." />
+		<!-- Spawns the process so the Ant build continues. -->
+		<java classname="org.hsqldb.Server" fork="true" spawn="true" classpathref="classpath.project.extended">
+			<arg value="-database.0" />
+			<arg value="${hsqldb.databaseLocation}/${database.name}" />
+			<arg value="-dbname.0" />
+			<arg value="${database.name}" />
+		</java>
+	</target>
+
+	<target name="hsqldb.stopServer" description="Stops the HSQLDB server.">
+		<sql autocommit="true" driver="${test.driver}" url="jdbc:hsqldb:hsql://localhost/${database.name}" userid="${test.userName}" password="${test.password}" classpathref="classpath.project.extended">
+			SHUTDOWN;
+		</sql>
+		<echo message="HSQLDB Server for database ${database.name} stopped." />
+	</target>
+
+	<target name="hsqldb.startManager.local" description="Start the HSQLDB Manager.">
+		<java classname="org.hsqldb.util.DatabaseManagerSwing" fork="yes" classpathref="classpath.project.extended" failonerror="true">
+			<arg value="-url" />
+			<arg value="jdbc:hsqldb:hsql://localhost/${database.name}" />
+			<arg value="-driver" />
+			<arg value="org.hsqldb.jdbcDriver" />
+		</java>
+	</target>
+	
+	<target name= "hsqldb.setup" depends="hsqldb.startServer.spawned, db.createDatabaseSchema, db.createInitialData" description="Sets up and starts a new, empty hsql db server" />
+	
+	<!--	
+	##########################################################################
+		 CLEAN targets
+	##########################################################################	
+	-->
+	
+	<target name="tomcat.remove" depends="init.taskdefinitions" description="Removes iteraplan from a local Tomcat installation.">
+		<tomcat.removeFromTomcat url="${tomcat.managerUrl}" username="${tomcat.adminUser}" password="${tomcat.adminPassword}" path="${tomcat.appPath}" failOnError="false" />
+	</target>
+	
+	<target name="tomcat.cleanWorkDir" description="Cleans Tomcat work directory">
+		<delete dir="${deploy.local.workDir}" />
+	</target>
+
+	<target name="jar.remove">
+		<delete file="${build.classes.main}/*.jar" />
+	</target>
+	
+	<target name="clean.war" description="Delete the war file from the project">
+		<delete file="${deploy.artifactDir}/${deploy.warFilename}" />
+	</target>
+
+	<target name="clean.build" description="Delete the build folder">
+		<delete dir="${build}" />
+	</target>
+
+	<target name="clean.all" depends="clean.build, tomcat.cleanWorkDir" description="Delete all temporary and generated files from the project and from Tomcat">
+		<delete dir="${javadoc.dir}" />
+		<delete dir="${deploy.artifactDir}" />
+		<delete dir="${deploy.local.dir}" />
+		<delete file="${deploy.local.dir}/../${deploy.warFilename}" />
+		<delete file="${deploy.local.contextDir}/${deploy.appname}.xml" />
+		<delete dir="${srcDist.zip.dir}" />
+		<delete dir="${dist}" />
+		<delete dir="${hibernate.search.index}" />
+	</target>
+	
+	
+	
+		
+</project>

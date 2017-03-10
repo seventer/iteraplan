@@ -1,0 +1,220 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+  <query name="getInformationSystemInterfacesConnectingCurrentAndNonCurrentInformationSystemReleases">
+    <![CDATA[ 
+    SELECT isi from InformationSystemInterface isi
+                    inner join isi.informationSystemReleaseA.informationSystem as ins
+    where (((isi.informationSystemReleaseA.typeOfStatus like :current) and (not isi.informationSystemReleaseB.typeOfStatus like :current)) or
+          ((not isi.informationSystemReleaseA.typeOfStatus like :current) and (isi.informationSystemReleaseB.typeOfStatus like :current)))
+    order by ins.name
+    ]]>
+  </query>
+
+  <query name="getInformationSystemInterfacesConnectingCurrentAndNonCurrentInformationSystemReleases2">
+    <![CDATA[ 
+    SELECT isi from InformationSystemInterface isi
+                    inner join isi.informationSystemReleaseA.informationSystem as ins
+    where (not (isi.informationSystemReleaseA.runtimePeriod.start = isi.informationSystemReleaseB.runtimePeriod.start) or
+           not (isi.informationSystemReleaseA.runtimePeriod.end = isi.informationSystemReleaseB.runtimePeriod.end))
+    order by ins.name
+    ]]>
+  </query>
+
+  <query name="getTechnicalComponentReleasesSharingNoArchitecturalDomainWithTheirChildren">
+    <![CDATA[    
+    select distinct tcr,tcrBc from TechnicalComponentRelease tcr 
+					inner join tcr.architecturalDomains tcrAd 
+					inner join tcr.baseComponents tcrBc 
+					inner join tcrBc.architecturalDomains tcrAd2
+	where tcrAd != tcrAd2
+	order by tcr.id
+    ]]>
+  </query>
+
+  <query name="getTechnicalComponentReleasesSharingNoArchitecturalDomainWithTheirSuccessors">
+    <![CDATA[    
+    select distinct tcr,tcrSc from TechnicalComponentRelease tcr 
+					inner join tcr.architecturalDomains tcrAd 
+					inner join tcr.successors tcrSc 
+					inner join tcrSc.architecturalDomains tcrAd2
+	where (tcrAd!=tcrAd2)  and (tcr not in 
+								(select distinct tcrC from TechnicalComponentRelease tcrC
+								 				inner join tcrC.architecturalDomains tcrAdC
+								 				inner join tcrC.successors tcrScC 
+								 				inner join tcrScC.architecturalDomains tcrAd2C
+	  							 where (tcrAdC = tcrAd2C))
+	  							 )
+	  							)
+	order by tcr.id
+    ]]>
+  </query>
+
+  <query name="getBuildingBlocksWithAttributeValueAssigmentsOutOfRange">
+    <![CDATA[    
+    select distinct bb from AttributeValueAssignment ava inner join ava.buildingBlock bb
+      where ava.attributeValue in 
+        (select nav from NumberAV nav inner join nav.attributeType nat 
+        where nav.value > nat.maxValue or nav.value < nat.minValue)
+    order by bb.name   
+    ]]>
+  </query>
+
+  <query name="getBuildingBlocksOfTypeWithAttributeValueAssigmentsOutOfRange">
+    <![CDATA[    
+    select distinct bb from AttributeValueAssignment ava inner join ava.buildingBlock bb inner join bb.buildingBlockType bbt
+      where ava.attributeValue in 
+        (select nav from NumberAV nav inner join nav.attributeType nat 
+        where nav.value > nat.maxValue or nav.value < nat.minValue)
+      and bbt.typeOfBuildingBlock = :type    
+    ]]>
+  </query>
+
+  <query name="getTcReleasesActiveWithoutStatusCurrent">
+    <![CDATA[
+    from TechnicalComponentRelease tcr
+      where (tcr.typeOfStatus not like :current) 
+      and (tcr.runtimePeriod.start is null or tcr.runtimePeriod.start <= :today) 
+      and (tcr.runtimePeriod.end is null or tcr.runtimePeriod.end >= :today)
+    order by tcr.technicalComponent.name    
+    ]]>
+  </query>
+
+  <query name="getTcReleasesInactiveWithoutStatusInactive">
+    <![CDATA[
+    from TechnicalComponentRelease tcr 
+      where not (tcr.typeOfStatus like :inactive or tcr.typeOfStatus like :undefined) 
+      and (tcr.runtimePeriod.end <= :yesterday)
+    order by tcr.technicalComponent.name
+    ]]>
+  </query>
+
+  <query name="getTcReleasesWithStatusCurrentOrInactiveButNotYetLaunched">
+    <![CDATA[
+    from TechnicalComponentRelease tcr 
+      where (tcr.typeOfStatus like :current or tcr.typeOfStatus like :inactive) 
+      and (tcr.runtimePeriod.start >= :tomorrow)
+    order by tcr.technicalComponent.name
+    ]]>
+  </query>
+
+  <query name="getTcReleasesWithStatusUndefined">
+    <![CDATA[    
+    from TechnicalComponentRelease tcr 
+      where (tcr.typeOfStatus like :undefined)
+    order by tcr.technicalComponent.name    
+    ]]>
+  </query>
+
+  <query name="getConnectionsWithUnsynchronizedInformationSystemReleases">
+    <![CDATA[
+    select isi from InformationSystemInterface isi 
+      where (isi.informationSystemReleaseB.runtimePeriod.start > isi.informationSystemReleaseA.runtimePeriod.end) 
+      or (isi.informationSystemReleaseB.runtimePeriod.end < isi.informationSystemReleaseA.runtimePeriod.start) 
+      or isi.informationSystemReleaseB.runtimePeriod.end is null 
+      or isi.informationSystemReleaseA.runtimePeriod.end is null 
+      or isi.informationSystemReleaseB.runtimePeriod.start is null 
+      or isi.informationSystemReleaseA.runtimePeriod.start is null
+    order by isi.informationSystemReleaseA.informationSystem.name
+    ]]>
+  </query>
+
+  <query name="getInformationSystemReleasesActiveWithoutStatusCurrent">
+    <![CDATA[    
+    from InformationSystemRelease isr 
+      where (isr.typeOfStatus not like :current) 
+      and (isr.runtimePeriod.start is null or isr.runtimePeriod.start <= :today) 
+      and (isr.runtimePeriod.end is null or isr.runtimePeriod.end >= :today)
+    order by isr.informationSystem.name
+    ]]>
+  </query>
+
+  <query name="getInformationSystemReleasesInactiveWithoutStatusInactive">
+    <![CDATA[
+    from InformationSystemRelease isr 
+      where not (isr.typeOfStatus like :inactive) 
+      and (isr.runtimePeriod.end <= :yesterday)
+    order by isr.informationSystem.name
+    ]]>
+  </query>
+
+  <query name="getInformationSystemReleasesWithParents">
+    <![CDATA[    
+    select isr from InformationSystemRelease isr 
+      where isr.parent is not null
+    order by isr.informationSystem.name
+    ]]>
+  </query>
+
+  <query name="getInformationSystemReleasesWithStatusCurrentOrInactiveButNotYetLaunched">
+    <![CDATA[
+    from InformationSystemRelease isr 
+      where (isr.typeOfStatus like :current or isr.typeOfStatus like :inactive) 
+      and (isr.runtimePeriod.start >= :tomorrow)
+    order by isr.informationSystem.name
+    ]]>
+  </query>
+
+  <query name="getInformationSystemReleasesWithoutStatusPlannedButAssociatedToProjects">
+    <![CDATA[
+    select isr from InformationSystemRelease isr
+      where isr.projects.size > 0 
+      and isr.typeOfStatus != :planned
+    order by isr.informationSystem.name
+    ]]>
+  </query>
+
+  <query name="getNumberAttributeTypeAndValueForBuildingBlockID">
+    <![CDATA[    
+    select nat, nav from NumberAV nav inner join nav.attributeType nat 
+      where (nav.value > nat.maxValue or nav.value < nat.minValue)
+      and nav in 
+        (select ava.attributeValue from AttributeValueAssignment ava 
+        where ava.buildingBlock.id = :id)
+    order by nat.name    
+    ]]>
+  </query>
+
+  <query name="getInformationSystemReleasesPlannedWithoutAssociatedProjects">
+    <![CDATA[
+    select isr from InformationSystemRelease isr 
+      where isr.projects.size = 0 
+      and isr.typeOfStatus = :planned
+    order by isr.informationSystem.name
+    ]]>
+  </query>
+
+  <query name="getReleasesWithStatusCurrentForTcID">
+    <![CDATA[    
+      select tcr from TechnicalComponent tc join tc.releases tcr 
+        where tc.id = :id
+        and tcr.typeOfStatus = :current 
+      order by tc.name, tcr.version]]>
+  </query>
+
+  <query name="getReleasesWithStatusCurrentForInformationSystemID">
+    <![CDATA[
+      select isr from InformationSystem ins join ins.releases isr 
+        where ins.id = :id 
+        and isr.typeOfStatus = :current
+      order by ins.name, isr.version]]>
+  </query>
+
+  <query name="getUnsynchronizedTcAndIsReleases">
+    <![CDATA[    
+      select tcr, isr from TechnicalComponentRelease tcr join tcr.informationSystemReleases isr
+      order by tcr.technicalComponent.name, isr.informationSystem.name   
+    ]]>
+  </query>
+
+  <query name="getUnsynchronizedProjectsWithInformationSystemReleases">
+    <![CDATA[
+    select project, isr from Project project, InformationSystemRelease isr 
+      where project in elements(isr.projects) 
+    order by project.name, isr.informationSystem.name]]>
+  </query>
+
+</hibernate-mapping>

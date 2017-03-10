@@ -1,0 +1,7 @@
+ant subdirectory
+		contains JAR files with additional Ant tasks, as well as the library for Ant-Maven integration
+		
+cobertura subdirectory
+		contains the files that are needed at runtime when a Cobertura-instrumented version is deployed
+		Selenium Webtests are executed against such deployments, and Cobertura measures code coverage of those tests
+		

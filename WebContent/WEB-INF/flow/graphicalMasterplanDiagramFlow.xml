@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+	    http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd "
+	start-state="start" parent="baseGraphicFlow">
+
+	<decision-state id="start">
+		<if test="requestParameters['_eventId']=='init'" then="init" />
+		<if test="requestParameters['_eventId']=='fromInterchange'" then="fromInterchange" />
+		<if test="requestParameters.bbType!=null" then="initFromId" />
+		<if test="requestParameters['_eventId']=='loadSavedQuery'" then="pre-load" />
+		<if test="requestParameters['_eventId']=='closeAll'" then="closeAll" />
+		<if test="requestParameters['_eventId']==null" then="init" />
+	</decision-state>
+	
+	<action-state id="init">
+		<evaluate expression="masterplanGraphicFrontendService.getInitialMemBean()"
+			result="flowScope.memBean" />
+		<transition on="#{true}" to="firststep" />			
+	</action-state>
+	
+	<action-state id="initFromId">
+			<evaluate result="flowScope.memBean" 
+				expression="masterplanGraphicFrontendService.directlyToStepTwo(requestParameters.id, requestParameters.bbType, requestParameters.diagramVariant)" />
+				
+			<transition on="#{true}" to="secondstep">
+			</transition>
+	</action-state>
+	
+	<action-state id="fromInterchange">
+			<evaluate expression="masterplanGraphicFrontendService.fromInterchange(requestParameters['bbType'],requestParameters['idList'])"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="secondstep" />
+	</action-state>
+	
+	<action-state id="pre-load">
+		<evaluate expression="masterplanGraphicFrontendService.getInitialMemBean()"
+			result="flowScope.memBean" />
+		<transition on="success" to="loadSavedQuery">
+			<set name="flowScope.FLOW_LABEL"
+				value="masterplanGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+			<set name="memBean.savedQueryId"
+				value="requestParameters.savedQueryId"
+				type="java.lang.Integer" />
+		</transition>			
+	</action-state>
+	
+	<action-state id="loadSavedQuery">
+		<evaluate expression="masterplanGraphicFrontendService.loadSavedQuery(flowScope.memBean)" 
+				result="flowScope.memBean"/>
+		<transition on="success" to="secondstep">
+			<evaluate expression="masterplanGraphicFrontendService.updateCheckAllBox(flowScope.memBean)" />
+		</transition>			
+	</action-state>
+	
+    <view-state id="firststep" model="memBean" view="graphicalreporting/masterplangraphic">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL"
+				value="masterplanGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+		</on-entry>
+		
+		<transition on="expandFirstLevel" to="firststep">
+			<evaluate expression="masterplanGraphicFrontendService.expandFirstLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="expandSecondLevel" to="firststep">
+			<evaluate expression="masterplanGraphicFrontendService.expandSecondLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />		
+		</transition>
+		<transition on="shrinkLevel" to="firststep">
+			<evaluate expression="masterplanGraphicFrontendService.shrinkLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />		
+		</transition>
+  
+        <transition on="addReportExtension" to="firststep">
+			<evaluate expression="masterplanGraphicFrontendService.addReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />		
+		</transition>
+        <transition on="removeReportExtension" to="firststep">
+			<evaluate expression="masterplanGraphicFrontendService.removeReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />		
+		</transition>
+        
+    <transition on="requestReport" to="firststep">
+			<evaluate expression="masterplanGraphicFrontendService.requestEntityList(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+
+		<transition on="requestAndConfirmReport" to="secondstep">
+			<evaluate expression="masterplanGraphicFrontendService.requestEntityList(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+			<evaluate expression="masterplanGraphicFrontendService.stepOneToStepTwo(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="refreshReport" to="firststep">
+			<evaluate result="flowScope.memBean"
+				expression="masterplanGraphicFrontendService.refreshReport(flowScope.memBean, flowRequestContext, flowExecutionContext, true)" />
+		</transition>
+
+        <transition on="selectMasterplanType" to="firststep">
+			<evaluate expression="masterplanGraphicFrontendService.changeQueryType(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />		
+		</transition>
+
+        <transition on="loadSavedQuery" to="secondstep">
+			<evaluate expression="masterplanGraphicFrontendService.loadSavedQuery(flowScope.memBean)"
+				result="flowScope.memBean" />
+			<evaluate expression="masterplanGraphicFrontendService.updateCheckAllBox(flowScope.memBean)" />			
+		</transition>
+        <transition on="deleteSavedQuery" to="firststep">
+			<evaluate expression="masterplanGraphicFrontendService.deleteSavedQuery(flowScope.memBean)"
+				result="flowScope.memBean" />		
+		</transition>
+
+		<transition on="goToMasterplanExportStep2" to="secondstep">
+			<evaluate result="flowScope.memBean" 
+				expression="masterplanGraphicFrontendService.stepOneToStepTwo(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+	
+	</view-state>
+    
+    
+    <view-state id="secondstep" model="memBean" view="graphicalreporting/masterplangraphic">
+    	
+    	<on-entry>
+			<set name="flowScope.FLOW_LABEL"
+				value="masterplanGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+		</on-entry>
+
+	    <transition on="goToMasterplanExportStep1" to="firststep">
+			<evaluate expression="masterplanGraphicFrontendService.stepTwoToStepOne(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+	
+	    <transition on="refreshReport" to="secondstep">
+			<evaluate result="flowScope.memBean"
+				expression="masterplanGraphicFrontendService.refreshReport(flowScope.memBean, flowRequestContext, flowExecutionContext, false)" />
+		</transition>
+		
+		<transition on="generateExport" to="secondstep">
+			<evaluate expression="masterplanGraphicFrontendService.generateGraphicFileResponse(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="triggerDownloadEvent" to="secondstep">
+			<evaluate expression="masterplanGraphicFrontendService.triggerDownloadEvent(flowRequestContext, 'generateExport')" />
+		</transition>
+		
+		<transition on="saveQuery" to="secondstep">
+			<evaluate expression="masterplanGraphicFrontendService.saveQuery(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		<transition on="saveQueryAs" to="secondstep">
+			<evaluate expression="masterplanGraphicFrontendService.saveQueryAs(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		<transition on="addCustomColumn0" to="secondstep">
+			<evaluate result="flowScope.memBean" expression="masterplanGraphicFrontendService.addCustomColumn(flowScope.memBean, flowRequestContext, flowExecutionContext, 0)" />
+		</transition>
+		<transition on="removeCustomColumn0" to="secondstep">
+			<evaluate result="flowScope.memBean" expression="masterplanGraphicFrontendService.removeCustomColumn(flowScope.memBean, flowRequestContext, flowExecutionContext, 0)" />
+		</transition>
+		<transition on="addCustomColumn1" to="secondstep">
+			<evaluate result="flowScope.memBean" expression="masterplanGraphicFrontendService.addCustomColumn(flowScope.memBean, flowRequestContext, flowExecutionContext, 1)" />
+		</transition>
+		<transition on="removeCustomColumn1" to="secondstep">
+			<evaluate result="flowScope.memBean" expression="masterplanGraphicFrontendService.removeCustomColumn(flowScope.memBean, flowRequestContext, flowExecutionContext, 1)" />
+		</transition>
+		<transition on="addCustomColumn2" to="secondstep">
+			<evaluate result="flowScope.memBean" expression="masterplanGraphicFrontendService.addCustomColumn(flowScope.memBean, flowRequestContext, flowExecutionContext, 2)" />
+		</transition>
+		<transition on="removeCustomColumn2" to="secondstep">
+			<evaluate result="flowScope.memBean" expression="masterplanGraphicFrontendService.removeCustomColumn(flowScope.memBean, flowRequestContext, flowExecutionContext, 2)" />
+		</transition>
+		<transition on="addDateInterval0" to="secondstep">
+			<evaluate result="flowScope.memBean" expression="masterplanGraphicFrontendService.addDateInterval(flowScope.memBean, flowRequestContext, flowExecutionContext, 0)" />
+		</transition>
+		<transition on="removeDateInterval0" to="secondstep">
+			<evaluate result="flowScope.memBean" expression="masterplanGraphicFrontendService.removeDateInterval(flowScope.memBean, flowRequestContext, flowExecutionContext, 0)" />
+		</transition>
+		<transition on="addDateInterval1" to="secondstep">
+			<evaluate result="flowScope.memBean" expression="masterplanGraphicFrontendService.addDateInterval(flowScope.memBean, flowRequestContext, flowExecutionContext, 1)" />
+		</transition>
+		<transition on="removeDateInterval1" to="secondstep">
+			<evaluate result="flowScope.memBean" expression="masterplanGraphicFrontendService.removeDateInterval(flowScope.memBean, flowRequestContext, flowExecutionContext, 1)" />
+		</transition>
+		<transition on="addDateInterval2" to="secondstep">
+			<evaluate result="flowScope.memBean" expression="masterplanGraphicFrontendService.addDateInterval(flowScope.memBean, flowRequestContext, flowExecutionContext, 2)" />
+		</transition>
+		<transition on="removeDateInterval2" to="secondstep">
+			<evaluate result="flowScope.memBean" expression="masterplanGraphicFrontendService.removeDateInterval(flowScope.memBean, flowRequestContext, flowExecutionContext, 2)" />
+		</transition>
+		
+		<transition on="selectLevel1Type" to="secondstep">
+			<evaluate result="flowScope.memBean" expression="masterplanGraphicFrontendService.selectLevelType(flowScope.memBean, flowRequestContext, flowExecutionContext, 1)" />
+		</transition>
+		<transition on="selectLevel2Type" to="secondstep">
+			<evaluate result="flowScope.memBean" expression="masterplanGraphicFrontendService.selectLevelType(flowScope.memBean, flowRequestContext, flowExecutionContext, 2)" />
+		</transition>
+		
+		<transition on="loadSavedQuery" to="pre-load" />
+	</view-state>
+	
+	<end-state id="close" view="externalRedirect:contextRelative:/show/graphicalreporting/masterplandiagram" />
+		
+	<end-state id="closeAll" view="externalRedirect:contextRelative:/graphicalreporting/init.do">
+		<on-entry>
+			<evaluate expression="masterplanGraphicFrontendService.closeAllFlows(flowRequestContext)"></evaluate>
+		</on-entry>
+	</end-state>
+	
+</flow>	

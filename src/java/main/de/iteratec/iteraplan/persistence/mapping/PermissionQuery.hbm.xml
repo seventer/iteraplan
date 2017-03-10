@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+  <query name="getRolesWithWritePermissionForTypeOfBuildingBlock">
+    <![CDATA[    
+    select role from Role role inner join role.permissionsBbt perm inner join perm.bbt type 
+      where type.typeOfBuildingBlock = :type
+    ]]>
+  </query>
+
+  <query name="getRolesWithFunctionalPermission">
+    <![CDATA[    
+    select role from Role role inner join role.permissionsFunctional permissions 
+      where permissions.typeOfFunctionalPermission = :type  
+    ]]>
+  </query>
+
+</hibernate-mapping>

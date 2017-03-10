@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<!--
+
+  @(#)package.html
+
+  Copyright 2008 iteratec GmbH
+  Germany, 82008 Unterhaching.  All Rights Reserved.
+
+-->
+</head>
+<body>
+
+This package contains the iteraplan domain model.
+
+<h2>Overview</h2>
+<p>
+These classes are used thoughout the application and represent the iteraplan domain
+model. 
+</p>
+<p>
+These classes are used in combination with Hibernate to persist
+the domain model data in the database. Each class is enriched with XDoclet 
+"annotations" that contain information about the Hibernate mapping. Instances can
+be loaded or persisted by the DAOs in the {@link de.iteratec.iteraplan.persistence.dao}
+package. Upon loading an instance, Hibernate may enhances specified getters of 
+the instance with proxies that allow dynamic loading of associated domain model
+instances.
+</p>
+<p>
+Each class contains a <code>update()</code> and a <code>validate()</code> method. These are used to
+fill the instance with data from the presentation layer and to validate the instance
+before saving it to the database.
+</p>
+</body>
+</html>

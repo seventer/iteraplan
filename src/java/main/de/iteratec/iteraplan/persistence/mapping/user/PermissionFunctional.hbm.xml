@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.iteratec.iteraplan.model.user">
+
+  <class name="PermissionFunctional" table="PERM_FUNCTIONAL" lazy="false">
+    <id name="id" column="ID" type="java.lang.Integer">
+      <generator class="org.hibernate.id.enhanced.TableGenerator">
+        <param name="segment_value">perm_functional</param>
+      </generator>
+    </id>
+    <property name="typeOfFunctionalPermission" type="enumPermFunctional" column="TYPE" not-null="true" unique="true" />
+    <set name="roles" table="ROLE_FUNCTIONAL" lazy="true" inverse="true" cascade="lock">
+      <key column="ID_FP" />
+      <many-to-many class="Role" column="ID_ROLE" fetch="join" foreign-key="FK_PERMFUNCT_ROLE"/>
+    </set>
+  </class>
+
+  <query name="getAvailableFunctionalPermissionsForRole">
+    <![CDATA[select pf from PermissionFunctional pf, Role role where role.id = :roleId and pf not in elements(role.permissionsFunctional)]]>
+  </query>
+
+  <query name="getPermissionFunctionalByType">
+    <![CDATA[select pf from PermissionFunctional pf where pf.typeOfFunctionalPermission like :tofp escape '|']]>
+  </query>
+
+</hibernate-mapping>

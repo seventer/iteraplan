@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.iteratec.iteraplan.model.user">
+
+  <class name="PermissionAttrTypeGroup" table="PERM_ATG" lazy="false">
+    <id name="id" column="ID" type="java.lang.Integer">
+      <generator class="org.hibernate.id.enhanced.TableGenerator">
+        <param name="segment_value">perm_atg</param>
+      </generator>
+    </id>
+    <version name="olVersion" column="VERSION" type="integer" unsaved-value="negative" />
+    <many-to-one name="role" lazy="false" foreign-key="FK_PERMATG_ROLE" cascade="lock">
+      <column name="ID_ROLE" />
+    </many-to-one>
+    <many-to-one name="attrTypeGroup" foreign-key="FK_PERMATG_ATG" cascade="lock">
+      <column name="ID_ATG" />
+    </many-to-one>
+    <property name="readPermission" column="PERM_READ" length="1" not-null="true" />
+    <property name="writePermission" column="PERM_WRITE" length="1" not-null="true" />
+  </class>
+
+</hibernate-mapping>

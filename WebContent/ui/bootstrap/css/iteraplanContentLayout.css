@@ -1,0 +1,1399 @@
+
+/* some bootstrap style changes */
+
+.page {
+	margin-top: 125px;	
+}
+
+.dropdown-menu{
+	max-width: none;
+}
+
+.accordion {
+	margin-bottom: 18px !important;
+}
+
+.accordion-heading {
+	color: #ac007c;
+	background-color: #EEEEEE;
+}
+
+.accordion-heading a {
+	color: #000000;
+	font-weight: bold;
+}
+
+.accordion-heading a:hover {
+	color: #000000;
+	text-decoration: none;
+}
+.accordion-inner-table {
+	padding: 0;
+	border-top: 1px solid #e5e5e5;
+	background-color: #FFFFFF !important;
+}
+.accordion-inner {
+	background-color: #FFFFFF !important;
+}
+
+#errors_Container .accordion-inner {
+	background-color: #F2DEDE !important;
+    border-color: #EED3D7;
+    color: #B94A48;
+}
+#contextActionsContainer .accordion-inner,
+#openElementsContainer .accordion-inner,
+#watchedElementsContainer .accordion-inner {
+	background-color: #EFEFEF !important;
+}
+
+.form-horizontal .control-group {
+	margin-bottom: 0px;
+}
+.form-horizontal .control-label {
+	float: left;
+	width: 200px;
+	padding-top: 5px;
+	text-align: left;
+}
+.form-horizontal .control-label a,
+.form-horizontal .control-label a:hover
+.form-horizontal .control-label-right a,
+.form-horizontal .control-label-right a:hover {
+ color: #000000;
+ text-decoration: none;
+}
+.form-horizontal .control-label-right {
+	float: left;
+	padding-top: 5px;
+	text-align: left;
+}
+.form-horizontal .controls {
+	float: left;
+	margin-left: 5px;
+	padding-top: 5px;
+	padding-right: 5px;
+}
+
+textarea {
+	width: auto;
+}
+
+.searchCriteria {
+	margin-right: 1em;
+	float: left; 
+}
+
+/* Customized btn-group style for buttons in a button-group with a tooltip */
+.btn-group a:nth-child(n) .btn {
+  position: relative !important;
+  float: left !important;
+  margin-left: -1px !important;
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  border-radius: 0 !important;
+}
+.btn-group a:first-child .btn {
+  margin-left: 0 !important;
+  -webkit-border-top-left-radius: 4px !important;
+  -moz-border-radius-topleft: 4px !important;
+  border-top-left-radius: 4px !important;
+  -webkit-border-bottom-left-radius: 4px !important;
+  -moz-border-radius-bottomleft: 4px !important;
+  border-bottom-left-radius: 4px !important;
+}
+.btn-group a:last-child .btn {
+  -webkit-border-top-right-radius: 4px !important;
+  -moz-border-radius-topright: 4px !important;
+  border-top-right-radius: 4px !important;
+  -webkit-border-bottom-right-radius: 4px !important;
+  -moz-border-radius-bottomright: 4px !important;
+  border-bottom-right-radius: 4px !important;
+}
+.btn-group a:first-child .btn.large {
+  margin-left: 0 !important;
+  -webkit-border-top-left-radius: 6px !important;
+  -moz-border-radius-topleft: 6px !important;
+  border-top-left-radius: 6px !important;
+  -webkit-border-bottom-left-radius: 6px !important;
+  -moz-border-radius-bottomleft: 6px !important;
+  border-bottom-left-radius: 6px !important;
+}
+.btn-group a:last-child .btn.large {
+  -webkit-border-top-right-radius: 6px !important;
+  -moz-border-radius-topright: 6px !important;
+  border-top-right-radius: 6px !important;
+  -webkit-border-bottom-right-radius: 6px !important;
+  -moz-border-radius-bottomright: 6px !important;
+  border-bottom-right-radius: 6px !important;
+}
+.btn-group a:nth-child(n) .btn:hover,
+.btn-group a:nth-child(n) .btn:focus,
+.btn-group a:nth-child(n) .btn:active,
+.btn-group a:nth-child(n) .btn.active {
+  z-index: 2 !important;
+}
+
+
+.nav li.dropdown ul.dropdown-menu li:HOVER ul,
+.btn-group.open ul.dropdown-menu li:HOVER ul {
+	display:block; 
+	position:absolute; 
+	left:100%;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.nav li.dropdown ul.dropdown-menu ul,
+.btn-group.open ul.dropdown-menu ul {
+	display: none;
+	float:right;
+	position: relative;
+	top: auto;
+	margin-top: -30px;
+}
+
+.nav-tabs li.active a {
+    background-color: #DDDDDD !important;
+}
+.nav-tabs li.active a:HOVER {
+    background-color: #DDDDDD !important;
+}
+
+.nav-list > .active > a,
+.nav-list > .active > a:hover {
+  color: #0088CC;
+  background-color: #E5DEE4;
+}
+
+.dropdown-menu li > a:hover,
+.dropdown-menu .active > a,
+.dropdown-menu .active > a:hover {
+  color: #000000;
+  background-color: #E5DEE4;
+}
+
+.dropdown-menu > li > a:focus,
+.dropdown-menu > li > a:hover {
+	color: #333333 !important;
+}
+
+/* Link styles */
+
+tr.highlightOnHover:HOVER td {
+	background-color: #FDF6C6;
+}
+
+tr.highlightOnHover:nth-child(odd):HOVER td {
+	background-color: #FDF6C6 !important;
+}
+
+*.link {
+	cursor: pointer;
+}
+span.infolink {
+	cursor: help;
+}
+
+*.linkonly {
+	cursor: pointer;
+}
+
+/* iteraplan header and menu */
+
+#iteraplan_header_image {
+	width: 200px;
+	height: 49px;
+	margin-bottom: 3px;
+	margin-top: 4px;
+	background: url('../../../images/iteraplanLogo200x49.gif') top left no-repeat;
+}
+
+#iteraplanNavigation {
+	height: 32px;
+	background-color: #ffffff;
+	background-image: -moz-linear-gradient(top, #DBD1D8, #E5DEE4);
+	background-image: -ms-linear-gradient(top, #DBD1D8, #E5DEE4);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#DBD1D8), to(#E5DEE4));
+	background-image: -webkit-linear-gradient(top, #DBD1D8, #E5DEE4);
+	background-image: -o-linear-gradient(top, #DBD1D8, #E5DEE4);
+	background-image: linear-gradient(top, #DBD1D8, #E5DEE4);
+  	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#DBD1D8', endColorstr='#E5DEE4', GradientType=0);
+  	min-height: 30px;
+}
+
+#iteraplanNavigation li > a {
+	color: #ac007c;
+	text-shadow: none;
+}
+
+#iteraplanNavigation li > a:hover {
+	color: #000000;
+	text-shadow: none;
+}
+
+#iteraplanNavigation li.active > a, 
+#iteraplanNavigation li.active > a:hover {
+	background-color: #000000;
+	color: #ffffff !important;
+	padding-top: 8px; 
+	padding-bottom: 9px; 
+	height: 15px; 
+}
+
+#iteraplanNavigation .dropdown-menu > li > a,
+#iteraplanNavigation .dropdown-menu > li > a:hover {
+	color: #000000;
+}
+
+#iteraplanNavigation .dropdown-menu > li.active > a, 
+#iteraplanNavigation .dropdown-menu > li.active > a:hover {
+	background-color: #000000;
+	color: #ffffff;
+}
+
+#iteraplanMenu {
+	background-color: #EEEEEE;
+	padding: 10px 0 10px 0;
+}
+
+.nav-list {
+	padding-left: 0;
+	margin-right: -15px;
+}
+
+#contextMenu {
+	width: 16.7%;
+}
+
+#mainContent {
+	width: 82%;
+	margin-left: 0px;
+	float: right;
+}
+
+#iteraplanMenu .accordion {
+	margin-bottom: 0px !important;
+}
+
+#iteraplanMenu .nav-list .nav-header {
+  color: #000000;
+}
+
+#iteraplanMenu .nav-list > li > .nav-list .nav-header {
+  text-shadow: 0 0 0;
+}
+
+#iteraplanHeader
+{
+	padding-left: 10px;
+	padding-right: 10px;
+	background-color: #ffffff;
+}
+
+#iteraplanBreadcrumb
+{
+	padding: 5px 7px;
+	height: 14px;
+}
+
+#iteraplanBreadcrumb > li
+{
+	white-space: nowrap;
+}
+
+#iteraplanBreadcrumb > li > a
+{
+	color: #ac007c;
+	text-decoration: none;
+}
+
+#iteraplanBreadcrumb > li > a:hover
+{
+	color: #000000;
+	text-decoration: none;
+}
+
+.dropdown-menu.dropdown-right
+{
+	right: 0;
+	left: auto;
+}
+
+/* --- bootstrap 2.3.2 adapptions ------------------------------------------------------------------------------------*/
+
+
+body {
+  font-size: 13px;
+  line-height: 18px;
+}
+
+
+/* Adaptation of Naviagtionbar */
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus,
+.dropdown-submenu:hover > a,
+.dropdown-submenu:focus > a {
+  text-decoration: none;
+  color: #ffffff;
+  background-color: #E5DEE4;
+  background-image: none;
+  filter: none;
+  }
+  
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+  color: #ffffff;
+  text-decoration: none;
+  outline: 0;
+  background-color: #E5DEE4;
+  background-image: none;
+  filter: none;
+}
+
+/* Breadcrumb from bootstrap 2.0.3 looks better */
+
+.breadcrumb {
+  margin: 0 0 18px;
+  list-style: none;
+  background-color: #fbfbfb;
+  background-image: -moz-linear-gradient(top, #ffffff, #f5f5f5);
+  background-image: -ms-linear-gradient(top, #ffffff, #f5f5f5);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f5f5f5));
+  background-image: -webkit-linear-gradient(top, #ffffff, #f5f5f5);
+  background-image: -o-linear-gradient(top, #ffffff, #f5f5f5);
+  background-image: linear-gradient(top, #ffffff, #f5f5f5);
+  background-repeat: repeat-x;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 3px;
+     -moz-border-radius: 3px;
+          border-radius: 3px;
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffffff', endColorstr='#f5f5f5', GradientType=0);
+  -webkit-box-shadow: inset 0 1px 0 #ffffff;
+     -moz-box-shadow: inset 0 1px 0 #ffffff;
+          box-shadow: inset 0 1px 0 #ffffff;
+} 
+
+/* customization for caret used in the navigation bar only for active dropdowns*/
+.navbar .nav li.dropdown.active > .dropdown-toggle .caret {
+  border-top-color: #ffffff;
+  border-bottom-color: #ffffff;
+}
+
+
+.nav-list > .active > a > [class^="icon-"],
+.dropdown-menu > li > a:focus > [class^="icon-"]{
+	background-image: url("../img/glyphicons-halflings.png");	
+}
+
+.navbar .nav > li > a {
+  padding: 8px 10px 6px;
+}
+
+/* solve a overlay problem with the scrollbar in IE10 */
+ @-ms-viewport{ width: auto !important; }
+ 
+
+.datepicker.dropdown-menu {
+	z-index: 1050;
+}
+
+.popover {
+	z-index: 30050 !important;
+}
+
+.popover-title {
+	font-weight: bold;
+}
+/* -------------------------------------------------------------------------------------------------------- */
+
+/* dashboard */
+.dashboardLargeChart {
+	text-align: left;
+	width: 550px;
+	height: 250px;
+}
+
+.pieLargeChart {
+	text-align: left;
+	width: 550px;
+	height: 500px;
+}
+
+.inputCell {
+	margin: 20px 0 20px 0; 	
+}
+	
+/* iteraplan start page*/
+#iteraplanMap {
+	background: url('../../../images/iteraplan-startscreen-No-Text-800w.png') no-repeat;
+	text-align: left;	
+	position:	relative;
+	height:		564px;
+	width:		800px;
+	overflow:	hidden;
+	padding: 	0px;
+	display: 	block;
+    margin-left: auto;
+    margin-right: auto;
+	margin-top: 2em;
+}
+
+#iteraplanMap li {
+  	list-style-type:none; 
+  	height: 		10px;
+  	width: 			10px;
+  	position:		absolute;
+}
+
+#iteraplanMap a,
+#iteraplanMap span
+{
+	position: absolute;
+  	width: 114px;
+  	top: 55px; 
+  	text-decoration: none;
+  	overflow:hidden; 
+  	display: block;
+
+  	padding-bottom: 10px;
+	padding-top: 	50px;
+	font-family:	Arial;
+	font-size:		13px;
+	font-weight:	bold;
+	text-align: 	center;
+
+}
+
+#iteraplanMap a:hover
+{  	 
+  	border: 1px solid #999999; 
+  	background: url('../img/whitePixel.png') repeat 0 0 transparent;  	
+}
+
+#iteraplanMap a:hover#businessmapping
+{
+	border: 1px solid #999999;
+	background-image: url('../img/whitePixel.png') repeat 0 0 transparent;
+	border-top-left-radius: 50% 50%;
+  	border-top-right-radius: 50% 50%;
+  	border-bottom-right-radius: 50% 50%;
+  	border-bottom-left-radius: 50% 50%;
+  	padding-right: 14pt;
+}
+
+
+a#businessdomain, span#businessdomain {						top:  8px;	left:   3px; padding-right:20px;}
+a#businessprocess, span#businessprocess  {					top:  46px;	left: 162px; padding-right:20px;}
+a#businessunit, span#businessunit {                     	top:  46px;	left: 320px; padding-right:20px;}
+a#product, span#product  {									top:  46px;	left: 480px; padding-right:20px;}
+a#businessmapping, span#businessmapping  {					top: 143px; left: 325px; padding-right:15px; padding-bottom: 32px; padding-top: 40px}
+a#businessfunction,  span#businessfunction  {				top: 166px; left: 480px; padding-right:20px;}
+a#project, span#project  {									top: 127px; left: 659px; padding-right:20px;}
+a#businessobject , span#businessobject { 					top: 225px; left: 162px; padding-right:20px;}
+a#informationsystem, span#informationsystem  { 			 	top: 305px; left: 320px; padding-right:20px;}
+a#informationsystemdomain, span#informationsystemdomain {	top: 305px; left: 480px; padding-right:20px;}
+a#interface, span#interface {								top: 343px; left: 162px; padding-right:20px;}
+a#architecturaldomain, span#architecturaldomain   { 		top: 465px; left:   3px; padding-right:20px;}
+a#technicalcomponent, span#technicalcomponent   { 			top: 465px; left: 162px; padding-right:20px;}
+a#infrastructureelement, span#infrastructureelement  { 		top: 465px; left: 320px; padding-right:20px;}
+
+span#hierarchy {			top:   0px; left: 675px; padding:2px; color: #999; text-align: left; font-size:14px; font-weight: normal;}
+span#usage {				top:  15px; left: 675px; padding:2px; color: #999; text-align: left; font-size:14px; font-weight: normal;}
+span#specialisation {		top:  31px; left: 675px; padding:2px; color: #999; text-align: left; font-size:14px; font-weight: normal;}
+span#successor {			top:  47px; left: 675px; padding:2px; color: #999; text-align: left; font-size:14px; font-weight: normal;}
+span#attribution {			top:  82px; left: 675px; padding:2px; color: #999; text-align: left; font-size:14px; font-weight: normal;}
+
+
+/* centering the start splash image */
+.startContent 
+{
+	text-align: center;
+	padding-top: 2em;
+}
+
+#startCitation
+{
+	margin-top:7ex; 
+	font-style: italic;
+	clear: both;
+}
+
+.startContent   a:link,
+.startContent  a:visited,
+.startContent   a:hover,
+.startContent   a:active {
+	color: rgb(0, 0, 0);
+	text-decoration: none;
+}
+
+td a {
+ color: #000000;
+}
+
+td a:hover {
+ color: #000000;
+ text-decoration: none;
+}
+
+td.landscapeRows {
+	vertical-align: top;
+	text-align: left;
+}
+
+td.landscapeColumns {
+	vertical-align: top;
+	text-align: left;
+}
+
+td.landscapeContent {
+	vertical-align: top;
+	text-align: left;
+	border-top
+	width: 80%;
+	height: 80%;
+}
+
+table.landscapeContent {
+	border-collapse: separate;
+	border-spacing: 0.4em;
+	border: 0;
+	padding: 0;
+	width: 100%;
+}
+
+.vevent{display:none}
+
+/* footer */
+#footer
+{
+	text-align:center;
+}
+
+/* column definitions */
+
+.col-ico,
+.searchResultView .col-ico,
+.attributeModelView .col-ico { width: 35px; text-align: center; }
+
+.col-ico img,
+.attributeModelView .col-ico img { display:block; margin:auto; }
+
+.col-name { width: 25%; }
+.col-name-small { width: 10%; }
+.searchResultView .col-name { width: 20%; }
+.attributeModelView .col-name { width: 35%; }
+
+.col-exec { width: 20px; }
+.col-desc { width: auto; }
+.col-val { width: 20%; }
+.searchResultView .col-desc { width: 35%; }
+.searchResultView .col-val { width: 20%; }
+.attributeModelView .col-desc,
+.attributeModelView .col-val { width: 25%; }
+
+.col-att { width: 48%; }
+.attributeModelView .col-att { width: 48%; }
+
+.searchResultView .col-tr { width: 5%; }
+
+.col-consist { width: 25%; }
+.searchResultView .col-consist { width: 98%; }
+.attributeModelView .col-consist { width: 35%; }
+
+.col-isiname { width: 20%; }
+.col-interface-name { min-width: 45%; }
+.col-interface-dir { width: 10em; }
+
+.searchResultView .col-namebe { width: auto; }
+.searchResultView .col-valbe { width: 20%; }
+.searchResultView .col-descbe { width: 65%; }
+
+.searchResultView .col-piecheckbox { width: 5%; }
+.searchResultView .col-piename { width: 45%; }
+.searchResultView .col-pieval { width: 50%; }
+
+
+.searchResultView .col-namebe2 { width: 25%; }
+.searchResultView .col-descbe2 { width: 75%; }
+
+#massUpdate .col-ico { width: 20px;   text-align: left; }
+
+/* Styles for the width of lists (sometimes smaller than those for the input fields in order to save space) */
+* .completereleaseintable {
+	width: 15em;
+	padding: 1px;
+}
+
+* .completereleaseintablelong {
+	width: 20em;
+	padding: 1px;
+}
+
+* .nameintable {
+	width: 20em;
+	padding: 1px;
+}
+
+* .checkboxintable {
+	width: 10px;
+	padding: 1px;
+}
+
+* .radiobuttonintable {
+	width: 10px;
+	padding: 1px;
+	white-space: nowrap;
+}
+
+* .dateintable {
+	width: 7em;
+	padding: 1px;
+}
+
+* .statusintable {
+	width: 6em;
+	padding: 1px;
+}
+
+* .buttonintable {
+	width: 30px;
+}
+
+* .expandbuttonintable {
+	width: 15px;
+}
+
+* .consistencyCheckWidth {
+	width: 15em;
+}
+
+th.actionsRow {
+	width: 3em;
+}
+
+/* Styles for the input textfields */
+* .search {
+	width: 40em;
+	padding: 1px;
+}
+
+* .name {
+	width: 20em;
+	padding: 1px;
+	margin: 2.5px;
+}
+
+* .elementName {
+	font-size: medium;
+	font-weight: bold;
+}
+
+* .label {
+	width: 10em;
+	padding: 1px;
+}
+
+* .labelSaveQuery {
+	width: 22em;
+	padding: 1px;
+}
+
+* .labelAddColumn {
+	width: 22em;
+	padding: 1px;
+}
+
+* .nameforhierarchy {
+	width: 35em;
+	padding: 1px;
+}
+
+* .nameforSelect {
+	width: 100%;
+	padding: 1px;
+}
+
+* .textbox {
+	height: 8em;
+	width: 35em;
+	padding: 1px;
+}
+
+* .wide {
+	width: 35em;
+}
+
+* .attributeDropDown {
+	width: 15em;
+	padding: 1px;
+}
+
+* .attributeValueDropDown {
+	width: 21em;
+	padding: 1px;
+}
+
+* .operationDropDown {
+	width: 12em;
+	padding: 1px;
+}
+
+.customTooltip {
+			
+}
+
+.customTooltip span {
+	background: transparent url(../../../images/shift-key.gif) no-repeat center left;
+	padding: 3px;
+	padding-left: 25px;
+	font-weight: bold;
+}
+
+.description {
+	box-sizing: border-box;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	width: 100%;
+	background-image: url(../../../images/wiki_hint.png); 
+/* 	top right corner */
+	background-position: 100% 0;
+	background-repeat: no-repeat; 
+}
+
+/* --------------------------------------- Icons -------------------------------------------------------------- */
+span.headerIcon {
+	float: left;
+	margin-right: 5px;
+}
+
+/* similar to TwBootstrap's "icon-*" for icon classes with underscores */
+[class^="icon_"],
+[class*=" icon_"] {
+  display: inline-block;
+  vertical-align: text-top;
+}
+
+.icon_businessdomain {
+	background: url(../../../images/Domain.png) no-repeat scroll;
+	height: 18px;
+	width: 27px;
+}
+
+.icon_businessprocess {
+	background: url(../../../images/Process.png) no-repeat scroll;
+	height: 18px;
+	width: 27px;
+}
+
+.icon_businessunit {
+	background: url(../../../images/Organisation.png) no-repeat scroll;
+	height: 18px;
+	width: 27px;
+}
+
+.icon_product {
+	background: url(../../../images/Product.png) no-repeat scroll;
+	height: 18px;
+	width: 27px;
+}
+
+.icon_businessfunction {
+	background: url(../../../images/Function.png) no-repeat scroll;
+	height: 18px;
+	width: 27px;
+}
+
+.icon_businessobject {
+	background: url(../../../images/Object.png) no-repeat scroll;
+	height: 18px;
+	width: 27px;
+}
+
+.icon_informationsystemdomain {
+	background: url(../../../images/Domain.png) no-repeat scroll;
+	height: 18px;
+	width: 27px;
+}
+
+.icon_informationsystem {
+	background: url(../../../images/IS.png) no-repeat scroll;
+	height: 18px;
+	width: 27px;
+}
+
+.icon_interface {
+	background: url(../../../images/Interface.png) no-repeat scroll;
+	height: 18px;
+	width: 27px;
+}
+
+.icon_architecturaldomain {
+	background: url(../../../images/Domain.png) no-repeat scroll;
+	height: 18px;
+	width: 27px;
+}
+
+.icon_technicalcomponent {
+	background: url(../../../images/Technical.png) no-repeat scroll;
+	height: 18px;
+	width: 14px;
+}
+
+.icon_infrastructureelement {
+	background: url(../../../images/Infrastructure.png) no-repeat scroll;
+	height: 18px;
+	width: 15px;
+}
+
+.icon_project {
+	background: url(../../../images/Project.png) no-repeat scroll;
+	height: 18px;
+	width: 27px;
+}
+
+/* --------------------------------------- small Icons -------------------------------------------------------------- */
+.icon-filter {
+  /* little hack: it's just icon-glass with cut-off bottom. If necessary, move to iteraplanIcons.png */
+  background-position: 0 1px;
+  height: 13px;
+  margin-bottom: 1px;
+}
+[class^="icon-iteraplan-"] {
+  background-image: url(../img/iteraplanIcons.png) !important;
+}
+.icon-iteraplan-businessdomain {
+  background-position: 0 0;
+}
+.icon-iteraplan-businessprocess {
+  background-position: -168px 0;
+}
+.icon-iteraplan-businessunit {
+  background-position: -144px 0;
+}
+.icon-iteraplan-product {
+  background-position: -192px 0;
+}
+.icon-iteraplan-businessfunction {
+  background-position: -24px 0;
+}
+.icon-iteraplan-businessobject {
+  background-position: -120px 0;
+}
+.icon-iteraplan-informationsystemdomain {
+  background-position: 0 0;
+}
+.icon-iteraplan-informationsystem {
+  background-position: -96px 0;
+}
+.icon-iteraplan-interface {
+  background-position: -72px 0;
+}
+.icon-iteraplan-architecturaldomain {
+  background-position: 0 0;
+}
+.icon-iteraplan-technicalcomponent {
+  background-position: -240px 0;
+}
+.icon-iteraplan-infrastructureelement {
+  background-position: -48px 0;
+}
+.icon-iteraplan-project {
+  background-position: -216px 0;
+}
+
+.icon-arrow-left {
+  background-position: -240px -96px;
+  cursor: pointer;
+}
+.icon-arrow-right {
+  background-position: -264px -96px;
+  cursor: pointer;
+}
+.icon-remove {
+  background-position: -312px 0;
+  cursor: pointer;
+}
+.icon-plus {
+  background-position: -408px -96px;
+  cursor: pointer;
+}
+
+/* --------------------------------------- Tree icons ---------------------------------------------------------- */
+
+.tree-icon  {
+  width: 10px;
+  height: 10px;
+  margin-top: 6px;
+  background-position: -10px 0;
+  background-image: url("../img/pm.png");
+  cursor: pointer;
+}
+
+.collapsed-node  {
+  background-position: 0 0 !important;
+}
+
+/* --------------------------------------- Tables -------------------------------------------------------------- */
+colgroup col.col-ico {
+	width: 35px;
+	text-align: center;
+}
+colgroup col.col-name {
+	width: 25%;
+}
+colgroup col.col-desc {
+	width: auto;
+}
+
+.elementComponentView {
+	margin-top: 0;
+	margin-right: 10px;
+}
+.pagination {
+	margin: 0;
+	padding: 0;
+}
+
+.tableInModule {
+	margin-bottom: 0px;
+}
+table.tableInWell > tbody > tr > td,
+table.tableInWell > tbody > tr > td:hover,
+table.tableInWell > tbody > tr:hover {
+	background-color: #F5F5F5;
+}
+
+table {
+	background-color: #FFFFFF;
+}
+table.noHighlighting > tbody > tr:hover > td,
+table.noHighlighting > tbody > tr:hover > th {
+	background-color: #FFFFFF;
+}
+
+td.top {
+	vertical-align: top;
+}
+
+/* Fix cause of bootstrap double border of colgroup */
+thead tr:first-child th,
+tbody:first-child tr:first-child th,
+tbody:first-child tr:first-child td {
+	border-top: 0 !important;
+}
+
+table.table > tbody > tr > td,
+table.table > tbody > tr > th {
+	background-color: #FFFFFF;
+}
+table.table > tbody > tr:hover > td,
+table.table > tbody > tr:hover > th {
+	background-color: #FDF6C6;
+}
+.table-striped tbody tr:nth-child(odd) td,
+.table-striped tbody tr:nth-child(odd) th {
+	background-color: #f9f9f9;
+}
+
+.table tbody tr:hover th {
+	background-color: #FFFFFF;
+}
+
+th.sortable:hover {
+	background-color: #EEEEEE !important;
+}
+
+.tableInTable {
+    border-top-width: 0px;
+    padding: 0px !important;
+    border-top-width: 0px !important;
+}
+
+.tableInTable table {
+    margin-bottom: 0px;
+    border-bottom-width: 0px;
+    border-top-width: 0px;
+    border-right-width: 0px;
+    border-left-width: 0px;
+}
+
+.businessMapping_table_cell > .table-striped,
+.businessMapping_table_header > .table-striped {
+	background-color: inherit !important;
+}
+
+.businessMapping_table_cell > .table-striped tbody tr td,
+.businessMapping_table_cell > .table-striped thead tr th,
+.businessMapping_table_header > .table-striped tbody tr td,
+.businessMapping_table_header > .table-striped thead tr th {
+	border: 0;
+	background-color: inherit !important;
+}
+
+.tableInTable .table-striped tbody tr:nth-child(odd) td,
+.tableInTable .table-striped tbody tr:nth-child(odd) th {
+	background-color: transparent !important;
+}
+
+.dontwrap {
+	white-space: nowrap;
+}
+
+#resultTable > thead > tr > th {
+  vertical-align: top !important;
+}
+
+/* --------------------------------------- Module -------------------------------------------------------------- */
+.module {
+	margin-bottom: 18px;
+	border: 1px solid #e5e5e5;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+.module-heading {
+	border-bottom: 1px solid #e5e5e5;
+	display: block;
+  	padding: 8px 15px;
+	font-weight: bold;
+	color: #000000;
+	background-color: #EEEEEE;
+}
+.module-heading-only {
+	display: block;
+  	padding: 8px 15px;
+	font-weight: bold;
+	color: #000000;
+	background-color: #EEEEEE;
+}
+.module-heading-nopadding {
+	border-bottom: 1px solid #e5e5e5;
+	display: block;
+  	padding: 0px 0px 0px 15px;
+	font-weight: bold;
+	color: #000000;
+	background-color: #EEEEEE;
+	height: 36px;
+}
+.module-heading a,
+.module-heading-only a {
+	color: #000000;
+	font-weight: bold;
+}
+
+.module-heading a:hover,
+.module-heading-only a:hover {
+	color: #000000;
+	text-decoration: none;
+}
+.module-body {
+	padding: 9px 15px;
+  	border-top: 0;
+  	/* background-color: #f9f9f9; */
+}
+.module-body-table {
+	padding: 0;
+  	border-top: 0;
+}
+
+/* --------------------------------------- Inner Module -------------------------------------------------------------- */
+.inner-module {
+	margin-bottom: 18px;
+	border: 1px solid #e5e5e5;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+.inner-module-heading {
+	border-bottom: 1px solid #e5e5e5;
+	display: block;
+  	padding: 4px 7px;
+	font-weight: bold;
+	color: #000000;
+	background-color: #f2f2f2;
+}
+.inner-module-heading-only {
+	display: block;
+  	padding: 4px 7px;
+	font-weight: bold;
+	color: #000000;
+	background-color: #f2f2f2;
+}
+.inner-module-heading-nopadding {
+	border-bottom: 1px solid #e5e5e5;
+	display: block;
+  	padding: 0px 0px 0px 7px;
+	font-weight: bold;
+	color: #000000;
+	background-color: #f2f2f2;
+	height: 18px;
+}
+.inner-module-heading a,
+.inner-module-heading-only a {
+	color: #000000;
+	font-weight: bold;
+}
+
+.inner-module-heading a:hover,
+.inner-module-heading-only a:hover {
+	color: #000000;
+	text-decoration: none;
+}
+.inner-module-body {
+	padding: 4px 7px;
+  	border-top: 0;
+  	/* background-color: #f9f9f9; */
+}
+.inner-module-body-table {
+	padding: 0;
+  	border-top: 0;
+}
+
+
+.darkframe {
+	border-width: 1px;
+	border-style: solid;
+	border-color: #ddd;
+	padding: 1px;
+}
+
+.overflowBox {
+	overflow: auto;
+	max-height: 250px;
+}
+
+/* ------------------------------- Attributes Model ------------------------------------------------------------------- */
+
+.attributeModelView
+{
+	width: 		100%;
+}
+
+.attributeViewFullPage
+{
+	width: 100%;
+}
+
+* .halfPageWidth {
+	width: 50%;
+	text-align: left;
+	vertical-align: top;
+}
+
+* .warning {
+	color: #FF0000;
+}
+
+/* ------------------------------- Overview ------------------------------------------------------------------- */
+div.overviewBody {
+	height: 150px;
+	overflow: auto;
+}
+
+/* ------------------------------- Graphical Reporting ------------------------------------------------------------------- */
+
+.ColorPicker {position:relative; } 
+.ColorPickerHover {position:relative;} 
+.ColorPicker span {display: none;}
+.ColorPickerHover span { 
+  display: block;
+  position: absolute;
+  border: 1px solid black;
+  background-color: white;
+  bottom: 16px;
+  left: 8px;
+  padding: 2px;
+}
+
+/* general text styles */
+* .helpText {
+	font-style: italic;
+	font-size: 7pt;
+}
+.highlighted tr,
+.highlighted td,
+.highlighted th {
+	background-color: #FCED8A !important;
+}
+
+.highlighted {
+	background-color: #FCED8A;
+}
+
+
+/* Number Attribute's separable line style */
+* .blankSpace { 
+    margin-left: 15px; 
+    margin-right: 15px; 
+}
+
+@media screen {
+	* .hiddenRows {
+		display: none;
+	}
+}
+
+/* ------------------------------- Business Mappings ------------------------------------------------------------------- */
+
+div.bbtContainer {
+	height: 50px;
+	padding: 15px;
+}
+
+div.bbtContainer.highlight {
+	background-color: #C0C0E0;
+}
+
+div.bbtElement {
+	height: 20px;
+	border: 1px solid #7A7A7A !important;
+	background-color: #E0E0E0;
+	font-size: 14px;
+	text-align: center;
+	padding: 15px;
+	white-space:nowrap;
+}
+
+/* ---------------- Sticky table header bar, showed on scrolling --------------------------------------------- */
+#stickyTableHeaderBar {
+	height: 20px;
+	background: #fff;
+	padding: 4px 0px 4px 0px;
+	border: 1px solid #DDDDDD;
+		
+	box-shadow: 0 0 9px #ccc;
+	-webkit-box-shadow: 0 0 9px #ccc;
+	-moz-box-shadow: 0 0 9px #ccc;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=2, Direction=180, Color='#cccccc')";
+}
+
+#stickyTableHeaderBar.vis {
+	position: fixed;
+	visibility: visible;
+}
+
+#stickyTableHeaderBar.unvis {
+	position: static;
+	visibility: hidden;
+}
+#stickyTableHeaderBar > div {
+	float: left;
+	font-weight: bold;
+	padding: 0px 0px 0px 4px; 
+	overflow-x: hidden; 
+}
+
+legend.searchheading {
+	border: 0;
+	margin-bottom: 15px;
+}
+legend.searchheading > span {
+	margin-top: 10px;
+}
+
+/* ---------------- Hierarchical navigation --------------------------------------------- */
+#hierarchyScrollPane {
+	height: 9em; 
+	width: 115em; 
+	white-space: nowrap; 
+	overflow-x: auto; 
+	overflow-y: auto;
+}
+
+
+
+/* ---------------- Responsive Design adjustments --------------------------------------------- */
+@media (max-width: 979px) {
+	#iteraplanNavigation {
+		height: auto;
+	}
+	
+	#stickyTableHeaderBar.vis { visibility: hidden; }
+	
+	.page { margin-top: auto; }
+}
+
+/* error messages */
+.errorBlock, .errorInline {
+	color: #FF0000;
+}
+.errorBlock {
+	display: block;
+}
+
+/* ---------------- Dashboard Design adjustments --------------------------------------------- */ 
+.viewBoxPanel {
+  display: table;
+  overflow: auto;
+  background-color: #ffffff;
+  border: 1px solid #999;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  *border: 1px solid #999;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+  -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+     -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+  -webkit-background-clip: padding-box;
+     -moz-background-clip: padding-box;
+          background-clip: padding-box;
+}
+
+.viewBoxPanel-header {
+  padding: 14px 15px 15px;
+  margin-top: 0;
+  text-align: center;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+  -webkit-border-radius: 0 0 6px 6px;
+     -moz-border-radius: 0 0 6px 6px;
+          border-radius: 6px 6px 0 0;
+  *zoom: 1;
+  -webkit-box-shadow: inset 0 1px 0 #ffffff;
+     -moz-box-shadow: inset 0 1px 0 #ffffff;
+          box-shadow: inset 0 1px 0 #ffffff;
+}
+
+.viewBoxPanel-body {
+  padding: 15px;
+  overflow-y: auto;
+}
+
+.feedbackPanelERROR {
+	color: red;
+	list-style: circle;
+	font-weight: bold;
+}
+
+/* ---------------- Broader bootstrap modal dialogs for graphic configuration tools ----------------- */
+div.modalWideMode {
+	width: 80% !important;
+	left: 10% !important;
+	right: 10% !important;
+	margin-left: 0 !important;  
+}
+
+div.modalHighMode {
+	top: 5% !important;
+	margin-top: 0 !important;
+}
+
+div.modalHighMode > .modal-body {
+	max-height: 600px !important;
+}
+
+/* Placeholder style for browsers it isn't supported natively, see https://github.com/mathiasbynens/jquery-placeholder */
+.placeholder {
+	color: #aaa;
+}
+
+.loading-small {
+	background: url('../../../images/loadingSmall.gif') no-repeat;
+	background-position: center;
+}

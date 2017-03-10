@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.iteratec.iteraplan.model.queries">
+
+  <class name="SavedQueryEntity" table="SAVED_QUERIES" lazy="false">
+    <id name="id" column="ID" type="java.lang.Integer">
+      <generator class="org.hibernate.id.enhanced.TableGenerator">
+        <param name="segment_value">saved_queries</param>
+      </generator>
+    </id>
+    <discriminator column="TYPE" type="string" length="15" />
+    <version name="olVersion" column="VERSION" type="integer" unsaved-value="negative" />
+    <property name="name" column="NAME" length="255" not-null="true" />
+    <property name="description" column="DESCRIPTION" length="4000" />
+	<property name="content" column="CONTENT" type="materialized_clob" />
+
+    <subclass name="SavedQuery" discriminator-value="QUERY" lazy="false">
+      <property name="type" type="enumSavedQueryType" column="SAVED_QUERY_TYPE" length="40" />
+      <property name="schemaFile" column="SCHEMA_FILE" length="40" />
+      <many-to-one name="resultBbType" column="ID_RESULT_BBT" foreign-key="FK_SAVEDQUERIES_BBT" fetch="select"/>
+    </subclass>
+
+  </class>
+</hibernate-mapping>

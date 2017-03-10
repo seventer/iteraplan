@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.iteratec.iteraplan.model" default-lazy="false">
+
+  <!-- ************** -->
+  <!-- Building Block -->
+  <!-- ************** -->
+
+  <class name="BuildingBlock" table="BB" >
+  	<cache usage="read-write"/>
+    <id name="id" column="ID" type="java.lang.Integer">
+      <generator class="org.hibernate.id.enhanced.TableGenerator">
+        <param name="segment_value">bb</param>
+      </generator>
+    </id>
+    <version name="olVersion" column="VERSION" type="integer" unsaved-value="negative" />
+    <many-to-one name="buildingBlockType" column="ID_BBT" not-null="true" foreign-key="FK_BB_BBT" cascade="lock" fetch="select"/>
+    <set name="owningUserEntities" table="BB_UE" lazy="true" cascade="lock">
+      <key column="ID_BB" />
+      <many-to-many class="de.iteratec.iteraplan.model.user.UserEntity" column="ID_UE" foreign-key="FK_BB_UE"/>
+    </set>
+    <set name="attributeValueAssignments" lazy="true" inverse="true" cascade="all,delete-orphan">
+      <cache usage="read-write"/>
+      <key column="ID_BB" />
+      <one-to-many class="de.iteratec.iteraplan.model.attribute.AttributeValueAssignment"/>
+    </set>
+    <set name="subscribedUsers" table="BB_SU" lazy="true" cascade="lock">
+    	<cache usage="read-write"/>
+      <key column="ID_BB" />
+      <many-to-many class="de.iteratec.iteraplan.model.user.User" column="ID_UE" foreign-key="FK_BB_SU"/>
+    </set>
+    <property name="lastModificationUser" column="LAST_MOD_USER" length="255" />
+    <property name="lastModificationTime" column="LAST_MOD_TIME" />
+    <property name="state" column="SEAL_STATE" length="20" />
+    <set name="seals" lazy="true" inverse="true" cascade="all,delete-orphan" sort="natural">
+    	<cache usage="read-write"/>
+    	<key column="ID_BB" />
+    	<one-to-many class="de.iteratec.iteraplan.model.Seal" />
+    </set>
+
+    <!-- ********* -->
+    <!-- Transport -->
+    <!-- ********* -->
+
+    <joined-subclass name="Transport" table="TRANSPORT" >
+      <key column="ID_BB" foreign-key="FK_TRANSPORT_BB"/>
+      <property name="direction" type="enumDirection" column="DIRECTION" length="5" not-null="true" unique-key="UNIQUE_TRANSPORT"/>
+      <many-to-one name="businessObject" column="ID_BO" not-null="true" foreign-key="FK_TRANSPORT_BO" unique-key="UNIQUE_TRANSPORT"/>
+      <many-to-one name="informationSystemInterface" column="ID_ISI" not-null="true" cascade="lock,save-update" foreign-key="FK_TRANSPORT_ISI" unique-key="UNIQUE_TRANSPORT"/>      
+    </joined-subclass>
+
+    <!-- ******* -->
+    <!-- Project -->
+    <!-- ******* -->
+
+    <joined-subclass name="Project" table="PROJ" >
+      <key column="ID_BB" foreign-key="FK_PROJ_BB"/>
+      <property name="name" column="NAME" length="255" not-null="true" unique="true" />
+      <property name="description" column="DESCRIPTION" length="4000" />
+
+      <component name="runtimePeriod" class="RuntimePeriod">
+        <property name="start" column="RUNTIME_START" type="java.util.Date" />
+        <property name="end" column="RUNTIME_END" type="java.util.Date" />
+      </component>
+
+      <set name="informationSystemReleases" table="ISR_PROJ" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_PROJ" />
+        <many-to-many class="InformationSystemRelease" column="ID_ISR" foreign-key="FK_PROJ_ISR"/>
+      </set>
+      <many-to-one name="parent" column="ID_PARENT" class="Project" foreign-key="FK_PROJ_PARENT" cascade="lock" insert="false" update="false"/>
+      <list name="children" lazy="true" cascade="lock,delete">
+        <key column="ID_PARENT" />
+        <list-index column="POS" />
+        <one-to-many class="Project" />
+      </list>
+      <property name="position" column="POS" type="integer" update="false" insert="false"/>
+    </joined-subclass>
+
+    <!-- *************** -->
+    <!-- Business Object -->
+    <!-- *************** -->
+
+    <joined-subclass name="BusinessObject" table="BO" >
+      <key column="ID_BB" foreign-key="FK_BO_BB"/>
+      <property name="name" column="NAME" length="255" not-null="true" unique="true" />
+      <property name="description" column="DESCRIPTION" length="4000" />
+      <set name="transports" lazy="true" inverse="true" cascade="lock,delete">
+        <key column="ID_BO" />
+        <one-to-many class="Transport" />
+      </set>
+      <set name="informationSystemReleaseAssociations" inverse="true" lazy="true" cascade="lock,delete-orphan">
+        <key column="ID_BO"/>
+        <one-to-many class="Isr2BoAssociation"/>
+      </set>
+      <set name="businessFunctions" table="BO_BF" lazy="true" cascade="lock">
+        <key column="ID_BO" />
+        <many-to-many class="BusinessFunction" column="ID_BF" foreign-key="FK_BO_BF"/>
+      </set>
+      <set name="businessDomains" table="BO_BD" lazy="true" cascade="lock">
+        <key column="ID_BO" />
+        <many-to-many class="BusinessDomain" column="ID_BD" foreign-key="FK_BO_BD"/>
+      </set>
+      <many-to-one name="generalisation" column="ID_GENERALISATION" class="BusinessObject" foreign-key="FK_BO_GENERALISATION" cascade="lock"/>
+      <set name="specialisations" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_GENERALISATION" />
+        <one-to-many class="BusinessObject" />
+      </set>
+      <many-to-one name="parent" column="ID_PARENT" class="BusinessObject" foreign-key="FK_BO_PARENT" cascade="lock" insert="false" update="false"/>
+      <list name="children" lazy="true" cascade="lock,delete">
+        <key column="ID_PARENT" />
+        <list-index column="POS" />
+        <one-to-many class="BusinessObject" />
+      </list>
+      <property name="position" column="POS" type="integer" update="false" insert="false"/>
+    </joined-subclass>
+
+    <!-- ******* -->
+    <!-- Product -->
+    <!-- ******* -->
+
+    <joined-subclass name="Product" table="PROD" >
+      <key column="ID_BB" foreign-key="FK_PROD_BB"/>
+      <property name="name" column="NAME" length="255" not-null="true" unique="true" />
+      <property name="description" column="DESCRIPTION" length="4000" />
+      <set name="businessMappings" lazy="true" inverse="true" cascade="lock,delete">
+        <key column="ID_PROD" />
+        <one-to-many class="BusinessMapping" />
+      </set>
+      <set name="businessDomains" table="PROD_BD" lazy="true" cascade="lock">
+        <key column="ID_PROD" />
+        <many-to-many class="BusinessDomain" column="ID_BD" foreign-key="FK_PROD_BD"/>
+      </set>
+      <many-to-one name="parent" column="ID_PARENT" class="Product" foreign-key="FK_PROD_PARENT" cascade="lock" insert="false" update="false"/>
+      <list name="children" lazy="true" cascade="lock,delete">
+        <key column="ID_PARENT" />
+        <list-index column="POS" />
+        <one-to-many class="Product" />
+      </list>
+      <property name="position" column="POS" type="integer" update="false" insert="false"/>
+    </joined-subclass>
+
+    <!-- ******************** -->
+    <!-- Architectural Domain -->
+    <!-- ******************** -->
+
+    <joined-subclass name="ArchitecturalDomain" table="AD" >
+      <key column="ID_BB" foreign-key="FK_AD_BB"/>
+      <property name="name" column="NAME" length="255" not-null="true" unique="true" />
+      <property name="description" column="DESCRIPTION" length="4000" />
+      <set name="technicalComponentReleases" table="TCR_AD" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_AD" />
+        <many-to-many class="TechnicalComponentRelease" column="ID_TCR" foreign-key="FK_AD_TCR"/>
+      </set>
+      <many-to-one name="parent" column="ID_PARENT" class="ArchitecturalDomain" foreign-key="FK_AD_PARENT" cascade="lock" insert="false" update="false"/>
+      <list name="children" lazy="true" cascade="lock,delete">
+        <key column="ID_PARENT" />
+        <list-index column="POS" />
+        <one-to-many class="ArchitecturalDomain" />
+      </list>
+      <property name="position" column="POS" type="integer" update="false" insert="false"/>
+    </joined-subclass>
+
+    <!-- **************** -->
+    <!-- Business Mapping -->
+    <!-- **************** -->
+
+    <joined-subclass name="BusinessMapping" table="BM" >
+      <key column="ID_BB" foreign-key="FK_BM_BB"/>
+      <many-to-one name="businessProcess" foreign-key="FK_BM_BP">
+        <column name="ID_BP" />
+      </many-to-one>
+      <many-to-one name="informationSystemRelease" foreign-key="FK_BM_ISR">
+        <column name="ID_ISR" />
+      </many-to-one>
+      <many-to-one name="businessUnit" foreign-key="FK_BM_BU">
+        <column name="ID_BU" />
+      </many-to-one>
+      <many-to-one name="product" foreign-key="FK_BM_PROD">
+        <column name="ID_PROD" />
+      </many-to-one>
+    </joined-subclass>
+
+    <!-- ************* -->
+    <!-- Business Unit -->
+    <!-- ************* -->
+
+    <joined-subclass name="BusinessUnit" table="BU" >
+      <key column="ID_BB" foreign-key="FK_BU_BB"/>
+      <property name="name" column="NAME" length="255" not-null="true" unique="true" />
+      <property name="description" column="DESCRIPTION" length="4000" />
+      <set name="businessMappings" lazy="true" inverse="true" cascade="lock,delete">
+        <key column="ID_BU" />
+        <one-to-many class="BusinessMapping" />
+      </set>
+      <set name="businessDomains" table="BD_BU" lazy="true" cascade="lock">
+        <key column="ID_BU" />
+        <many-to-many class="BusinessDomain" column="ID_BD" foreign-key="FK_BU_BD"/>
+      </set>
+      <many-to-one name="parent" column="ID_PARENT" class="BusinessUnit" foreign-key="FK_BU_PARENT" cascade="lock" insert="false" update="false"/>
+      <list name="children" lazy="true" cascade="lock,delete">
+        <key column="ID_PARENT" />
+        <list-index column="POS" />
+        <one-to-many class="BusinessUnit" />
+      </list>
+      <property name="position" column="POS" type="integer" update="false" insert="false"/>
+    </joined-subclass>
+
+    <!-- ********************** -->
+    <!-- Infrastructure Element -->
+    <!-- ********************** -->
+
+    <joined-subclass name="InfrastructureElement" table="IE" >
+      <key column="ID_BB" foreign-key="FK_IE_BB"/>
+      <property name="name" column="NAME" length="255" not-null="true" unique="true" />
+      <property name="description" column="DESCRIPTION" length="4000" />
+      <set name="informationSystemReleases" table="ISR_IE" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_IE" />
+        <many-to-many class="InformationSystemRelease" column="ID_ISR" foreign-key="FK_IE_ISR"/>
+      </set>
+      <set name="technicalComponentReleaseAssociations" inverse="true" lazy="true" cascade="lock,delete-orphan">
+        <key column="ID_IE"/>
+        <one-to-many class="Tcr2IeAssociation"/>
+      </set>
+      <many-to-one name="parent" column="ID_PARENT" class="InfrastructureElement" foreign-key="FK_IE_PARENT" cascade="lock" insert="false" update="false"/>
+      <list name="children" lazy="true" cascade="lock,delete">
+        <key column="ID_PARENT" />
+        <list-index column="POS" />
+        <one-to-many class="InfrastructureElement" />
+      </list>
+      <property name="position" column="POS" type="integer" update="false" insert="false"/>
+      <set name="baseComponents" table="IE_BASE" lazy="true" cascade="lock">
+        <key column="ID_IE" />
+        <many-to-many class="InfrastructureElement" column="ID_BASE" foreign-key="FK_IE_BASE" />
+      </set>
+      <set name="parentComponents" table="IE_BASE" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_BASE" />
+        <many-to-many class="InfrastructureElement" column="ID_IE" foreign-key="FK_IE_IE2"/>
+      </set>
+    </joined-subclass>
+
+    <!-- *************************************************************************** -->
+    <!-- Attributable relation Technical Component Release to Infrastructure Element -->
+    <!-- *************************************************************************** -->
+    <joined-subclass name="Tcr2IeAssociation" table="TCR_IE" >
+      <key column="ID_BB" foreign-key="FK_TCRIE_BB"/>
+      <many-to-one name="technicalComponentRelease" class="TechnicalComponentRelease" column="ID_TCR" not-null="true" foreign-key="FK_TCRIE_TCR" cascade="lock" unique-key="uniqueEnds"/>
+      <many-to-one name="infrastructureElement" class="InfrastructureElement" column="ID_IE" not-null="true" foreign-key="FK_TCRIE_IE" cascade="lock" unique-key="uniqueEnds"/>
+    </joined-subclass>
+    
+    <!-- *************************************************************************** -->
+    <!-- Attributable relation Information System Release to Business Object -->
+    <!-- *************************************************************************** -->
+    <joined-subclass name="Isr2BoAssociation" table="ISR_BO" >
+      <key column="ID_BB" foreign-key="FK_ISRBO_BB"/>
+      <many-to-one name="informationSystemRelease" class="InformationSystemRelease" column="ID_ISR" not-null="true" foreign-key="FK_ISRBO_ISR" cascade="lock" unique-key="uniqueEnds"/>
+      <many-to-one name="businessObject" class="BusinessObject" column="ID_BO" not-null="true" foreign-key="FK_ISRBO_BO" cascade="lock" unique-key="uniqueEnds"/>
+    </joined-subclass>
+
+    <!-- **************************** -->
+    <!-- Information System Interface -->
+    <!-- **************************** -->
+
+    <joined-subclass name="InformationSystemInterface" table="ISI" >
+      <key column="ID_BB" foreign-key="FK_ISI_BB"/>
+      <property name="name" column="NAME" length="255" not-null="true" />
+      <property name="interfaceDirection" type="enumDirection" column="DIRECTION" length="5" not-null="true"/>
+      <property name="description" column="DESCRIPTION" length="4000" />
+      <many-to-one name="informationSystemReleaseA" column="ID_ISR_A" not-null="true" foreign-key="FK_ISI_ISRA" cascade="lock"/>
+      <many-to-one name="informationSystemReleaseB" column="ID_ISR_B" not-null="true" foreign-key="FK_ISI_ISRB" cascade="lock"/>
+      <set name="technicalComponentReleases" table="ISI_TCR" lazy="true" cascade="lock">
+        <key column="ID_ISI" />
+        <many-to-many class="TechnicalComponentRelease" column="ID_TCR" foreign-key="FK_ISI_TCR"/>
+      </set>
+      <set name="transports" inverse="true" cascade="all,delete-orphan" lazy="true">
+        <key column="ID_ISI" />
+        <one-to-many class="Transport" />
+      </set>
+    </joined-subclass>
+
+    <!-- ****************** -->
+    <!-- Information System -->
+    <!-- ****************** -->
+
+    <joined-subclass name="InformationSystem" table="INS" >
+      <key column="ID_BB" foreign-key="FK_INS_BB"/>
+      <property name="name" column="NAME" not-null="true" unique="true" length="255" />
+      <set name="releases" lazy="true" inverse="true">
+        <key column="ID_INS" />
+        <one-to-many class="InformationSystemRelease" />
+      </set>
+    </joined-subclass>
+
+    <!-- ************************** -->
+    <!-- Information System Release -->
+    <!-- ************************** -->
+
+    <joined-subclass name="InformationSystemRelease" table="ISR" >
+      <key column="ID_BB" foreign-key="FK_ISR_BB"/>
+      <property name="description" column="DESCRIPTION" length="4000" />
+      <property name="version" column="VERSION" length="255" unique-key="UNIQUE_IS_RELEASE" />
+
+      <component name="runtimePeriod" class="RuntimePeriod">
+        <property name="start" column="RUNTIME_START" type="java.util.Date" />
+        <property name="end" column="RUNTIME_END" type="java.util.Date" />
+      </component>
+
+      <property name="typeOfStatus" type="enumIsrStatus" column="STATUS" not-null="true" />
+      <many-to-one name="informationSystem" column="ID_INS" not-null="true" lazy="false" fetch="join" foreign-key="FK_ISR_INS" cascade="lock" unique-key="UNIQUE_IS_RELEASE" />
+      <set name="interfacesReleaseA" lazy="true" inverse="true" cascade="lock,delete">
+        <key column="ID_ISR_A" />
+        <one-to-many class="InformationSystemInterface" />
+      </set>
+      <set name="interfacesReleaseB" lazy="true" inverse="true" cascade="lock,delete">
+        <key column="ID_ISR_B" />
+        <one-to-many class="InformationSystemInterface" />
+      </set>
+      <set name="informationSystemDomains" table="ISR_ISD" lazy="true" cascade="lock">
+        <key column="ID_ISR" />
+        <many-to-many class="InformationSystemDomain" column="ID_ISD" foreign-key="FK_ISR_ISD"/>
+      </set>
+      <set name="technicalComponentReleases" table="ISR_TCR" lazy="true" cascade="lock">
+        <key column="ID_ISR" />
+        <many-to-many class="TechnicalComponentRelease" column="ID_TCR" foreign-key="FK_ISR_TCR"/>
+      </set>
+      <set name="businessFunctions" table="ISR_BF" lazy="true" cascade="lock">
+        <key column="ID_ISR" />
+        <many-to-many class="BusinessFunction" column="ID_BF" foreign-key="FK_ISR_BF"/>
+      </set>
+      <set name="infrastructureElements" table="ISR_IE" lazy="true" cascade="lock">
+        <key column="ID_ISR" />
+        <many-to-many class="InfrastructureElement" column="ID_IE" foreign-key="FK_ISR_IE"/>
+      </set>
+      <set name="businessObjectAssociations" inverse="true" lazy="true" cascade="lock,delete-orphan">
+        <key column="ID_ISR"/>
+        <one-to-many class="Isr2BoAssociation" />
+      </set>
+      <set name="predecessors" table="ISR_SUCC" lazy="true" cascade="lock">
+      	<cache usage="read-write"/>
+        <key column="ID_SUCC" />
+        <many-to-many class="InformationSystemRelease" column="ID_ISR" foreign-key="FK_ISR_ISR"/>
+      </set>
+      <set name="successors" table="ISR_SUCC" lazy="true" inverse="true" cascade="lock">
+      	<cache usage="read-write"/>
+        <key column="ID_ISR" />
+        <many-to-many class="InformationSystemRelease" column="ID_SUCC" foreign-key="FK_ISR_SUCC"/>
+      </set>
+      <many-to-one name="parent" column="ID_PARENT" not-null="false" class="InformationSystemRelease" foreign-key="FK_ISR_PARENT" cascade="lock"/>
+      <set name="children" lazy="true" inverse="true" cascade="lock,delete">
+        <key column="ID_PARENT" />
+        <one-to-many class="InformationSystemRelease" />
+      </set>
+      <set name="projects" table="ISR_PROJ" lazy="true" cascade="lock">
+        <key column="ID_ISR" />
+        <many-to-many class="Project" column="ID_PROJ" foreign-key="FK_ISR_PROJ"/>
+      </set>
+      <set name="businessMappings" lazy="true" inverse="true" cascade="lock,delete">
+        <key column="ID_ISR" />
+        <one-to-many class="BusinessMapping" />
+      </set>
+      <set name="baseComponents" table="ISR_BASE" lazy="true" cascade="lock">
+        <key column="ID_ISR" />
+        <many-to-many class="InformationSystemRelease" column="ID_BASE" foreign-key="FK_ISR_BASE" />
+      </set>
+      <set name="parentComponents" table="ISR_BASE" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_BASE" />
+        <many-to-many class="InformationSystemRelease" column="ID_ISR" foreign-key="FK_ISR_ISR2"/>
+      </set>
+    </joined-subclass>
+
+    <!-- ******************* -->
+    <!-- Technical Component -->
+    <!-- ******************* -->
+
+    <joined-subclass name="TechnicalComponent" table="TC" >
+      <key column="ID_BB" foreign-key="FK_TC_BB"/>
+      <property name="name" column="NAME" length="255" not-null="true" unique="true" />
+      <property name="availableForInterfaces" column="AVAILABLE_FOR_ISI" length="1" not-null="true" />
+      <set name="releases" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_TC" />
+        <one-to-many class="TechnicalComponentRelease" />
+      </set>
+    </joined-subclass>
+
+    <!-- *************************** -->
+    <!-- Technical Component Release -->
+    <!-- *************************** -->
+
+    <joined-subclass name="TechnicalComponentRelease" table="TCR" >
+      <key column="ID_BB" foreign-key="FK_TCR_BB"/>
+      <property name="description" column="DESCRIPTION" length="4000" />
+      <property name="version" column="VERSION" length="255" unique-key="UNIQUE_TC_RELEASE" />
+
+      <component name="runtimePeriod" class="RuntimePeriod">
+        <property name="start" column="RUNTIME_START" type="java.util.Date" />
+        <property name="end" column="RUNTIME_END" type="java.util.Date" />
+      </component>
+
+      <property name="typeOfStatus" type="enumTcrStatus" column="STATUS" not-null="true" />
+      <many-to-one name="technicalComponent" column="ID_TC" not-null="true" fetch="join" lazy="false" foreign-key="FK_TCR_TC" cascade="lock" unique-key="UNIQUE_TC_RELEASE" />
+      <set name="informationSystemInterfaces" table="ISI_TCR" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_TCR" />
+        <many-to-many class="InformationSystemInterface" column="ID_ISI" foreign-key="FK_TCR_ISI"/>
+      </set>
+      <set name="infrastructureElementAssociations" inverse="true" lazy="true" cascade="lock,delete-orphan">
+        <key column="ID_TCR"/>
+        <one-to-many class="Tcr2IeAssociation" />
+      </set>
+      <set name="informationSystemReleases" table="ISR_TCR" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_TCR" />
+        <many-to-many class="InformationSystemRelease" column="ID_ISR" foreign-key="FK_TCR_ISR"/>
+      </set>
+      <set name="architecturalDomains" table="TCR_AD" lazy="true" cascade="lock">
+        <key column="ID_TCR" />
+        <many-to-many class="ArchitecturalDomain" column="ID_AD" foreign-key="FK_TCR_AD"/>
+      </set>
+      <set name="predecessors" table="TCR_SUCC" lazy="true" cascade="lock">
+        <key column="ID_SUCC" />
+        <many-to-many class="TechnicalComponentRelease" column="ID_TCR" foreign-key="FK_TCR_TCR"/>
+      </set>
+      <set name="successors" table="TCR_SUCC" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_TCR" />
+        <many-to-many class="TechnicalComponentRelease" column="ID_SUCC" foreign-key="FK_TCR_SUCC"/>
+      </set>
+      <set name="baseComponents" table="TCR_BASE" lazy="true" cascade="lock">
+        <key column="ID_TCR" />
+        <many-to-many class="TechnicalComponentRelease" column="ID_BASE" foreign-key="FK_TCR_BASE"/>
+      </set>
+      <set name="parentComponents" table="TCR_BASE" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_BASE" />
+        <many-to-many class="TechnicalComponentRelease" column="ID_TCR" foreign-key="FK_TCR_TCR2"/>
+      </set>
+    </joined-subclass>
+
+    <!-- **************** -->
+    <!-- Business Process -->
+    <!-- **************** -->
+
+    <joined-subclass name="BusinessProcess" table="BP" >
+      <key column="ID_BB" foreign-key="FK_BP_BB"/>
+      <property name="name" column="NAME" length="255" not-null="true" unique="true" />
+      <property name="description" column="DESCRIPTION" length="4000" />
+      <set name="businessMappings" lazy="true" inverse="true" cascade="lock,delete">
+        <key column="ID_BP" />
+        <one-to-many class="BusinessMapping" />
+      </set>
+      <set name="businessDomains" table="BP_BD" lazy="true" cascade="lock">
+        <key column="ID_BP" />
+        <many-to-many class="BusinessDomain" column="ID_BD" foreign-key="FK_BP_BD"/>
+      </set>
+      <many-to-one name="parent" column="ID_PARENT" class="BusinessProcess" foreign-key="FK_BP_PARENT" cascade="lock" insert="false" update="false"/>
+      <list name="children" lazy="true" cascade="lock,delete">
+        <key column="ID_PARENT" />
+        <list-index column="POS" />
+        <one-to-many class="BusinessProcess" />
+      </list>
+      <property name="position" column="POS" type="integer" update="false" insert="false"/>
+    </joined-subclass>
+
+    <!-- ************************* -->
+    <!-- Information System Domain -->
+    <!-- ************************* -->
+
+    <joined-subclass name="InformationSystemDomain" table="ISD" >
+      <key column="ID_BB" foreign-key="FK_ISD_BB"/>
+      <property name="name" column="NAME" length="255" not-null="true" unique="true" />
+      <property name="description" column="DESCRIPTION" length="4000" />
+      <set name="informationSystemReleases" table="ISR_ISD" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_ISD" />
+        <many-to-many class="InformationSystemRelease" column="ID_ISR" foreign-key="FK_ISD_ISR"/>
+      </set>
+      <many-to-one name="parent" column="ID_PARENT" class="InformationSystemDomain" foreign-key="FK_ISD_PARENT" cascade="lock" insert="false" update="false"/>
+      <list name="children" lazy="true" cascade="lock,delete">
+        <key column="ID_PARENT" />
+        <list-index column="POS" />
+        <one-to-many class="InformationSystemDomain" />
+      </list>
+      <property name="position" column="POS" type="integer" update="false" insert="false"/>
+    </joined-subclass>
+
+    <!-- ***************** -->
+    <!-- Business Function -->
+    <!-- ***************** -->
+
+    <joined-subclass name="BusinessFunction" table="BF" >
+      <key column="ID_BB" foreign-key="FK_BF_BB"/>
+      <property name="name" column="NAME" length="255" not-null="true" unique="true" />
+      <property name="description" column="DESCRIPTION" length="4000" />
+      <set name="businessObjects" table="BO_BF" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_BF" />
+        <many-to-many class="BusinessObject" column="ID_BO" foreign-key="FK_BF_BO"/>
+      </set>
+      <set name="businessDomains" table="BF_BD" lazy="true" cascade="lock">
+        <key column="ID_BF" />
+        <many-to-many class="BusinessDomain" column="ID_BD" foreign-key="FK_BF_BD"/>
+      </set>
+      <set name="informationSystems" table="ISR_BF" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_BF" />
+        <many-to-many class="InformationSystemRelease" column="ID_ISR" foreign-key="FK_BF_ISR"/>
+      </set>
+      <many-to-one name="parent" column="ID_PARENT" class="BusinessFunction" foreign-key="FK_BF_PARENT" cascade="lock" insert="false" update="false"/>
+      <list name="children" lazy="true" cascade="lock,delete">
+        <key column="ID_PARENT" />
+        <list-index column="POS" />
+        <one-to-many class="BusinessFunction" />
+      </list>
+      <property name="position" column="POS" type="integer" update="false" insert="false"/>
+    </joined-subclass>
+
+    <!-- *************** -->
+    <!-- Business Domain -->
+    <!-- *************** -->
+
+    <joined-subclass name="BusinessDomain" table="BD" >
+      <key column="ID_BB" foreign-key="FK_BD_BB"/>
+      <property name="name" column="NAME" length="255" not-null="true" unique="true" />
+      <property name="description" column="DESCRIPTION" length="4000" />
+      <set name="businessFunctions" table="BF_BD" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_BD" />
+        <many-to-many class="BusinessFunction" column="ID_BF" foreign-key="FK_BD_BF"/>
+      </set>
+      <set name="businessProcesses" table="BP_BD" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_BD" />
+        <many-to-many class="BusinessProcess" column="ID_BP" foreign-key="FK_BD_BP"/>
+      </set>
+      <set name="businessObjects" table="BO_BD" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_BD" />
+        <many-to-many class="BusinessObject" column="ID_BO" foreign-key="FK_BD_BO"/>
+      </set>
+      <set name="products" table="PROD_BD" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_BD" />
+        <many-to-many class="Product" column="ID_PROD" foreign-key="FK_BD_PROD"/>
+      </set>
+      <set name="businessUnits" table="BD_BU" lazy="true" inverse="true" cascade="lock">
+        <key column="ID_BD" />
+        <many-to-many class="BusinessUnit" column="ID_BU" foreign-key="FK_BD_BU"/>
+      </set>
+      <many-to-one name="parent" column="ID_PARENT" class="BusinessDomain" foreign-key="FK_BD_PARENT" cascade="lock" insert="false" update="false"/>
+      <list name="children" lazy="true" cascade="lock,delete">
+        <key column="ID_PARENT" />
+        <list-index column="POS" />
+        <one-to-many class="BusinessDomain" />
+      </list>
+      <property name="position" column="POS" type="integer" update="false" insert="false"/>
+    </joined-subclass>
+  </class>
+  
+  <class name="Seal" table="SEAL" lazy="true" mutable="false">
+  	<cache usage="read-write"/>
+    <id name="id" column="ID" type="java.lang.Integer">
+      <generator class="org.hibernate.id.enhanced.TableGenerator">
+        <param name="segment_value">seal</param>
+      </generator>
+    </id>
+    
+    <property name="date" type="java.util.Date" column="TIME_STAMP" not-null="true"/>
+    <property name="user" column="USERLOGIN" length="255" not-null="true"/>
+    <property name="comment" column="COMMENTS" length="4000"/>
+    <many-to-one name="bb" class="BuildingBlock" column="ID_BB" not-null="true" foreign-key="FK_SEAL_BB"/>
+  </class>
+
+  <query name="getAllBuildingBlocksWithAVAsForBBT">
+    <![CDATA[select bb from BuildingBlock bb
+              where bb.buildingBlockType.id = :bbtId
+              and bb.attributeValueAssignments is not empty]]>
+  </query>
+
+  <query name="getLatelyModifiedBuildingBlocks">
+    <![CDATA[select bb from BuildingBlock bb
+              where bb.lastModificationTime >= :checkDate
+              order by bb.buildingBlockType.typeOfBuildingBlock asc, bb.lastModificationTime desc]]>
+  </query>
+
+  <query name="getNotLatelyModifiedBuildingBlocks">
+    <![CDATA[select bb from BuildingBlock bb
+              where bb.lastModificationTime <= :checkDate
+              or bb.lastModificationTime is null
+              order by bb.buildingBlockType.typeOfBuildingBlock asc, bb.lastModificationTime desc]]>
+  </query>
+
+  <query name="getBuildingBlocksByType">
+    <![CDATA[select bb from BuildingBlock bb join bb.buildingBlockType bbt
+              where bbt.typeOfBuildingBlock like :type]]>
+  </query>
+
+</hibernate-mapping>

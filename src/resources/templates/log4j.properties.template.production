@@ -1,0 +1,95 @@
+###############################################################
+# Define log Levels for packages or specific classes.
+###############################################################
+
+# iteraplan general logging
+# #########################
+log4j.rootLogger=WARN, logfile
+
+# iteraplan audit logging
+# #######################
+log4j.logger.de.iteratec.iteraplan.businesslogic.common.AuditLogger=@AUDIT_LOG_TYPE@, auditlogfile
+log4j.additivity.de.iteratec.iteraplan.businesslogic.common.AuditLogger=false
+
+# iteraplan login & data source caching and handling
+# ##################################################
+log4j.logger.auditing.logins = INFO, login_logfile
+log4j.additivity.auditing.logins=false
+
+log4j.logger.de.iteratec.iteraplan.businesslogic.service.DataSourceServiceImpl=INFO
+log4j.logger.de.iteratec.iteraplan.persistence.RoutingDataSource=INFO
+log4j.logger.de.iteratec.iteraplan.presentation.ContextListener=INFO
+
+# iteraplan presentation tier logging
+# ###################################
+
+# iteraplan businesslogic logging
+# ###############################
+log4j.logger.ExcelImportProcessingLog=INFO
+
+# iteraplan persistence layer logging
+# ###################################
+
+# iteraplan textual queries logging
+# #################################
+log4j.logger.de.iteratec.iteraplan.businesslogic.reports.query.node=WARN
+log4j.logger.de.iteratec.iteraplan.persistence.dao.QueryDaoImpl=WARN
+
+# spring logging
+# ##############
+log4j.logger.org.springframework=WARN
+log4j.logger.org.springframework.security=WARN
+
+log4j.logger.org.springframework.js.resource.ResourceServlet=ERROR
+
+# hibernate logging
+# #################
+log4j.logger.org.hibernate.SQL=WARN, logfile
+log4j.additivity.org.hibernate.SQL=false
+
+log4j.logger.org.hibernate.type=WARN, logfile
+log4j.additivity.org.hibernate.type.SQL=false
+
+log4j.logger.org.hibernate.transaction=WARN
+
+log4j.logger.net.sf.ehcache.hibernate.strategy.AbstractReadWriteEhcacheAccessStrategy=ERROR
+
+# JAWR logging
+##############
+log4j.logger.net.jawr=WARN
+
+###############################################################
+# FileAppender "logfile"
+#
+# All technical log statements are written to this appender.
+###############################################################
+log4j.appender.logfile=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.logfile.File=@LOG_FILE@
+log4j.appender.logfile.encoding=UTF-8
+log4j.appender.logfile.DatePattern='.'yyyy-MM-dd
+log4j.appender.logfile.layout=org.apache.log4j.PatternLayout
+log4j.appender.logfile.layout.ConversionPattern = [%-5p] %d{dd-MMM-yyyy HH:mm:ss} [%-c{3}] %m%n
+
+###############################################################
+#FileAppender "login_logfile"
+###############################################################
+log4j.appender.login_logfile=org.apache.log4j.FileAppender
+log4j.appender.login_logfile.File=@LOGIN_LOG_FILE@
+log4j.appender.login_logfile.encoding=UTF-8
+log4j.appender.login_logfile.layout=org.apache.log4j.PatternLayout
+log4j.appender.login_logfile.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %m%n
+
+###############################################################
+# FileAppender "auditlogfile"
+#
+# If audit logging is activated (set appropriate log level above 
+# to DEBUG), the audit log files can be downloaded as a zipped 
+# package via the user interface. The file size should not be 
+# too large!
+###############################################################
+log4j.appender.auditlogfile=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.auditlogfile.File=@AUDIT.LOGGING.PATH@
+log4j.appender.auditlogfile.encoding=UTF-8
+log4j.appender.auditlogfile.DatePattern='.'yyyy-MM-dd
+log4j.appender.auditlogfile.layout=org.apache.log4j.PatternLayout
+log4j.appender.auditlogfile.layout.ConversionPattern = [%d{yyyy-MM-dd HH:mm:ss}] %m%n

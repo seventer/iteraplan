@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<version>1</version>
+	<pluginVersion><![CDATA[2.9.2.201205070117-RELEASE]]></pluginVersion>
+	<configSuffixes>
+		<configSuffix><![CDATA[xml]]></configSuffix>
+	</configSuffixes>
+	<enableImports><![CDATA[false]]></enableImports>
+	<configs>
+		<config>WebContent/WEB-INF/applicationContext-dao.xml</config>
+		<config>WebContent/WEB-INF/applicationContext-ext.xml</config>
+		<config>WebContent/WEB-INF/applicationContext-gui.xml</config>
+		<config>WebContent/WEB-INF/applicationContext-spring-security.xml</config>
+		<config>WebContent/WEB-INF/applicationContext-staticquery.xml</config>
+		<config>WebContent/WEB-INF/applicationContext.xml</config>
+		<config>WebContent/WEB-INF/springmvc-servlet.xml</config>
+		<config>WebContent/WEB-INF/applicationContext-rest.xml</config>
+		<config>WebContent/WEB-INF/applicationContext-datasource.xml</config>
+	</configs>
+	<configSets>
+		<configSet>
+			<name><![CDATA[iteraplanConfig]]></name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
+				<config>WebContent/WEB-INF/applicationContext.xml</config>
+				<config>WebContent/WEB-INF/applicationContext-dao.xml</config>
+				<config>WebContent/WEB-INF/applicationContext-ext.xml</config>
+				<config>WebContent/WEB-INF/applicationContext-gui.xml</config>
+				<config>WebContent/WEB-INF/applicationContext-spring-security.xml</config>
+				<config>WebContent/WEB-INF/applicationContext-staticquery.xml</config>
+				<config>WebContent/WEB-INF/springmvc-servlet.xml</config>
+				<config>WebContent/WEB-INF/applicationContext-rest.xml</config>
+				<config>WebContent/WEB-INF/applicationContext-datasource.xml</config>
+			</configs>
+			<profiles>
+			</profiles>
+		</configSet>
+	</configSets>
+</beansProjectDescription>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<report reportType="CLUSTER" xsi:schemaLocation="http://iteratec.iteraplan.com/ http://iteratec.iteraplan.com//QueryXML.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <clusterOptions colorAttribute="0" dialogStep="2" selectedAttributeType="-1">
+        <availableLevels>1</availableLevels>
+        <colorAttributeValues>
+            <value>Ist</value>
+            <value>Plan</value>
+            <value>Soll</value>
+            <value>Außer Betrieb</value>
+        </colorAttributeValues>
+        <colorOptions>
+        	<option colorAttribute="1" selected="true">
+                <dimensionKey>Komplexität</dimensionKey>
+                <dimensionType>attributeBean</dimensionType>
+                <childrenColorAttributeValues>
+                    <childValue>Hoch</childValue>
+                    <childValue>Mittel</childValue>
+                    <childValue>Gering</childValue>
+                </childrenColorAttributeValues>
+                <childrenSelectedColors>
+                    <childColor>AFCEA8</childColor>
+                    <childColor>F6DF95</childColor>
+                    <childColor>D79DAD</childColor>
+                    <childColor>D3CFD1</childColor>
+                </childrenSelectedColors>
+                <form>graphicalExport.cluster.form.option.rectangle</form>
+            </option>
+        </colorOptions>
+        <lowerLevel>1</lowerLevel>
+        <selectedBbType>informationSystemRelease.plural</selectedBbType>
+        <selectedColors>
+            <color>AFCEA8</color>
+            <color>F6DF95</color>
+            <color>D79DAD</color>
+            <color>88AED9</color>
+        </selectedColors>
+        <selectedModus>graphicalExport.cluster.mode.buildingBlocks</selectedModus>
+        <typeOrder>
+            <type>Komplexität</type>
+            <type>informationSystemDomain.singular</type>
+        </typeOrder>
+        <upperLevel>1</upperLevel>
+        <selectedGraphicsFormat>reports_export_SVG</selectedGraphicsFormat>
+    </clusterOptions>
+    <queryForms>
+        <queryForm typeXML="INFORMATIONSYSTEMRELEASE">
+            <queryUserInput>
+                <noAssignements>false</noAssignements>
+                <queryFirstLevels>
+                    <queryFirstLevel>
+                        <querySecondLevels>
+                            <querySecondLevel>
+                                <chosenAttributeStringId>blank_null_-1</chosenAttributeStringId>
+                                <dateATSelected>false</dateATSelected>
+                                <freeTextCriteriaSelected>true</freeTextCriteriaSelected>
+                            </querySecondLevel>
+                        </querySecondLevels>
+                    </queryFirstLevel>
+                </queryFirstLevels>
+                <statusQueryData typeOfStatus="INFORMATIONSYSTEMRELEASE">
+                    <values>
+                        <value key="typeOfStatus_current" value="true"/>
+                        <value key="typeOfStatus_planned" value="false"/>
+                        <value key="typeOfStatus_target" value="false"/>
+                        <value key="typeOfStatus_inactive" value="false"/>
+                    </values>
+                </statusQueryData>
+                <timeSpanQueryData>
+                    <endDate>1277071200000</endDate>
+                    <endTimeFunction>ABSOLUTE</endTimeFunction>
+                    <startDate>1277071200000</startDate>
+                    <startTimeFunction>ABSOLUTE</startTimeFunction>
+                </timeSpanQueryData>
+            </queryUserInput>
+        </queryForm>
+    </queryForms>
+    <selectedResultIds/>
+    <version>@build.version@</version>
+</report>

@@ -1,0 +1,1 @@
+select iu.loginName as Loginname from im_user iu where iu.loginName not in (select u.loginName from users u);

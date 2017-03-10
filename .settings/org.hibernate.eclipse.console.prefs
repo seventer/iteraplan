@@ -1,0 +1,4 @@
+#Sun May 24 22:41:30 CEST 2009
+default.configuration=iteraplan-hib
+eclipse.preferences.version=1
+hibernate3.enabled=true

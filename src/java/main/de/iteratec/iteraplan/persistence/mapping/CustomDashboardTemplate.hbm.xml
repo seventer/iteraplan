@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="de.iteratec.iteraplan.model.queries">
+ <class lazy="false" name="CustomDashboardTemplate" table="DASHB_TEMPL">
+  <id column="ID" name="id" type="java.lang.Integer">
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+    <param name="segment_value">dtmp</param>
+   </generator>
+  </id>
+  <version column="VERSION" generated="never" name="olVersion" type="integer"/>
+  <property column="NAME" generated="never" lazy="false" length="255"
+   name="name" not-null="true" type="java.lang.String"/>
+  <property column="DESCRIPTION" generated="never" lazy="false"
+   length="4000" name="description" type="java.lang.String"/>
+  <property column="CONTENT" generated="never" lazy="false"
+   name="content" type="materialized_clob"/>
+  <many-to-one column="ID_BBT" fetch="select"
+   foreign-key="FK_DASHB_TEMPL_BBT" name="buildingBlockType"/>
+ </class>
+</hibernate-mapping>

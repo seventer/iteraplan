@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+
+	<!-- Mass Updates -->
+	<bean id="massUpdateService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces" value="de.iteratec.iteraplan.businesslogic.service.MassUpdateService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.MassUpdateServiceImpl">
+				<property name="attributeTypeService" ref="attributeTypeService" />
+				<property name="attributeValueService" ref="attributeValueService" />
+				<property name="dateIntervalService" ref="dateIntervalService" />
+				<property name="architecturalDomainService" ref="architecturalDomainService" />
+				<property name="businessDomainService" ref="businessDomainService" />
+				<property name="businessFunctionService" ref="businessFunctionService" />
+				<property name="businessMappingService" ref="businessMappingService" />
+				<property name="businessObjectService" ref="businessObjectService" />
+				<property name="businessProcessService" ref="businessProcessService" />
+				<property name="businessUnitService" ref="businessUnitService" />
+				<property name="informationSystemDomainService" ref="informationSystemDomainService" />
+				<property name="informationSystemInterfaceService" ref="informationSystemInterfaceService" />
+				<property name="informationSystemReleaseService" ref="informationSystemReleaseService" />
+				<property name="infrastructureElementService" ref="infrastructureElementService" />
+				<property name="productService" ref="productService" />
+				<property name="projectService" ref="projectService" />
+				<property name="technicalComponentReleaseService" ref="technicalComponentReleaseService" />
+			</bean>
+		</property>
+	</bean>
+
+
+	<!--  Permission Queries -->
+	<bean id="permissionQueryService"
+		class="de.iteratec.iteraplan.businesslogic.service.PermissionQueryServiceImpl" />
+
+	<!-- Successors of Information System Releases  -->
+	<bean id="releaseSuccessorService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces" value="de.iteratec.iteraplan.businesslogic.service.ReleaseSuccessorService" />
+		<property name="target">
+			<bean class="de.iteratec.iteraplan.businesslogic.service.ReleaseSuccessorServiceImpl">
+				<property name="informationSystemReleaseDAO" ref="informationSystemReleaseDAO" />
+                <property name="technicalComponentReleaseDAO" ref="technicalComponentReleaseDAO" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="permissionQueryDAO" parent="genericBaseDAO"
+		class="de.iteratec.iteraplan.persistence.dao.PermissionQueryDAOImpl" />
+
+</beans>

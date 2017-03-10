@@ -1,0 +1,74 @@
+<project name="iTURM - Setup" default="war" basedir=".">
+
+    <description>
+	Creates a deployable iTURM war file. You can override the settings in 
+	build.properties by creating a file called build_local.properties
+    and set the parameters differently there.
+	</description>
+	
+	<!-- load local properties first so that they can override the default ones -->
+	<property file="${basedir}/build_local.properties" />
+	<!-- load default settings for build process -->
+	<property file="${basedir}/build.properties" />
+
+    <path id="project.classpath">
+         <fileset dir="${libDir}">
+             <include name="**/*.jar" />
+         </fileset>
+    </path>
+
+	<target name="configureExplodedWar">
+        <copy file="${templatesDir}/context.xml.template" tofile="${explodedWarDir}/META-INF/context.xml" overwrite="true">
+            <filterset>
+                <filter token="WEBAPP_PATH" value="${tomcat.appPath}" />
+                <filter token="DB.DRIVER.CLASS" value="${database.driver}" />
+                <filter token="DB.CONNECT.URL" value="${database.url}" />
+                <filter token="DB.USER.NAME" value="${database.login}" />
+                <filter token="DB.USER.PASSWORD" value="${database.password}" />
+                <filter token="DB.JNDI.DATASOURCE" value="${database.jndi.datasource}" />
+            	<filter token="DB.VALIDATIONQUERY" value="${database.validationquery}" />
+            </filterset>
+        </copy>
+        <copy file="${templatesDir}/web.xml.template" tofile="${explodedWarDir}/WEB-INF/web.xml" overwrite="true">
+            <filterset>
+                <filter token="WEB.SECURITY.TRANSPORT" value="${security.transport}" />
+            	<filter token="DB.DATA.SOURCE" value="${database.jndi.datasource}" />
+            </filterset>
+        </copy>
+        <copy file="${templatesDir}/applicationContext-spring-security.xml.template" tofile="${explodedWarDir}/WEB-INF/applicationContext-spring-security.xml" overwrite="true">
+            <filterset>
+                <filter token="DB.JNDI.DATASOURCE" value="${database.jndi.datasource}" />
+            </filterset>
+        </copy>
+        <copy file="${templatesDir}/turm.properties.template" tofile="${explodedWarDir}/WEB-INF/classes/turm.properties" overwrite="true">
+            <filterset>
+                <filter token="DB.JNDI.DATASOURCE" value="${database.jndi.datasource}" />
+            </filterset>
+        </copy>
+        <copy file="${templatesDir}/log4j.properties.template.production" tofile="${explodedWarDir}/WEB-INF/classes/log4j.properties" overwrite="true">
+            <filterset>
+                <filter token="LOG_FILE" value="${deploy.logfile}" />
+            </filterset>
+        </copy>
+	</target>
+	
+	<target name="war" depends="configureExplodedWar" description="Builds the deployable turm war file.">
+		<mkdir dir="${buildDir}"/>
+		<zip destfile="${buildDir}/${deploy.appname}.war">
+			<zipfileset dir="${explodedWarDir}"/>
+		</zip>
+	</target>
+	
+	<target name="createDatabaseSchema" description="creates the database schema for turm">
+		<sql driver="${database.driver}" url="${database.url}" userid="${database.login}" password="${database.password}" encoding="iso-8859-1" classpathref="project.classpath" onerror="continue">
+			<transaction src="${sqlDir}/${database.rdbmsName}/createSchema.sql" />
+		</sql>
+	</target>
+	
+	<target name="createInitialData" description="fills the turm database with an initial user and role">
+		<sql driver="${database.driver}" url="${database.url}" userid="${database.login}" password="${database.password}" encoding="iso-8859-1" classpathref="project.classpath" onerror="continue">
+			<transaction src="${sqlDir}/${database.rdbmsName}/insertInitialData.sql" />
+		</sql>
+	</target>
+	
+</project>

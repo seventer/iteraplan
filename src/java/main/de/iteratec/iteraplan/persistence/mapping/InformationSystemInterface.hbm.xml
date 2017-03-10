@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+  <query name="getConnectionsImplementedByTechnicalComponent">
+    <![CDATA[select isi from InformationSystemInterface isi inner join isi.technicalComponentReleases tcrs
+              where tcrs.technicalComponent = :tc]]>
+  </query>
+
+  <query name="getConnectionsImplementedByTechnicalComponentRelease">
+    <![CDATA[select isi from InformationSystemInterface isi
+              where :release in elements(isi.technicalComponentReleases)]]>
+  </query>
+
+  <query name="getFirstConnection">
+    <![CDATA[select c from InformationSystemInterface c 
+              join c.informationSystemReleaseA isrA 
+              join isrA.informationSystem insA 
+              join c.informationSystemReleaseB isrB 
+              join isrB.informationSystem insB 
+              where isrA.typeOfStatus != :ignoreTypeOfStatus 
+              and isrB.typeOfStatus != :ignoreTypeOfStatus 
+              order by insA.name, isrA.version, insB.name, isrB.version]]>
+  </query>
+
+  <query name="getFirstConnectionAll">
+    <![CDATA[select c from InformationSystemInterface c 
+              join c.informationSystemReleaseA isrA 
+              join isrA.informationSystem insA 
+              join c.informationSystemReleaseB isrB 
+              join isrB.informationSystem insB 
+              order by insA.name, isrA.version, insB.name, isrB.version]]>
+  </query>
+
+  <query name="getSelfReferencedInterface">
+  	<![CDATA[from InformationSystemInterface isi
+  			  where isi.informationSystemReleaseA.id = :isReleaseId 
+              and isi.informationSystemReleaseB.id = :isReleaseId]]>
+  </query>
+</hibernate-mapping>

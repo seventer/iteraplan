@@ -1,0 +1,28 @@
+# The property 'database.rdbmsName' is set by the user during the install process.
+dir.dbConfig=various/config/database/${database.rdbmsName}
+deploy.warFilename=iteraplan
+log.filename=@LOG_FILE_NAME@
+loginLog.filename=@LOGIN_LOG_FILE_NAME@
+auditLogging.filename=@AUDIT_LOG_FILE_NAME@
+login.datasource=jdbc/iteraplan_login/datasource
+#database.validationquery=SELECT 1 FROM DUAL
+history.enabled=false
+iteraql.loader.timeout.clock=5000
+iteraql.loader.timeout.update=20000
+iteraql.loader.timeout.force=3600000
+
+# iTURM settings:
+turm.deploy.name=iturm
+turm.datasource=jdbc/iturm/datasource
+
+#JDBC driver libraries
+lib.mysql.jar=mysql-connector-java-5.1.18-bin.jar
+lib.oracle.jar=ojdbc5.jar
+lib.sqlserver.jar=sqljdbc4.jar
+jdbc.driver.mysql=lib/${lib.mysql.jar}
+jdbc.driver.oracle=lib/${lib.oracle.jar}
+jdbc.driver.sqlserver=lib/${lib.sqlserver.jar}
+
+web.security.transport=NONE
+dwr.debug=false
+http.errorcode.filtered=500

@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<report reportType="CLUSTER" xsi:schemaLocation="http://iteratec.iteraplan.com/ http://iteratec.iteraplan.com//QueryXML.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <clusterOptions colorAttribute="@systemgre.id@" dialogStep="2" selectedAttributeType="-1">
+        <availableLevels>2</availableLevels>
+        <colorAttributeValues>
+            <value>@klein@</value>
+            <value>@mittel@</value>
+            <value>@gro@</value>
+            <value>@unspec@</value>
+        </colorAttributeValues>
+        <colorOptions>
+            <option colorAttribute="@verantwortlichkeit.id@" selected="true">
+                <dimensionKey>infrastructureElement.singular</dimensionKey>
+                <dimensionType>buildingBlockBean</dimensionType>
+                <childrenColorAttributeValues>
+                    <childValue>alice</childValue>
+                    <childValue>bob</childValue>
+                    <childValue>joe</childValue>
+                    <childValue>max</childValue>
+                    <childValue>sue</childValue>
+                    <childValue>tom</childValue>
+                    <childValue>walter</childValue>
+                    <childValue>@unspec@</childValue>
+                </childrenColorAttributeValues>
+                <childrenSelectedColors>
+                    <childColor>AFCEA8</childColor>
+                    <childColor>F6DF95</childColor>
+                    <childColor>D79DAD</childColor>
+                    <childColor>88AED9</childColor>
+                    <childColor>ACA1C8</childColor>
+                    <childColor>D3DD93</childColor>
+                    <childColor>E8BB9E</childColor>
+                    <childColor>D3CFD1</childColor>
+                </childrenSelectedColors>
+                <form>graphicalExport.cluster.form.option.rectangle</form>
+            </option>
+            <option colorAttribute="@kosten.id@" selected="true">
+                <dimensionKey>informationSystemDomain.singular</dimensionKey>
+                <dimensionType>buildingBlockBean</dimensionType>
+                <childrenColorAttributeValues>
+                    <childValue>&lt;= 15,00</childValue>
+                    <childValue>15,00 - 65,00</childValue>
+                    <childValue>65,00 - 90,00</childValue>
+                    <childValue>90,00 - 92,00</childValue>
+                    <childValue>&gt; 92,00</childValue>
+                    <childValue>@unspec@</childValue>
+                </childrenColorAttributeValues>
+                <childrenSelectedColors>
+                    <childColor>AFCEA8</childColor>
+                    <childColor>F6DF95</childColor>
+                    <childColor>D79DAD</childColor>
+                    <childColor>88AED9</childColor>
+                    <childColor>ACA1C8</childColor>
+                    <childColor>D3CFD1</childColor>
+                </childrenSelectedColors>
+                <form>graphicalExport.cluster.form.option.rectangle</form>
+            </option>
+            <option colorAttribute="@gesundheitszustand.id@" selected="true">
+                <dimensionKey>@gesundheitszustand@</dimensionKey>
+                <dimensionType>attributeBean</dimensionType>
+                <childrenColorAttributeValues>
+                    <childValue>@gut@</childValue>
+                    <childValue>@mittel@</childValue>
+                    <childValue>@schlecht@</childValue>
+                    <childValue>@unspec@</childValue>
+                </childrenColorAttributeValues>
+                <childrenSelectedColors>
+                    <childColor>AFCEA8</childColor>
+                    <childColor>F6DF95</childColor>
+                    <childColor>D79DAD</childColor>
+                    <childColor>D3CFD1</childColor>
+                </childrenSelectedColors>
+                <form>graphicalExport.cluster.form.option.rectangle</form>
+            </option>
+            <option colorAttribute="@komplexitt.id@" selected="true">
+                <dimensionKey>@komplexitt@</dimensionKey>
+                <dimensionType>attributeBean</dimensionType>
+                <childrenColorAttributeValues>
+                    <childValue>@hoch@</childValue>
+                    <childValue>@mittel@</childValue>
+                    <childValue>@gering@</childValue>
+                    <childValue>@unspec@</childValue>
+                </childrenColorAttributeValues>
+                <childrenSelectedColors>
+                    <childColor>AFCEA8</childColor>
+                    <childColor>F6DF95</childColor>
+                    <childColor>D79DAD</childColor>
+                    <childColor>D3CFD1</childColor>
+                </childrenSelectedColors>
+                <form>graphicalExport.cluster.form.option.rectangle</form>
+            </option>
+            <option colorAttribute="@kosten.id@" selected="true">
+                <dimensionKey>@kosten@</dimensionKey>
+                <dimensionType>attributeBean</dimensionType>
+                <childrenColorAttributeValues>
+                    <childValue>&lt;= 15,00</childValue>
+                    <childValue>15,00 - 65,00</childValue>
+                    <childValue>65,00 - 90,00</childValue>
+                    <childValue>90,00 - 92,00</childValue>
+                    <childValue>&gt; 92,00</childValue>
+                    <childValue>@unspec@</childValue>
+                </childrenColorAttributeValues>
+                <childrenSelectedColors>
+                    <childColor>AFCEA8</childColor>
+                    <childColor>F6DF95</childColor>
+                    <childColor>D79DAD</childColor>
+                    <childColor>88AED9</childColor>
+                    <childColor>ACA1C8</childColor>
+                    <childColor>D3CFD1</childColor>
+                </childrenSelectedColors>
+                <form>graphicalExport.cluster.form.option.rectangle</form>
+            </option>
+            <option colorAttribute="@wertbeitrag.id@" selected="true">
+                <dimensionKey>@wertbeitrag@</dimensionKey>
+                <dimensionType>attributeBean</dimensionType>
+                <childrenColorAttributeValues>
+                    <childValue>&lt;= 4,00</childValue>
+                    <childValue>4,00 - 4,60</childValue>
+                    <childValue>4,60 - 7,00</childValue>
+                    <childValue>7,00 - 8,00</childValue>
+                    <childValue>&gt; 8,00</childValue>
+                    <childValue>@unspec@</childValue>
+                </childrenColorAttributeValues>
+                <childrenSelectedColors>
+                    <childColor>AFCEA8</childColor>
+                    <childColor>F6DF95</childColor>
+                    <childColor>D79DAD</childColor>
+                    <childColor>88AED9</childColor>
+                    <childColor>ACA1C8</childColor>
+                    <childColor>D3CFD1</childColor>
+                </childrenSelectedColors>
+                <form>graphicalExport.cluster.form.option.rectangle</form>
+            </option>
+            <option colorAttribute="-1" selected="false">
+                <dimensionKey>project.singular</dimensionKey>
+                <dimensionType>buildingBlockBean</dimensionType>
+                <childrenColorAttributeValues/>
+                <childrenSelectedColors/>
+                <form>graphicalExport.cluster.form.option.rectangle</form>
+            </option>
+            <option colorAttribute="-1" selected="false">
+                <dimensionKey>businessProcess.singular</dimensionKey>
+                <dimensionType>buildingBlockBean</dimensionType>
+                <childrenColorAttributeValues/>
+                <childrenSelectedColors/>
+                <form>graphicalExport.cluster.form.option.rectangle</form>
+            </option>
+            <option colorAttribute="-1" selected="false">
+                <dimensionKey>global.business_function</dimensionKey>
+                <dimensionType>buildingBlockBean</dimensionType>
+                <childrenColorAttributeValues/>
+                <childrenSelectedColors/>
+                <form>graphicalExport.cluster.form.option.rectangle</form>
+            </option>
+            <option colorAttribute="-1" selected="false">
+                <dimensionKey>businessObject.singular</dimensionKey>
+                <dimensionType>buildingBlockBean</dimensionType>
+                <childrenColorAttributeValues/>
+                <childrenSelectedColors/>
+                <form>graphicalExport.cluster.form.option.rectangle</form>
+            </option>
+            <option colorAttribute="-1" selected="false">
+                <dimensionKey>global.product</dimensionKey>
+                <dimensionType>buildingBlockBean</dimensionType>
+                <childrenColorAttributeValues/>
+                <childrenSelectedColors/>
+                <form>graphicalExport.cluster.form.option.rectangle</form>
+            </option>
+            <option colorAttribute="-1" selected="false">
+                <dimensionKey>businessUnit.singular</dimensionKey>
+                <dimensionType>buildingBlockBean</dimensionType>
+                <childrenColorAttributeValues/>
+                <childrenSelectedColors/>
+                <form>graphicalExport.cluster.form.option.rectangle</form>
+            </option>
+            <option colorAttribute="-1" selected="false">
+                <dimensionKey>technicalComponentRelease.singular</dimensionKey>
+                <dimensionType>buildingBlockBean</dimensionType>
+                <childrenColorAttributeValues/>
+                <childrenSelectedColors/>
+                <form>graphicalExport.cluster.form.option.rectangle</form>
+            </option>
+            <option colorAttribute="@systemgre.id@" selected="false">
+                <dimensionKey>@systemgre@</dimensionKey>
+                <dimensionType>attributeBean</dimensionType>
+                <childrenColorAttributeValues>
+                    <childValue>@klein@</childValue>
+            		<childValue>@mittel@</childValue>
+            		<childValue>@gro@</childValue>
+           			<childValue>@unspec@</childValue>
+                </childrenColorAttributeValues>
+                <childrenSelectedColors/>
+                <form>graphicalExport.cluster.form.option.rectangle</form>
+            </option>
+            <option colorAttribute="@verantwortlichkeit.id@" selected="false">
+                <dimensionKey>@verantwortlichkeit@</dimensionKey>
+                <dimensionType>attributeBean</dimensionType>
+                <childrenColorAttributeValues>
+                	<childValue>alice</childValue>
+                    <childValue>bob</childValue>
+                    <childValue>joe</childValue>
+                    <childValue>max</childValue>
+                    <childValue>sue</childValue>
+                    <childValue>tom</childValue>
+                    <childValue>walter</childValue>
+                    <childValue>@unspec@</childValue>
+                </childrenColorAttributeValues>
+                <childrenSelectedColors/>
+                <form>graphicalExport.cluster.form.option.rectangle</form>
+            </option>
+        </colorOptions>
+        <lowerLevel>1</lowerLevel>
+        <selectedBbType>informationSystemRelease.plural</selectedBbType>
+        <selectedColors>
+            <color>AFCEA8</color>
+            <color>F6DF95</color>
+            <color>D79DAD</color>
+            <color>D3CFD1</color>
+        </selectedColors>
+        <selectedModus>graphicalExport.cluster.mode.buildingBlocks</selectedModus>
+        <typeOrder>
+            <type>infrastructureElement.singular</type>
+            <type>informationSystemDomain.singular</type>
+            <type>@gesundheitszustand@</type>
+            <type>@komplexitt@</type>
+            <type>@kosten@</type>
+            <type>@wertbeitrag@</type>
+            <type>@verantwortlichkeit@</type>
+            <type>@systemgre@</type>
+            <type>project.singular</type>
+            <type>businessProcess.singular</type>
+            <type>global.business_function</type>
+            <type>businessObject.singular</type>
+            <type>global.product</type>
+            <type>businessUnit.singular</type>
+            <type>technicalComponentRelease.singular</type>
+        </typeOrder>
+        <upperLevel>1</upperLevel>
+        <selectedGraphicsFormat>reports_export_SVG</selectedGraphicsFormat>
+    </clusterOptions>
+    <queryForms>
+        <queryForm typeXML="INFORMATIONSYSTEMRELEASE">
+            <queryUserInput>
+                <noAssignements>false</noAssignements>
+                <queryFirstLevels>
+                    <queryFirstLevel>
+                        <querySecondLevels>
+                            <querySecondLevel>
+                                <chosenAttributeStringId>blank_null_-1</chosenAttributeStringId>
+                                <dateATSelected>false</dateATSelected>
+                                <freeTextCriteriaSelected>true</freeTextCriteriaSelected>
+                            </querySecondLevel>
+                        </querySecondLevels>
+                    </queryFirstLevel>
+                </queryFirstLevels>
+                <statusQueryData typeOfStatus="INFORMATIONSYSTEMRELEASE">
+                    <values>
+                        <value key="typeOfStatus_current" value="true"/>
+                        <value key="typeOfStatus_planned" value="false"/>
+                        <value key="typeOfStatus_target" value="false"/>
+                        <value key="typeOfStatus_inactive" value="false"/>
+                    </values>
+                </statusQueryData>
+                <timeSpanQueryData>
+                    <endDate>1275861600000</endDate>
+                    <endTimeFunction>ABSOLUTE</endTimeFunction>
+                    <startDate>1275861600000</startDate>
+                    <startTimeFunction>ABSOLUTE</startTimeFunction>
+                </timeSpanQueryData>
+            </queryUserInput>
+        </queryForm>
+    </queryForms>
+    <selectedResultIds />
+    <version>@build.version@</version>
+</report>

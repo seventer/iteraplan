@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:security="http://www.springframework.org/schema/security"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                      http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+
+	<bean id="filterChainProxy" class="org.springframework.security.web.FilterChainProxy">
+		<security:filter-chain-map path-type="ant">
+         	<security:filter-chain pattern="/**"
+         	  filters="
+         	    httpSessionContextIntegrationFilter,
+         	    logoutFilter,
+         	    usernamePasswordAuthenticationFilter,
+         	    securityContextHolderAwareRequestFilter,
+         	    anonymousAuthenticationFilter,
+         	    exceptionTranslationFilter,
+         	    filterInvocationInterceptor" />
+		</security:filter-chain-map>
+	</bean>
+
+	<bean id="httpSessionContextIntegrationFilter" class="org.springframework.security.web.context.HttpSessionContextIntegrationFilter"/>
+
+	<bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<constructor-arg value="/jsp/Start.jsp"/> <!-- URL redirected to after logout -->
+		<constructor-arg>
+			<list>
+				<bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler">
+                  <property name="invalidateHttpSession" value="true"/>
+                </bean>
+			</list>
+		</constructor-arg>
+        <property name="filterProcessesUrl" value="/j_turm_logout"/> <!-- URL for activating logout -->
+	</bean>
+
+	<bean id="usernamePasswordAuthenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+		<property name="authenticationManager" ref="authenticationManager"/>
+		<property name="authenticationFailureHandler" ref="failureHandler" />
+		<property name="authenticationSuccessHandler" ref="successHandler" />
+		<property name="sessionAuthenticationStrategy" ref="sas"/>
+		<property name="filterProcessesUrl" value="/j_turm_security_check"/>
+		<property name="allowSessionCreation" value="true" />
+	</bean>
+
+  <!-- =============================================================================================
+    Handlers for failure/exception / success and session authentication startegy
+    ===========================================================================================  -->
+
+	<bean id="failureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler" >
+		<property name="defaultFailureUrl" value="/jsp/Login.jsp?errorKey=error.badCredentials" />
+		<property name="exceptionMappings">
+	      <props>
+	        <prop key="org.springframework.security.authentication.AuthenticationServiceException">
+	          /jsp/Login.jsp?errorKey=error.datasourceNotAvailable
+	        </prop>
+	        <prop key="org.springframework.security.authentication.CredentialsExpiredException">
+	          /password?passwordChangeReason=message.passwordExpired
+	        </prop>
+	      </props>
+	    </property>
+	</bean>
+
+	<bean id="successHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler" >
+		<property name="defaultTargetUrl" value="/" />
+	</bean>
+
+	<bean id="sas" class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy">
+		<property name="migrateSessionAttributes" value="true" />
+	</bean>
+
+	<bean id="securityContextHolderAwareRequestFilter" class="org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter"/>
+
+	<bean id="anonymousAuthenticationFilter" class="org.springframework.security.web.authentication.AnonymousAuthenticationFilter">
+		<property name="key" value="changeThis"/>
+		<property name="userAttribute" value="anonymousUser,ROLE_ANONYMOUS"/>
+	</bean>
+
+	<bean id="exceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
+		<property name="authenticationEntryPoint">
+			<bean class="org.springframework.security.web.authentication.AuthenticationProcessingFilterEntryPoint">
+				<property name="loginFormUrl" value="/jsp/Login.jsp"/>
+				<property name="forceHttps" value="false"/>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="filterInvocationInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+		<property name="authenticationManager" ref="authenticationManager"/>
+		<property name="accessDecisionManager">
+			<bean class="org.springframework.security.access.vote.AffirmativeBased">
+				<property name="allowIfAllAbstainDecisions" value="false"/>
+				<property name="decisionVoters">
+					<list>
+						<bean class="org.springframework.security.access.vote.RoleVoter">
+                          <property name="rolePrefix">
+                            <value>iteraplan_</value>
+                          </property>
+                        </bean>
+						<bean class="org.springframework.security.access.vote.AuthenticatedVoter"/>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<property name="securityMetadataSource">
+			<security:filter-security-metadata-source path-type="ant" lowercase-comparisons="true" >
+				<security:intercept-url pattern="/jsp/login.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+				<security:intercept-url pattern="/images/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+				<security:intercept-url pattern="/css/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+				<security:intercept-url pattern="/javascript/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+				<security:intercept-url pattern="/password" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+				<security:intercept-url pattern="/users" access="iteraplan_Supervisor"/>
+				<security:intercept-url pattern="/roles" access="iteraplan_Supervisor"/>
+				<security:intercept-url pattern="/**" access="IS_AUTHENTICATED_REMEMBERED"/>
+			</security:filter-security-metadata-source>
+		</property>
+	</bean>
+
+	<bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
+		<property name="providers">
+			<list>
+                <ref local="daoAuthenticationProvider"/>
+				<bean class="org.springframework.security.authentication.AnonymousAuthenticationProvider">
+					<property name="key" value="changeThis"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+   <bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+      <property name="userDetailsService" ref="JdbcUserDetailsServiceImpl" />
+      <property name="passwordEncoder" ref="passwordEncoder" />
+      <property name="hideUserNotFoundExceptions" value="false"/>
+   </bean>
+
+  <!-- =============================================================================================
+    Fetches the user and role information from the database. The expected database schema corresponds 
+    to the iTURM database schema.
+    ===========================================================================================  -->
+   <bean id="JdbcUserDetailsServiceImpl" class="de.iteratec.springframework.security.userdetails.jdbc.JdbcUserDetailsServiceImpl">
+      <property name="dataSource">
+        <ref bean="dataSource"/>
+      </property>
+      <property name="authoritiesByUsernameQuery">
+        <value>SELECT u.loginName as username, r.roleName AS authority FROM im_role r, im_user_has_role ur, im_user u WHERE r.id=ur.im_role_id AND ur.im_user_id=u.id AND lower(u.loginName)=lower(?)</value>
+      </property>
+      <property name="usersByUsernameQuery">
+        <value>SELECT u.loginName as username, u.password AS password, u.lastPasswordChange AS lastPasswordChange FROM im_user u WHERE lower(loginName)=lower(?)</value>
+      </property>
+      <property name="daysBeforePasswordExpires">
+        <value>9999</value>
+      </property>
+   </bean>
+
+   <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+     <property name="jndiName" value="java:/comp/env/@DB.JNDI.DATASOURCE@" />
+   </bean>
+
+   <bean id="passwordEncoder" class="de.iteratec.springframework.security.providers.encoding.CaseInsensitiveMessageDigestPasswordEncoder">
+     <constructor-arg value="MD5"/>
+   </bean>
+
+	<!-- This bean is optional; it isn't used by any other bean as it only listens and logs -->
+	<!--
+	<bean id="loggerListener" class="org.springframework.security.event.authentication.LoggerListener"/>
+	-->
+
+</beans>

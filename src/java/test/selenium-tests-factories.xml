@@ -1,0 +1,794 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation=
+       "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/util  http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+	
+	<bean id="loginActionFactory"
+		class="de.iteratec.iteraplan.webtests.action.factory.LoginActionFactory"
+		scope="singleton">
+        <property name="userField"><value>${page.login.username.field}</value></property>
+        <property name="passwordField"><value>${page.login.password.field}</value></property>
+        <property name="loginButton"><value>${page.login.button}</value></property>
+    </bean>
+    
+    <bean id="logoutActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.LogoutActionFactory">  
+    	<property name="logoutLink"><value>${page.main.navigation.menu.logout}</value></property>
+    </bean>
+    
+    <bean id="createInformationSystemActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateInformationSystemActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.information.system}</value>
+    		</list>
+    	</property>
+    	<property name="newISButton"><value>${page.main.navigation.information.system.new}</value></property>
+    	<property name="nameField"><value>${page.main.navigation.information.system.new.name.field}</value></property>
+    	<property name="relationsTab"><value>${page.main.navigation.information.system.new.relationship.tab}</value></property>
+    	<property name="parentOption"><value>${page.main.navigation.information.system.new.parent.option}</value></property>
+    	<property name="predecessorOption"><value>${page.main.navigation.information.system.new.relationship.predecessor.option}</value></property>
+    	<property name="saveButton"><value>${page.main.navigation.information.system.save}</value></property>
+    	<property name="buildingBlockOption"><value>${page.main.navigation.information.system.new.relationship.component.option}</value></property>
+    	<property name="businessObjectOption"><value>${page.main.navigation.information.system.new.relationship.bo.option}</value></property>
+    	<property name="businessObjectAdd"><value>${page.main.navigation.information.system.new.relationship.bo.add}</value></property>
+    </bean>
+    
+    <bean id="deleteInformationSystemActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.DeleteInformationSystemActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.information.system}</value>
+    		</list>
+    	</property>
+    	<property name="selectLink"><value>${page.main.navigation.information.system.link}</value></property>
+    	<property name="deleteButton"><value>${page.main.navigation.information.system.delete}</value></property>
+    	<property name="confirmationMessage"><value>
+    		<![CDATA[
+    			^Wenn Sie dieses Bebauungselement löschen, werden alle direkten und indirekten Teil-Bebauungselemente gelöscht\. Möchten Sie fortfahren[\s\S]$
+    		]]></value>
+    	</property>
+    </bean>
+    
+    <bean id="createBuildingBlockActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateBuildingBlockActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.building.block}</value>
+    		</list>
+    	</property>
+    	<property name="newBBButton"><value>${page.main.navigation.building.block.new}</value></property>
+    	<property name="nameField"><value>${page.main.navigation.building.block.new.name.field}</value></property>
+    	<property name="usesOption"><value>${page.main.navigation.building.block.new.uses.option}</value></property>
+    	<property name="addUsesButton"><value>${page.main.navigation.building.block.new.uses.add.button}</value></property>
+    	<property name="saveButton"><value>${page.main.navigation.building.block.save}</value></property>
+    </bean>
+    
+    <bean id="createBuildingBlockReleaseActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateBuildingBlockReleaseActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.building.block}</value>
+    		</list>
+    	</property>
+    	<property name="bBLink"><value>${page.main.navigation.building.block.link}</value></property>
+    	<property name="releaseButton"><value>${page.main.navigation.building.block.release}</value></property>
+    	<property name="releaseNameField"><value>${page.main.navigation.building.block.release.name.field}</value></property>
+    	<property name="usesOption"><value>${page.main.navigation.building.block.new.uses.option}</value></property>
+    	<property name="addUsesButton"><value>${page.main.navigation.building.block.new.uses.add.button}</value></property>
+    	<property name="saveButton"><value>${page.main.navigation.building.block.save}</value></property>
+    </bean>
+    
+    <bean id="deleteBuildingBlockActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.DeleteBuildingBlockActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.building.block}</value>
+    		</list>
+    	</property>
+    	<property name="selectLink"><value>${page.main.navigation.building.block.link}</value></property>
+    	<property name="deleteButton"><value>${page.main.navigation.building.block.delete}</value></property>
+    	<property name="confirmationMessage"><value>
+    		<![CDATA[
+    			^Wenn Sie dieses Bebauungselement löschen, werden alle direkten und indirekten Teil-Bebauungselemente gelöscht\. Möchten Sie fortfahren[\s\S]$
+    		]]></value>
+    	</property>
+    </bean>
+    
+    <bean id="editBuildingBlockActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.EditBuildingBlockActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.building.block}</value>
+    		</list>
+    	</property>
+    	<property name="selectLink"><value>${page.main.navigation.building.block.link}</value></property>
+    	<property name="editButton"><value>${page.main.navigation.building.block.edit}</value></property>
+    	<property name="saveButton"><value>${page.main.navigation.building.block.save}</value></property>
+    </bean>
+    
+    <bean id="createInformationFlowDiagramActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateInformationFlowDiagramActionFactory">  
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.menu.evaluation.graphical}</value>
+    		</list>
+    	</property>
+    	<property name="informationFlowDiagramLink"><value>${page.reporting.graphical.information.flow}</value></property>
+    	<property name="queryButton"><value>${page.reporting.graphical.information.flow.query.button}</value></property>
+    	<property name="confirmSelectionButton"><value>${page.reporting.graphical.information.flow.query.confirm.button}</value></property>
+    	<property name="colorField"><value>${page.reporting.graphical.information.flow.color.field}</value></property>
+        <property name="lineField"><value>${page.reporting.graphical.information.flow.line.field}</value></property>
+        <property name="formatOption"><value>${page.reporting.graphical.information.flow.format.option}</value></property>
+        <property name="generateButton"><value>${page.reporting.graphical.information.flow.generate.button}</value></property>
+    </bean>
+    
+    <bean id="createLandscapeDiagramActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateLandscapeDiagramActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.menu.evaluation.graphical}</value>
+    		</list>
+    	</property>
+    	<property name="landscapeDiagramLink"><value>${page.reporting.graphical.landscape}</value></property>
+    	<property name="contentOption"><value>${page.reporting.graphical.landscape.content.option}</value></property>
+    	<property name="columnOption"><value>${page.reporting.graphical.landscape.column.option}</value></property>
+    	<property name="rowOption"><value>${page.reporting.graphical.landscape.row.option}</value></property>
+    	<property name="colorAttributeOption"><value>${page.reporting.graphical.landscape.color.option}</value></property>
+    	<property name="lineAttributeOption"><value>${page.reporting.graphical.landscape.line.option}</value></property>
+    	<property name="formatOption"><value>${page.reporting.graphical.landscape.format.option}</value></property>
+    	<property name="generateButton"><value>${page.reporting.graphical.landscape.generate.button}</value></property>
+    </bean>
+    
+    <bean id="createMasterplanDiagramActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateMasterplanDiagramActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.menu.evaluation.graphical}</value>
+    		</list>
+    	</property>
+    	<property name="masterplanDiagramLink"><value>${page.reporting.graphical.masterplan}</value></property>
+    	<property name="queryButton"><value>${page.reporting.graphical.masterplan.query.button}</value></property>
+    	<property name="confirmSelectionButton"><value>${page.reporting.graphical.masterplan.query.confirm.button}</value></property>
+    	<property name="colourAttributeOption"><value>${page.reporting.graphical.masterplan.colour.option}</value></property>
+    	<property name="formatOption"><value>${page.reporting.graphical.masterplan.format.option}</value></property>
+    	<property name="generateButton"><value>${page.reporting.graphical.masterplan.generate.button}</value></property>
+    </bean>
+    
+    <bean id="createPortfolioDiagramActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreatePortfolioDiagramActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.menu.evaluation.graphical}</value>
+    		</list>
+    	</property>
+    	<property name="portfolioDiagramLink"><value>${page.reporting.graphical.portfolio}</value></property>
+    	<property name="queryButton"><value>${page.reporting.graphical.portfolio.query.button}</value></property>
+    	<property name="confirmSelectionButton"><value>${page.reporting.graphical.portfolio.query.confirm.button}</value></property>
+    	<property name="xAxisAttributeOption"><value>${page.reporting.graphical.portfolio.xaxis.option}</value></property>
+    	<property name="yAxisAttributeOption"><value>${page.reporting.graphical.portfolio.yaxis.option}</value></property>
+    	<property name="sizeAttributeOption"><value>${page.reporting.graphical.portfolio.size.option}</value></property>
+    	<property name="dimensionAttributeOption"><value>${page.reporting.graphical.portfolio.dimension.option}</value></property>
+    	<property name="formatOption"><value>${page.reporting.graphical.portfolio.format.option}</value></property>
+    	<property name="generateButton"><value>${page.reporting.graphical.portfolio.generate.button}</value></property>
+    </bean>
+    
+    <bean id="createSavedQueryDiagramActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateSavedQueryDiagramActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.menu.evaluation.graphical}</value>
+    		</list>
+    	</property>
+    	<property name="selectButton"><value>${page.reporting.graphical.saved.query.select.button}</value></property>
+    </bean>
+    
+    <bean id="createClusterDiagramActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateClusterDiagramActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.menu.evaluation.graphical}</value>
+    		</list>
+    	</property>
+    	<property name="clusterDiagramLink"><value>${page.reporting.graphical.cluster}</value></property>
+    	<property name="queryButton"><value>${page.reporting.graphical.cluster.query.button}</value></property>
+    	<property name="allCheckbox"><value>${page.reporting.graphical.cluster.query.all.checkbox}</value></property>
+    	<property name="systemElement"><value>${page.reporting.graphical.cluster.query.system.element}</value></property>
+    	<property name="confirmSelectionButton"><value>${page.reporting.graphical.cluster.query.confirm.button}</value></property>
+    	<property name="colourAttributeOption"><value>${page.reporting.graphical.cluster.colour.option}</value></property>
+    	<property name="formatOption"><value>${page.reporting.graphical.cluster.format.option}</value></property>
+    	<property name="generateButton"><value>${page.reporting.graphical.cluster.generate.button}</value></property>
+    </bean>
+    
+    
+    <bean id="createClusterDiagramWithAttributesActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateClusterDiagramWithAttributesActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.menu.evaluation.graphical}</value>
+    		</list>
+    	</property>
+    	<property name="clusterDiagramLink"><value>${page.reporting.graphical.cluster}</value></property>
+    	<property name="criterionOption"><value>${page.reporting.graphical.cluster.modus.option}</value></property>
+    	<property name="confirmSelectionButton"><value>${page.reporting.graphical.cluster.query.confirm.button}</value></property>
+    	<property name="formatOption"><value>${page.reporting.graphical.cluster.format.option}</value></property>
+    	<property name="generateButton"><value>${page.reporting.graphical.cluster.generate.button}</value></property>
+    </bean>
+    
+    <bean id="createTabularReportActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateTabularReportActionFactory">  
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.navigation.menu.reporting.tabular}</value>
+    		</list>
+    	</property>
+    	<property name="formatOption"><value>${page.reporting.tabular.format.option}</value></property>
+    	<property name="generateButton"><value>${page.reporting.tabular.generate.button}</value></property>
+    </bean>
+    
+    <bean id="createEnummerationAttributeActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateAttributeActionFactory">  
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.menu.administration.attributes}</value>
+    		</list>
+    	</property>
+    	<property name="newAttributeButton"><value>${page.administration.attributes.new}</value></property>
+    	<property name="attributeOption"><value>${page.administration.attributes.new.enummeration}</value></property>
+    	<property name="nextButton"><value>${page.administration.attributes.new.next}</value></property>
+    	<property name="attributeNameField"><value>${page.administration.attributes.new.enummeration.name.field}</value></property>
+    	<property name="mandatoryField"><value>${page.administration.attributes.new.enummeration.mandatory}</value></property>
+    	<property name="bbtOption"><value>${page.administration.attributes.new.bbt.option}</value></property>
+    	<property name="saveButton"><value>${page.administration.attributes.new.enummeration.save}</value></property>
+    </bean>
+    
+    <bean id="createNumberAttributeActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateAttributeActionFactory">  
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.menu.administration.attributes}</value>
+    		</list>
+    	</property>
+    	<property name="newAttributeButton"><value>${page.administration.attributes.new}</value></property>
+    	<property name="attributeOption"><value>${page.administration.attributes.new.number}</value></property>
+    	<property name="nextButton"><value>${page.administration.attributes.new.next}</value></property>
+    	<property name="attributeNameField"><value>${page.administration.attributes.new.enummeration.name.field}</value></property>
+    	<property name="mandatoryField"><value>${page.administration.attributes.new.enummeration.mandatory}</value></property>
+    	<property name="bbtOption"><value>${page.administration.attributes.new.bbt.option}</value></property>
+    	<property name="saveButton"><value>${page.administration.attributes.new.enummeration.save}</value></property>
+    </bean>
+    
+    <bean id="createTextAttributeActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateAttributeActionFactory">  
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.menu.administration.attributes}</value>
+    		</list>
+    	</property>
+    	<property name="newAttributeButton"><value>${page.administration.attributes.new}</value></property>
+    	<property name="attributeOption"><value>${page.administration.attributes.new.text}</value></property>
+    	<property name="nextButton"><value>${page.administration.attributes.new.next}</value></property>
+    	<property name="attributeNameField"><value>${page.administration.attributes.new.enummeration.name.field}</value></property>
+    	<property name="mandatoryField"><value>${page.administration.attributes.new.enummeration.mandatory}</value></property>
+    	<property name="bbtOption"><value>${page.administration.attributes.new.bbt.option}</value></property>
+    	<property name="saveButton"><value>${page.administration.attributes.new.enummeration.save}</value></property>
+    </bean>
+    
+    <bean id="createDateAttributeActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateAttributeActionFactory">  
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.menu.administration.attributes}</value>
+    		</list>
+    	</property>
+    	<property name="newAttributeButton"><value>${page.administration.attributes.new}</value></property>
+    	<property name="attributeOption"><value>${page.administration.attributes.new.date}</value></property>
+    	<property name="nextButton"><value>${page.administration.attributes.new.next}</value></property>
+    	<property name="attributeNameField"><value>${page.administration.attributes.new.enummeration.name.field}</value></property>
+    	<property name="mandatoryField"><value>${page.administration.attributes.new.enummeration.mandatory}</value></property>
+    	<property name="bbtOption"><value>${page.administration.attributes.new.bbt.option}</value></property>
+    	<property name="saveButton"><value>${page.administration.attributes.new.enummeration.save}</value></property>
+    </bean>
+    
+    <bean id="createResponsibilityAttributeActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateAttributeActionFactory">  
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.menu.administration.attributes}</value>
+    		</list>
+    	</property>
+    	<property name="newAttributeButton"><value>${page.administration.attributes.new}</value></property>
+    	<property name="attributeOption"><value>${page.administration.attributes.new.responsibility}</value></property>
+    	<property name="nextButton"><value>${page.administration.attributes.new.next}</value></property>
+    	<property name="attributeNameField"><value>${page.administration.attributes.new.enummeration.name.field}</value></property>
+    	<property name="mandatoryField"><value>${page.administration.attributes.new.enummeration.mandatory}</value></property>
+    	<property name="bbtOption"><value>${page.administration.attributes.new.bbt.option}</value></property>
+    	<property name="saveButton"><value>${page.administration.attributes.new.enummeration.save}</value></property>
+    </bean>
+    
+    <bean id="deleteAttributeActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.DeleteAttributeActionFactory">  
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.menu.administration.attributes}</value>
+    		</list>
+    	</property>
+    	<property name="attributeOption"><value>${page.administration.attributes.select}</value></property>
+    	<property name="deleteButton"><value>${page.administration.attributes.delete}</value></property>
+    </bean>
+    
+    <bean id="createAttributeGroupActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateAttributeGroupActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.menu.administration.attribute.group}</value>
+    		</list>
+    	</property>
+    	<property name="newAttributeGroupButton"><value>${page.attribute.group.new.button}</value></property>
+    	<property name="nameField"><value>${page.attribute.group.new.name.field}</value></property>
+    	<property name="attributesOption"><value>${page.attribute.group.new.attribues.option}</value></property>
+    	<property name="addAttributeButton"><value>${page.attribute.group.new.attribues.add.button}</value></property>
+    	<property name="saveButton"><value>${page.attribute.group.new.save}</value></property>
+    </bean>
+    
+    <bean id="deleteAttributeGroupActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.DeleteAttributeGroupActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.menu.administration.attribute.group}</value>
+    		</list>
+    	</property>
+    	<property name="attributeGroupList"><value>${page.attribute.group.list}</value></property>
+    	<property name="deleteButton"><value>${page.attribute.group.new.delete}</value></property>
+    </bean>
+    
+    <bean id="changeDbActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.ChangeDbActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.navigation.menu.administration.configuration}</value>
+    		</list>
+    	</property>
+    	<property name="dbOption"><value>${page.navigation.menu.administration.configuration.db.option}</value></property>
+    	<property name="changeButton"><value>${page.navigation.menu.administration.configuration.db.change.button}</value></property>
+    </bean>
+    
+    <bean id="sessionCleanupActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.SessionCleanupActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.navigation.menu.administration.restart}</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="exportActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.ExportActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.navigation.menu.administration.export}</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="timeseriesImportActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.TimeseriesImportActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.navigation.menu.administration.export}</value>
+    		</list>
+    	</property>
+    	<property name="timeseriesUploadButton"><value>${page.import.timeseries.upload.button}</value></property>
+    	<property name="backButton"><value>${page.navigation.button.back}</value></property>
+    </bean>
+    
+    <bean id="consistencyCheckActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CheckConsistencyActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.navigation.menu.evaluation.consistency}</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="fastExportActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.FastExportActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.information.system}</value>
+    		</list>
+    	</property>
+    	<property name="visualisationTab"><value>${page.main.visualisation.tab}</value></property>
+    	<property name="selectButton"><value>${page.main.fast.export.select.button}</value></property>
+    	<property name="formatOption"><value>${page.main.fast.export.format.option}</value></property>
+    	<property name="downloadButton"><value>${page.main.fast.export.download.button}</value></property>
+    	<property name="dropdownLink"><value>${page.main.fast.export.dropdown.link}</value></property>
+    </bean>
+    
+    <bean id="searchActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.SearchActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.navigation.menu.reporting.search}</value>
+    		</list>
+    	</property>
+    	<property name="searchTermField"><value>${page.search.term.field}</value></property>
+    	<property name="searchButton"><value>${page.search.search.button}</value></property>
+    	<property name="resetButton"><value>${page.search.reset.button}</value></property>
+    </bean>
+    
+    <bean id="searchWithDifferentSelectedAttributesActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.SearchWithDifferentSelectedAttributesActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.project}</value>
+    		</list>
+    	</property>
+    	<property name="attributeDropDown"><value>${page.project.attribute.dropdown}</value></property>
+    	<property name="operationDropDown"><value>${page.project.operation.dropdown}</value></property>
+    </bean>
+    
+    <bean id="createISSuccessorReportActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateSuccessorReportActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.navigation.menu.reporting.successor.report}</value>
+    		</list>
+    	</property>
+    	<property name="selectOption"><value>${page.reporting.successor.ISreport.select.option}</value></property>
+    	<property name="childrenOption"><value>${page.reporting.successor.ISreport.children.option}</value></property>
+    	<property name="parentsOption"><value>${page.reporting.successor.ISreport.parents.option}</value></property>
+    	<property name="formatOption"><value>${page.reporting.successor.ISreport.format.option}</value></property>
+    	<property name="generateButton"><value>${page.reporting.successor.ISreport.generate.button}</value></property>
+    </bean>
+    
+    <bean id="createTCSuccessorReportActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateSuccessorReportActionFactory">
+      <property name="navigationLinks">
+        <list>
+          <value>${page.navigation.menu.reporting.successor.report}</value>
+        </list>
+      </property>
+      <property name="selectOption"><value>${page.reporting.successor.TCreport.select.option}</value></property>
+      <property name="childrenOption"><value>${page.reporting.successor.TCreport.children.option}</value></property>
+      <property name="parentsOption"><value>${page.reporting.successor.TCreport.parents.option}</value></property>
+      <property name="formatOption"><value>${page.reporting.successor.TCreport.format.option}</value></property>
+      <property name="generateButton"><value>${page.reporting.successor.TCreport.generate.button}</value></property>
+    </bean>
+    
+    <bean id="createArchitecturalDomainActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateArchitecturalDomainActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.architectural.domain}</value>
+    		</list>
+    	</property>
+    	<property name="newADButton"><value>${page.architectural.domain.new}</value></property>
+    	<property name="nameField"><value>${page.architectural.domain.new.name.field}</value></property>
+    	<property name="parentOption"><value>${page.architectural.domain.parent}</value></property>
+    	<property name="childrenOption"><value>${page.architectural.domain.children}</value></property>
+    	<property name="childrenOptionAdd"><value>${page.architectural.domain.children.add}</value></property>
+    	<property name="saveButton"><value>${page.architectural.domain.save}</value></property>
+    </bean>
+    
+    <bean id="deleteArchitecturalDomainActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.DeleteArchitecturalDomainActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.architectural.domain}</value>
+    		</list>
+    	</property>
+    	<property name="selectLink"><value>${page.architectural.domain.link}</value></property>
+    	<property name="refreshButton"><value>${page.architectural.domain.refresh}</value></property>
+    	<property name="deleteButton"><value>${page.architectural.domain.delete}</value></property>
+    </bean>
+    
+    <bean id="createBusinessDomainActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateBusinessDomainActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.business.domain}</value>
+    		</list>
+    	</property>
+    	<property name="newBDButton"><value>${page.business.domain.new}</value></property>
+    	<property name="nameField"><value>${page.business.domain.new.name.field}</value></property>
+    	<property name="parentOption"><value>${page.business.domain.parent}</value></property>
+    	<property name="childrenOption"><value>${page.business.domain.children}</value></property>
+    	<property name="childrenOptionAdd"><value>${page.business.domain.children.add}</value></property>
+    	<property name="saveButton"><value>${page.business.domain.save}</value></property>
+    </bean>
+    
+    <bean id="deleteBusinessDomainActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.DeleteBusinessDomainActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.business.domain}</value>
+    		</list>
+    	</property>
+    	<property name="selectLink"><value>${page.business.domain.link}</value></property>
+    	<property name="refreshButton"><value>${page.business.domain.refresh}</value></property>
+    	<property name="deleteButton"><value>${page.business.domain.delete}</value></property>
+    </bean>
+    
+    <bean id="createBusinessProcessActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateBusinessProcessActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.business.process}</value>
+    		</list>
+    	</property>
+    	<property name="newBPButton"><value>${page.business.process.new}</value></property>
+    	<property name="nameField"><value>${page.business.process.new.name.field}</value></property>
+    	<property name="parentOption"><value>${page.business.process.parent}</value></property>
+    	<property name="childrenOption"><value>${page.business.process.children}</value></property>
+    	<property name="childrenOptionAdd"><value>${page.business.process.children.add}</value></property>
+    	<property name="saveButton"><value>${page.business.process.save}</value></property>
+    </bean>
+    
+    <bean id="deleteBusinessProcessActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.DeleteBusinessProcessActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.business.process}</value>
+    		</list>
+    	</property>
+    	<property name="selectLink"><value>${page.business.process.link}</value></property>
+    	<property name="refreshButton"><value>${page.business.process.refresh}</value></property>
+    	<property name="deleteButton"><value>${page.business.process.delete}</value></property>
+    </bean>
+    
+    <bean id="createBusinessUnitActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateBusinessUnitActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.business.unit}</value>
+    		</list>
+    	</property>
+    	<property name="newBUButton"><value>${page.business.unit.new}</value></property>
+    	<property name="nameField"><value>${page.business.unit.new.name.field}</value></property>
+    	<property name="parentOption"><value>${page.business.unit.parent}</value></property>
+    	<property name="childrenOption"><value>${page.business.unit.children}</value></property>
+    	<property name="childrenOptionAdd"><value>${page.business.unit.children.add}</value></property>
+    	<property name="saveButton"><value>${page.business.unit.save}</value></property>
+    </bean>
+    
+    <bean id="deleteBusinessUnitActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.DeleteBusinessUnitActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.business.unit}</value>
+    		</list>
+    	</property>
+    	<property name="selectLink"><value>${page.business.unit.link}</value></property>
+    	<property name="refreshButton"><value>${page.business.unit.refresh}</value></property>
+    	<property name="deleteButton"><value>${page.business.unit.delete}</value></property>
+    </bean>
+    
+    <bean id="createBusinessFunctionActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateBusinessFunctionActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.business.function}</value>
+    		</list>
+    	</property>
+    	<property name="newBFButton"><value>${page.business.function.new}</value></property>
+    	<property name="nameField"><value>${page.business.function.new.name.field}</value></property>
+    	<property name="parentOption"><value>${page.business.function.parent}</value></property>
+    	<property name="childrenOption"><value>${page.business.function.children}</value></property>
+    	<property name="childrenOptionAdd"><value>${page.business.function.children.add}</value></property>
+    	<property name="saveButton"><value>${page.business.function.save}</value></property>
+    </bean>
+    
+    <bean id="deleteBusinessFunctionActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.DeleteBusinessFunctionActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.business.function}</value>
+    		</list>
+    	</property>
+    	<property name="selectLink"><value>${page.business.function.link}</value></property>
+    	<property name="refreshButton"><value>${page.business.function.refresh}</value></property>
+    	<property name="deleteButton"><value>${page.business.function.delete}</value></property>
+    </bean>
+    
+    <bean id="createBusinessObjectActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateBusinessObjectActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.business.object}</value>
+    		</list>
+    	</property>
+    	<property name="newBOButton"><value>${page.business.object.new}</value></property>
+    	<property name="nameField"><value>${page.business.object.new.name.field}</value></property>
+    	<property name="parentOption"><value>${page.business.object.parent}</value></property>
+    	<property name="childrenOption"><value>${page.business.object.children}</value></property>
+    	<property name="childrenOptionAdd"><value>${page.business.object.children.add}</value></property>
+    	<property name="relationsTab"><value>${page.business.object.new.relationship.tab}</value></property>
+    	<property name="informationSystemOption"><value>${page.business.object.new.relationship.isr.option}</value></property>
+    	<property name="informationSystemAdd"><value>${page.business.object.new.relationship.isr.add}</value></property>
+    	<property name="saveButton"><value>${page.business.object.save}</value></property>
+    </bean>
+    
+    <bean id="deleteBusinessObjectActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.DeleteBusinessObjectActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.business.object}</value>
+    		</list>
+    	</property>
+    	<property name="selectLink"><value>${page.business.object.link}</value></property>
+    	<property name="refreshButton"><value>${page.business.object.refresh}</value></property>
+    	<property name="deleteButton"><value>${page.business.object.delete}</value></property>
+    </bean>
+    
+    <bean id="createProductActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateProductActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.product}</value>
+    		</list>
+    	</property>
+    	<property name="newProductButton"><value>${page.product.new}</value></property>
+    	<property name="nameField"><value>${page.product.new.name.field}</value></property>
+    	<property name="parentOption"><value>${page.product.parent}</value></property>
+    	<property name="childrenOption"><value>${page.product.children}</value></property>
+    	<property name="childrenOptionAdd"><value>${page.product.children.add}</value></property>
+    	<property name="saveButton"><value>${page.product.save}</value></property>
+    </bean>
+    
+    <bean id="deleteProductActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.DeleteProductActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.product}</value>
+    		</list>
+    	</property>
+    	<property name="selectLink"><value>${page.product.link}</value></property>
+    	<property name="refreshButton"><value>${page.product.refresh}</value></property>
+    	<property name="deleteButton"><value>${page.product.delete}</value></property>
+    </bean>
+    
+    <bean id="createProjectActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateProjectActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.project}</value>
+    		</list>
+    	</property>
+    	<property name="newProjectButton"><value>${page.project.new}</value></property>
+    	<property name="nameField"><value>${page.project.new.name.field}</value></property>
+    	<property name="parentOption"><value>${page.project.parent}</value></property>
+    	<property name="childrenOption"><value>${page.project.children}</value></property>
+    	<property name="childrenOptionAdd"><value>${page.project.children.add}</value></property>
+    	<property name="saveButton"><value>${page.project.save}</value></property>
+    </bean>
+    
+    <bean id="deleteProjectActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.DeleteProjectActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.project}</value>
+    		</list>
+    	</property>
+    	<property name="selectLink"><value>${page.project.link}</value></property>
+    	<property name="refreshButton"><value>${page.project.refresh}</value></property>
+    	<property name="deleteButton"><value>${page.project.delete}</value></property>
+    </bean>
+    
+    <bean id="createISDomainActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateISDomainActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.information.system.domain}</value>
+    		</list>
+    	</property>
+    	<property name="newISDomainButton"><value>${page.information.system.domain.new}</value></property>
+    	<property name="nameField"><value>${page.information.system.domain.new.name.field}</value></property>
+    	<property name="parentOption"><value>${page.information.system.domain.parent}</value></property>
+    	<property name="childrenOption"><value>${page.information.system.domain.children}</value></property>
+    	<property name="childrenOptionAdd"><value>${page.information.system.domain.children.add}</value></property>
+    	<property name="saveButton"><value>${page.information.system.domain.save}</value></property>
+    </bean>
+    
+    <bean id="deleteISDomainActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.DeleteISDomainActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.information.system.domain}</value>
+    		</list>
+    	</property>
+    	<property name="selectLink"><value>${page.information.system.domain.link}</value></property>
+    	<property name="refreshButton"><value>${page.information.system.domain.refresh}</value></property>
+    	<property name="deleteButton"><value>${page.information.system.domain.delete}</value></property>
+    </bean>
+    
+    <bean id="createInfrastructureElementActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateInfrastructureElementActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.infrastructure.element}</value>
+    		</list>
+    	</property>
+    	<property name="newIEButton"><value>${page.infrastructure.element.new}</value></property>
+    	<property name="nameField"><value>${page.infrastructure.element.new.name.field}</value></property>
+    	<property name="parentOption"><value>${page.infrastructure.element.parent}</value></property>
+    	<property name="childrenOption"><value>${page.infrastructure.element.children}</value></property>
+    	<property name="childrenOptionAdd"><value>${page.infrastructure.element.children.add}</value></property>
+    	<property name="saveButton"><value>${page.infrastructure.element.save}</value></property>
+    </bean>
+    
+    <bean id="deleteInfrastructureElementActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.DeleteInfrastructureElementActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.infrastructure.element}</value>
+    		</list>
+    	</property>
+    	<property name="selectLink"><value>${page.infrastructure.element.link}</value></property>
+    	<property name="refreshButton"><value>${page.infrastructure.element.refresh}</value></property>
+    	<property name="deleteButton"><value>${page.infrastructure.element.delete}</value></property>
+    </bean>
+    
+    <bean id="createInterfaceTransportActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateInterfaceTransportActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.interface}</value>
+    		</list>
+    	</property>
+    	<property name="newISIButton"><value>${page.interface.new}</value></property>
+    	<property name="nameField"><value>${page.interface.new.name.field}</value></property>
+    	<property name="directionOption"><value>${page.interface.new.direction.option}</value></property>
+    	<property name="saveButton"><value>${page.interface.save}</value></property>
+    </bean>
+    
+     <bean id="deleteInterfaceTransportActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.DeleteInterfaceTransportActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.interface}</value>
+    		</list>
+    	</property>
+    	<property name="selectLink"><value>${page.interface.link}</value></property>
+    	<property name="deleteButton"><value>${page.interface.delete}</value></property>
+    </bean>
+    
+    <bean id="createInterfaceActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateInterfaceActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.interface}</value>
+    		</list>
+    	</property>
+    	<property name="newISIButton"><value>${page.interface.new}</value></property>
+    	<property name="nameField"><value>${page.interface.new.name.field}</value></property>
+    	<property name="saveButton"><value>${page.interface.save}</value></property>
+    </bean>
+    
+    <bean id="createBusinessMappingActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateBusinessMappingActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.business.mapping}</value>
+    		</list>
+    	</property>
+    	<property name="selectFirst"><value>${page.business.mapping.select.first}</value></property>
+    	<property name="showBusinessMappings"><value>${page.business.mapping.show}</value></property>
+    	<property name="edit"><value>${page.business.mapping.edit}</value></property>
+    	<property name="cellContent"><value>${page.business.mapping.cell.content}</value></property>
+    	<property name="editCellSelect"><value>${page.business.mapping.edit.cell.select}</value></property>
+    	<property name="save"><value>${page.business.mapping.save}</value></property>
+    	<property name="close"><value>${page.business.mapping.close}</value></property>
+    </bean>
+    
+    <bean id="deleteBusinessMappingActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.DeleteBusinessMappingActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.business.mapping}</value>
+    		</list>
+    	</property>
+    	<property name="selectFirst"><value>${page.business.mapping.select.first}</value></property>
+    	<property name="showBusinessMappings"><value>${page.business.mapping.show}</value></property>
+    	<property name="edit"><value>${page.business.mapping.edit}</value></property>
+    	<property name="cellContent"><value>${page.business.mapping.cell.content}</value></property>
+    	<property name="editCellRemove"><value>${page.business.mapping.edit.cell.remove}</value></property>
+    	<property name="save"><value>${page.business.mapping.save}</value></property>
+    	<property name="close"><value>${page.business.mapping.close}</value></property>
+    </bean>
+    
+    <bean id="createBusinessMappingRowColumnActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.CreateBusinessMappingRowColumnActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.business.mapping}</value>
+    		</list>
+    	</property>
+    	<property name="selectFirst"><value>${page.business.mapping.select.first}</value></property>
+    	<property name="dragAndDropBoxFrom"><value>${page.business.mapping.drag.and.drop.from}</value></property>
+    	<property name="dragAndDropBoxTo"><value>${page.business.mapping.drag.and.drop.to}</value></property>
+    	<property name="showBusinessMappings"><value>${page.business.mapping.show}</value></property>
+    	<property name="edit"><value>${page.business.mapping.edit}</value></property>
+    	<property name="rowColumnUpdateCheck"><value>${page.business.mapping.row.column.update}</value></property>
+    	<property name="cellContent"><value>${page.business.mapping.cell.content}</value></property>
+    	<property name="editRowUpdateSelect"><value>${page.business.mapping.edit.row.update.select}</value></property>
+    	<property name="editRowUpdateButton"><value>${page.business.mapping.edit.row.update.take.over}</value></property>
+    	<property name="editColumnUpdateSelect"><value>${page.business.mapping.edit.column.update.select}</value></property>
+    	<property name="editColumnUpdateButton"><value>${page.business.mapping.edit.column.update.take.over}</value></property>
+    	<property name="save"><value>${page.business.mapping.save}</value></property>
+    	<property name="close"><value>${page.business.mapping.close}</value></property>
+    </bean>
+    
+    <bean id="bulkUpdateActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.BulkUpdateActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.menu.administration.bulk}</value>
+    		</list>
+    	</property>
+    	<property name="bulkAttributesStatusCheckbox"><value>${page.bulk.attributes.status.checkbox}</value></property>
+    	<property name="attributeOption"><value>${page.bulk.attribute.option}</value></property>
+    	<property name="attributeValueOption"><value>${page.bulk.attribute.value.option}</value></property>
+    	<property name="queryButton"><value>${page.bulk.query.button}</value></property>
+    	<property name="resultCheckbox"><value>${page.bulk.result.checkbox}</value></property>
+    	<property name="prepareButton"><value>${page.bulk.update.prepare.button}</value></property>
+    	<property name="statusOption"><value>${page.bulk.status.option}</value></property>
+    	<property name="bulkUpdateButton"><value>${page.bulk.update.button}</value></property>
+    </bean>
+    
+    <bean id="bulkDeleteActionFactory" class="de.iteratec.iteraplan.webtests.action.factory.BulkDeleteActionFactory">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.menu.administration.bulk}</value>
+    		</list>
+    	</property>
+    	<property name="attributeOption"><value>${page.bulk.attribute.option}</value></property>
+    	<property name="attributeValueOption"><value>${page.bulk.attribute.value.option}</value></property>
+    	<property name="queryButton"><value>${page.bulk.query.button}</value></property>
+    	<property name="resultCheckbox"><value>${page.bulk.result.checkbox}</value></property>
+    	<property name="bulkDeleteButton"><value>${page.bulk.delete.button}</value></property>
+    </bean>
+</beans>

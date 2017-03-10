@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+      http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+	start-state="start" parent="baseGraphicFlow">
+	
+	
+	<decision-state id="start">
+		<if test="requestParameters['_eventId']=='init'" then="init" />
+		<if test="requestParameters['_eventId']=='fromInterchange'" then="fromInterchange" />
+		<if test="requestParameters['_eventId']=='loadSavedQuery'" then="pre-load" />
+		<if test="requestParameters['_eventId']=='closeAll'" then="closeAll" />
+		<if test="requestParameters['_eventId']==null" then="init" />		
+	</decision-state>
+	
+	<action-state id="init">
+			<evaluate expression="pieBarGraphicFrontendService.getInitialMemBean()"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="firststep" />
+	</action-state>
+	
+	<action-state id="fromInterchange">
+			<evaluate expression="pieBarGraphicFrontendService.fromInterchange(requestParameters['bbType'],requestParameters['idList'])"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="firststep" />
+	</action-state>
+	
+	<action-state id="pre-load">
+		<evaluate expression="pieBarGraphicFrontendService.getInitialMemBean()"
+			result="flowScope.memBean" />
+		<transition on="success" to="loadSavedQuery">
+			<set name="flowScope.FLOW_LABEL"
+				value="pieBarGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+			<set name="memBean.savedQueryId"
+				value="requestParameters.savedQueryId"
+				type="java.lang.Integer" />
+		</transition>			
+	</action-state>
+	
+	<action-state id="loadSavedQuery">
+		<evaluate expression="pieBarGraphicFrontendService.loadSavedQuery(flowScope.memBean)" 
+				result="flowScope.memBean"/>
+		<transition on="success" to="secondstep">
+			<evaluate expression="pieBarGraphicFrontendService.updateCheckAllBox(flowScope.memBean)" />
+		</transition>			
+	</action-state>
+	
+	
+	<view-state id="firststep" model="memBean" view="graphicalreporting/piebardiagram">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL"
+				value="pieBarGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+		</on-entry>
+		
+		<transition on="changeQueryType" to="firststep">
+			<evaluate expression="pieBarGraphicFrontendService.changeQueryType(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+				result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="changeDiagramType" to="firststep">
+			<evaluate expression="pieBarGraphicFrontendService.changeDiagramType(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+				result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="loadSavedQuery" to="secondstep">
+			<evaluate expression="pieBarGraphicFrontendService.loadSavedQuery(flowScope.memBean)"
+				result="flowScope.memBean" />
+			<evaluate expression="pieBarGraphicFrontendService.updateCheckAllBox(flowScope.memBean)" />
+		</transition>		
+
+		<transition on="goToPieBarExportStep2" to="secondstep">
+			<evaluate expression="pieBarGraphicFrontendService.stepOneToStepTwo(flowScope.memBean)"
+				result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="requestReport" to="firststep">
+			<evaluate expression="pieBarGraphicFrontendService.requestEntityList(flowScope.memBean)" />
+		</transition>
+		
+		<transition on="requestAndConfirmReport" to="secondstep">
+			<evaluate expression="pieBarGraphicFrontendService.requestEntityList(flowScope.memBean)" />
+			<evaluate expression="pieBarGraphicFrontendService.stepOneToStepTwo(flowScope.memBean)"
+				result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="refreshReport" to="firststep">
+			<evaluate result="flowScope.memBean"
+				expression="portfolioGraphicFrontendService.refreshReport(flowScope.memBean, flowRequestContext, flowExecutionContext, true)" />
+		</transition>
+		<transition on="expandFirstLevel" to="firststep">
+			<evaluate expression="pieBarGraphicFrontendService.expandFirstLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="expandSecondLevel" to="firststep">
+			<evaluate expression="pieBarGraphicFrontendService.expandSecondLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />		
+		</transition>
+		<transition on="shrinkLevel" to="firststep">
+			<evaluate expression="pieBarGraphicFrontendService.shrinkLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="addReportExtension" to="firststep">
+			<evaluate expression="pieBarGraphicFrontendService.addReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="removeReportExtension" to="firststep">
+			<evaluate expression="pieBarGraphicFrontendService.removeReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="deleteSavedQuery" to="firststep">
+			<evaluate expression="pieBarGraphicFrontendService.deleteSavedQuery(flowScope.memBean)" />
+		</transition>
+	</view-state>
+	
+	<view-state id="secondstep" model="memBean" view="graphicalreporting/piebardiagram">
+		<transition on="saveQuery" to="secondstep">
+			<evaluate expression="pieBarGraphicFrontendService.saveQuery(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		<transition on="saveQueryAs" to="secondstep">
+			<evaluate expression="pieBarGraphicFrontendService.saveQueryAs(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		<transition on="goToPieBarExportStep1" to="firststep">
+			<evaluate expression="pieBarGraphicFrontendService.stepTwoToStepOne(flowScope.memBean)" />
+		</transition>
+		<transition on="selectValuesSource" to="secondstep">
+			<evaluate expression="pieBarGraphicFrontendService.refreshColorOptions(flowScope.memBean)" />
+		</transition>
+		<transition on="selectDiagramKeyType" to="secondstep">
+			<evaluate expression="pieBarGraphicFrontendService.changeDiagramKeyType(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="selectKeyAttribute" to="secondstep">
+		</transition>
+		<transition on="selectKeyAssociation" to="secondstep">
+			<evaluate expression="pieBarGraphicFrontendService.changeKeyAssociation(flowScope.memBean, flowRequestContext, flowExecutionContext)"/>
+		</transition>
+		<transition on="selectAssociation" to="secondstep">
+			<evaluate expression="pieBarGraphicFrontendService.refreshColorOptions(flowScope.memBean)"/>
+		</transition>
+		<transition on="selectValueType" to="secondstep">
+			<evaluate expression="pieBarGraphicFrontendService.refreshColorOptions(flowScope.memBean)" />
+		</transition>
+		<transition on="selectAttribute" to="secondstep">
+			<evaluate expression="pieBarGraphicFrontendService.refreshColorOptions(flowScope.memBean)"/>
+		</transition>
+		<transition on="generateExport" to="secondstep">
+			<evaluate expression="pieBarGraphicFrontendService.generateGraphicFileResponse(flowScope.memBean, flowRequestContext, flowExecutionContext)"/>
+		</transition>
+		
+		<transition on="triggerDownloadEvent" to="secondstep">
+			<evaluate expression="pieBarGraphicFrontendService.triggerDownloadEvent(flowRequestContext, 'generateExport')" />
+		</transition>
+		
+		<transition on="refreshPage" to="secondstep" />
+		<transition on="loadSavedQuery" to="pre-load" />
+	</view-state>
+	
+	<end-state id="close" view="externalRedirect:contextRelative:/show/graphicalreporting/piebardiagram" />
+	<end-state id="closeAll" view="externalRedirect:contextRelative:/graphicalreporting/init.do">
+		<on-entry>
+			<evaluate expression="portfolioGraphicFrontendService.closeAllFlows(flowRequestContext)"></evaluate>
+		</on-entry>
+	</end-state>
+</flow>

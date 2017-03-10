@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ehcache.xsd" 
+	updateCheck="false" name="iteraplanCacheManager" >
+	
+<!--	<cacheManagerPeerListenerFactory class="org.terracotta.ehcachedx.monitor.probe.ProbePeerListenerFactory"-->
+<!--    	properties="monitorAddress=localhost, monitorPort=9889, memoryMeasurement=true"/>-->
+
+	<defaultCache maxElementsInMemory="10000"
+	              eternal="false"
+	              timeToIdleSeconds="600"
+	              timeToLiveSeconds="600"
+	              diskPersistent="false" 
+	              statistics="false"
+                  overflowToDisk="false">
+	</defaultCache>                
+	              
+	<cache 
+    	name="org.hibernate.cache.StandardQueryCache"
+    	maxElementsInMemory="5"
+    	eternal="false"
+    	timeToLiveSeconds="120"
+    	diskPersistent="false" 
+      overflowToDisk="false">
+	</cache>
+    
+  <cache
+    	name="org.hibernate.cache.UpdateTimestampsCache"
+    	maxElementsInMemory="5000"
+    	eternal="true"
+    	diskPersistent="false" 
+      	overflowToDisk="false">
+	</cache>
+    	
+  <cache
+    	name="de.iteratec.iteraplan.model.BuildingBlock.subscribedUsers"
+    	maxElementsInMemory="50000"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false" 
+      	overflowToDisk="false">
+	</cache>
+	    
+	<cache
+    	name="de.iteratec.iteraplan.model.BuildingBlock"
+    	maxElementsInMemory="2147483647"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      	overflowToDisk="false">
+	</cache>
+	
+	<cache
+    	name="de.iteratec.iteraplan.model.BuildingBlock.seals"
+    	maxElementsInMemory="50000"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      	overflowToDisk="false">
+	</cache>
+	
+	<cache
+    	name="de.iteratec.iteraplan.model.BuildingBlockType"
+    	maxElementsInMemory="2147483647"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      	overflowToDisk="false">
+	</cache>
+	    
+	<cache
+    	name="de.iteratec.iteraplan.model.BuildingBlockType.subscribedUsers"
+    	maxElementsInMemory="500"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      	overflowToDisk="false">
+	</cache>
+	    
+	<cache
+    	name="de.iteratec.iteraplan.model.attribute.AttributeValueAssignment"
+    	maxElementsInMemory="2147483647"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      	overflowToDisk="false">
+	</cache>
+	    
+	<cache
+    	name="de.iteratec.iteraplan.model.InformationSystemRelease.predecessors"
+    	maxElementsInMemory="10000"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      	overflowToDisk="false">
+	</cache>
+	    
+	<cache
+    	name="de.iteratec.iteraplan.model.InformationSystemRelease.successors"
+    	maxElementsInMemory="10000"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      	overflowToDisk="false">
+	</cache>
+
+  <cache
+    	name="de.iteratec.iteraplan.model.BuildingBlock.attributeValueAssignments"
+    	maxElementsInMemory="2147483647"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      	overflowToDisk="false">
+	</cache>
+  
+  <cache
+    	name="de.iteratec.iteraplan.model.attribute.AttributeValue"
+    	maxElementsInMemory="2147483647"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      	overflowToDisk="false">
+	</cache>
+	    
+	    
+  <cache
+    	name="de.iteratec.iteraplan.model.attribute.AttributeType"
+    	maxElementsInMemory="2147483647"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      	overflowToDisk="false">
+	</cache>
+	    
+  <cache
+    	name="de.iteratec.iteraplan.model.attribute.Timeseries"
+    	maxElementsInMemory="2147483647"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      overflowToDisk="false">
+	</cache>
+	    
+  <cache
+    	name="de.iteratec.iteraplan.model.attribute.AttributeTypeGroup"
+    	maxElementsInMemory="2147483647"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      	overflowToDisk="false">
+	</cache>
+	    
+  <cache
+    	name="de.iteratec.iteraplan.model.attribute.NumberAT.rangeValues"
+    	maxElementsInMemory="2147483647"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      	overflowToDisk="false">
+	</cache>
+   
+  <cache
+    	name="de.iteratec.iteraplan.model.Seal"
+    	maxElementsInMemory="10000"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      	overflowToDisk="false">
+	</cache>
+	
+  <cache
+    	name="de.iteratec.iteraplan.model.BuildingBlockType.attributeTypes"
+    	maxElementsInMemory="2147483647"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      	overflowToDisk="false">
+	</cache>
+	
+	<cache
+    	name="de.iteratec.iteraplan.model.attribute.EnumAT.attributeValues"
+    	maxElementsInMemory="2147483647"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      	overflowToDisk="false">
+	</cache>
+	
+	<cache
+    	name="de.iteratec.iteraplan.model.attribute.ResponsibilityAT.attributeValues"
+    	maxElementsInMemory="2147483647"
+    	eternal="false"
+	    timeToIdleSeconds="28800"
+	    timeToLiveSeconds="28800"
+	    diskPersistent="false"
+      	overflowToDisk="false">
+	</cache>
+	    
+</ehcache>

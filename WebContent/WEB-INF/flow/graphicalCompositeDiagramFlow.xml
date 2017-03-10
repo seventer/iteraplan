@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+      http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+	start-state="start" parent="baseGraphicFlow">
+	
+	
+	<decision-state id="start">
+		<if test="requestParameters['_eventId']=='init'" then="init" />
+		<if test="requestParameters['_eventId']=='loadSavedQuery'" then="pre-load" />
+		<if test="requestParameters['_eventId']=='closeAll'" then="closeAll" />
+		<if test="requestParameters['_eventId']==null" then="init" />		
+	</decision-state>
+	
+	<action-state id="init">
+			<evaluate expression="compositeGraphicFrontendService.getInitialMemBean()"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="manage" />
+	</action-state>
+	
+	<action-state id="pre-load">
+		<evaluate expression="compositeGraphicFrontendService.getInitialMemBean()"
+			result="flowScope.memBean" />
+		<transition on="success" to="loadSavedQuery">
+			<set name="flowScope.FLOW_LABEL"
+				value="compositeGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+			<set name="memBean.savedQueryId"
+				value="requestParameters.savedQueryId"
+				type="java.lang.Integer" />
+		</transition>			
+	</action-state>
+	
+	<action-state id="loadSavedQuery">
+		<evaluate expression="compositeGraphicFrontendService.loadSavedQuery(flowScope.memBean)" 
+				result="flowScope.memBean"/>
+		<transition on="success" to="manage" />			
+	</action-state>
+	
+	<view-state id="manage" model="memBean" view="graphicalreporting/compositegraphic">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL"
+				value="compositeGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+		</on-entry>
+		
+		<transition on="generateExport" to="manage">
+			<evaluate expression="compositeGraphicFrontendService.generateGraphicFileResponse(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="triggerDownloadEvent" to="manage">
+			<evaluate expression="compositeGraphicFrontendService.triggerDownloadEvent(flowRequestContext, 'generateExport')" />
+		</transition>
+		
+		
+		<transition on="saveQuery" to="manage">
+			<evaluate expression="compositeGraphicFrontendService.saveQuery(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		<transition on="saveQueryAs" to="manage">
+			<evaluate expression="compositeGraphicFrontendService.saveQueryAs(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		<transition on="loadSavedQuery" to="manage">
+			<evaluate expression="compositeGraphicFrontendService.loadSavedQuery(flowScope.memBean)"
+			result="flowScope.memBean" />
+		</transition>		
+		<transition on="refreshAvailablePartQueries" to="manage">
+			<evaluate expression="compositeGraphicFrontendService.refreshAvailablePartQueries(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+			result="flowScope.memBean" />
+		</transition>		
+		<transition on="refreshPage" to="manage">
+			<evaluate expression="compositeGraphicFrontendService.refreshOrderOfParts(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+			result="flowScope.memBean" />
+		</transition>		
+		<transition on="deleteSavedQuery" to="manage">
+			<evaluate expression="compositeGraphicFrontendService.deleteSavedQuery(flowScope.memBean)" />
+		</transition>
+		
+	</view-state>
+	
+	<end-state id="close" view="externalRedirect:contextRelative:/show/graphicalreporting/compositediagram" />
+		
+	<end-state id="closeAll" view="externalRedirect:contextRelative:/graphicalreporting/init.do">
+		<on-entry>
+			<evaluate expression="compositeGraphicFrontendService.closeAllFlows(flowRequestContext)"></evaluate>
+		</on-entry>
+	</end-state>
+	
+</flow>

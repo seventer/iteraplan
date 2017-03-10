@@ -1,0 +1,886 @@
+﻿=========================================
+==   Release notes for iteraplan 3.3   ==
+=========================================
+
+Release notes for iteraplan 3.3.1 Final
+=========================================
+
+Fixed bugs (vs. 3.3.0):
+
+* Fixed an issue which occurred, when trying to apply a filter on Relationship-End with IteraQL.
+* Fixed an issue preventing successful imports if there were values missing for mandatory attributes in Business Mappings.
+* Update of multivalued attributes in interfaces is now possible.
+* Fixed an issue when using the query filter on building block overview pages.
+* Fixed an issue causing errors with Export/Import and Power Queries, if attributes had invalid names.
+* Fixed issue which allowed the creation of attributes and attribute values with invalid or conflicting names.
+* Fixed an issue preventing the re-import of a partial export using enumeration attribute values in its filter predicate
+* Fixed an issue preventing iteraplan to run correctly when installed in Tomcat's ROOT context.
+* Fixed an issue which lead to a permanent opened coloring dialog for Nesting Cluster Diagram.
+* Fixed misleading error message during file downloads.
+* Fixed issue allowing the creation of building blocks with duplicate names when using certain database configurations.
+* Fixed an issue which sometimes prevented successful iteraplan installation using console (headless) mode.
+* Fixed an excel import issue with elements of type Isr2BoAssociation, Tcr2IeAssociation and InformationFlow which prevented their creation or deletion.
+
+Improvements/new features (vs. 3.3.0):
+
+* Added a default color to enumeration attribute values added by the Excel/XMI import.
+* Improved error messages and error handling in some import cases (both Excel and XMI).
+* Response status codes in iteraplan's REST API are now more meaningful.
+* The output format "CSV" is now supported for direct list export in Tabular Reporting.
+
+Release notes for iteraplan 3.3.0 Final
+=========================================
+
+New features (vs. 3.2):
+
+* Major overhaul of iteraplan's export & import capabilities
+	** partial export/import: possibility to export and import only a specific subset of all data
+	** Different strategies for import: Additive (Create/part. Update) & Overwrite (Create/Update/Delete)
+	** REST interface: Write access to single building block elements (Create/Update/Delete)
+	** HTTP Basic Authentication for REST-API access
+* New direct Excel export: WYSIWYG-export of simple-list query results or spreadsheet reports
+* Report type independent overview for all saved queries
+* Added Kerberos-based Single Sign On in combination with Microsoft IIS
+* Tested for Oracle 12 compatibility
+* Backwards 3.x compatibility with Excel import improved
+* LDAP-based authentication: given and last names are synchronized at login time
+* Improved IE10 support
+* Improved error reporting capabilities 
+
+Fixed bugs (vs. 3.2):
+
+* Fixed issue with displaced text on attribute description popups
+* Fixed issue with missing connection lines in information flow diagrams
+* Fixed a bug causing an error page during configuration of spreadsheet reports. It was related to certain business mapping queries.
+* Fixed a bug preventing the deletion of infrastructure elements in certain cases
+* Fixed issue with notifications not being sent for certain status changes
+* Fixed issue with switching the language on the query console page
+* Fixed issue with changing enum attribute values using Internet Explorer
+* Fixed issue with deleting an infrastructure element
+* Various minor improvements and fixes
+    
+Release notes for iteraplan 3.3.M2 (compared to Version 3.3.M1)
+=========================================
+
+This is a milestone release. Do not use in production environments.
+
+New features (vs. 3.3.M1): 
+
+* Major overhaul of iteraplan's export & import capabilities
+	** partial export/import: possibility to export and import only a specific subset of all data
+	** Different strategies for import: Additive & Overwrite (Create/Update/Delete)
+	** REST interface: Write access to single building block elements (Create/Update/Delete)
+	** HTTP Basic Authentication for REST-API access
+* Tested for Oracle 12 compatibility
+* Backwards 3.x compatibility with Excel import improved
+    
+Release notes for iteraplan 3.3.M1 (compared to Version 3.2.0 Final)
+=========================================
+
+This is a milestone release.
+
+New features (vs. 3.2):
+
+* LDAP-based authentication: given and last names are synchronized at login time
+* New "netto" Excel export: WYSIWYG-export of simple-list query results or spreadsheet reports to an Excel file
+* Report-type-independent overview for all saved queries
+* Improved IE10 support
+* Improved error reporting capabilities 
+
+Fixed bugs (vs. 3.2):
+
+* Fixed issue with displaced text on attribute description popups
+* Fixed issue with missing connection lines in information flow diagrams
+* Fixed a bug causing an error page during configuration of spreadsheet reports. It was related to certain business mapping queries.
+* Fixed a bug preventing the deletion of infrastructure elements in certain cases
+* Fixed issue with notifications not being sent for certain status changes
+
+Release notes for iteraplan 3.2.0 Final (compared to Version 3.2.RC1)
+=========================================
+
+New features, changes and fixed bugs:
+
+* Smaller improvements of REST-interface JSON-structure 
+* Edit backward-compatibility of CE Visio template
+* Improvement of sample data (date intervals and dashboard example)
+* Fixes regarding XMI-import/export
+* Fix to avoid SQL Exception on Custom-Dashboard initialization
+* Performance-improvement of Nesting-Cluster Diagram-Generation
+* Enabled defective attribute-group-menu for MS SQL Server use
+* Fix to enable last modification properties for instances of relationship types
+* Validation of support for MS SQL Server as backing database
+* Finalization of documentation
+
+
+Release notes for iteraplan 3.2.RC1 (compared to Version 3.1.0 Final)
+=========================================
+
+New features and changes:
+
+*	Improved robustness of Excel and XMI import
+*	Performance improvements of Excel and XMI import
+*	Nesting Cluster Diagram:
+	**	An option was added to show inner elements without relation to any of the outer elements in a separate block.
+	**	Coloring of displayed elements according to their enumeration attribute values was enabled
+	**	Color legends were added
+	**	Filtering of inner and outer elements was enabled
+*	Introduction of context visualisation "Neighborhood Diagram" for Information Systems
+*	Possibility of more than one dashboard template for each building block type was added
+*	Improvement of the history functionality by enabling following information to be included:
+	**	Changes to successors and predecessors of Information Systems and Technical Components
+	**	Changes to the assignments for Enumeration and Responsibility attribute types
+*	Introduction of a REST-interface for requesting landscape data
+*	Addition of support for MSSQL Server as backing database.
+
+Fixed bugs:
+
+*	Problems when assigning several Infrastructure Elements to the "uses" relation of another Infrastructure Element where fixed
+*	Creating Nesting Cluster Diagrams without contents now works with PDF as well
+*	Issue with enumeration attributes without values during Export resolved
+*	Some issues in the display of custom dashboards (wrong numbers, colors, layout) were fixed
+*	Portfolio Diagrams don't change orientation depending on their output format anymore
+*	Several issues with Visio output format of diagrams were fixed
+*	An error when using the query extension "Properties of assigned Interfaces" of Information Systems was fixed
+*	Some other minor fixes
+
+
+Release notes for iteraplan 3.1.0 Final (compared to Version 3.1.RC1)
+=========================================
+
+New features, changes and fixed bugs:
+
+* Improved start script in Community edition to find the Java runtime more reliably from the Windows registry
+* Fixes to the Excel import, which corrupted the hierarchy information in the database in 3.1RC1
+   ** Fixed NullPointerException in Excel import when wrong cell formats are set
+   ** newly added Building Blocks can now directly be used in a new relationship
+   ** reduced the file size of generated Excel template files
+* Various minor improvements to the new Custom Dashboards
+* Masterplan diagram:
+   ** Added an option to colour date interval bars according to their defined colour
+   ** Unified labels of the time span bars
+* The default state of switch "Elements with status 'Inactive' are shown." is now configurable server-side
+* Various improvements to the user documentation
+
+
+New Features and Changes in 3.1.RC1 (compared to Version 3.1.M2)
+=========================================
+
+* Master plan diagram:
+   ** Visio export support for new masterplan configuration options was added
+   ** A management UI for date interval definitions has been added (expected minor changes before the 3.1 final release)
+   ** Saving and loading of queries with new masterplan configuration options works now
+* Custom-defined dashboards:
+   ** Administrators can embed saved diagram queries into dashboard templates. Height or width of the resulting diagrams can be influenced as well.
+   ** Users can create their individual dashboards from administrator-defined dashboard templates, by choosing which set of building blocks shall be fed into the dashboard's diagrams
+   ** A rich-text editor for dashboard templates was added, which helps insert wiki syntax for saved diagram queries.
+* Portfolio diagram: When both axes show discrete attributes, circles are positioned into portfolio tiles without overlapping each other. Under these circumstances, exact positioning of circles provides no value at all, as they overlap in almost all cases.
+* Tree View for hierarchical types:
+   ** Hiercharies can be reordered by dragging and dropping elements or entire sub-trees to a new position in the hierarchy
+* Building block overview lists can now also show status (applies to Information Systems and Technical Components)
+* Query Console results for iteraQl queries can be transfered to graphical report configurations, where applicable. This brings the advanced query power of iteraQl to iteraplan's graphical reports.
+
+Fixed Bugs:
+
+* Excel import: imported Interfaces were often incorrectly mapped to existing interfaces, mixing up data for interfaces: Fixed
+* Excel export: Interfaces without a name were missing in full model Excel exports; fixed
+* Bulk updates: Some relation dropdown were always empty: fixed to show available elements for settings relations
+* Spreadsheet reports: Fixed date format for date attribute columns in Simple list results
+* Spreadsheet reports: Fixed incorrect date format validation when specifying operands for date attrebute comparison. It was always expected in ISO date format, not the currently active locale's date format.
+* Corrupted layout on definitions page was fixed
+
+New Features and Changes in 3.1.M2 (compared to Version 3.1.M1)
+=========================================
+
+* Master plan diagram:
+   ** All Building Block types can be used in the diagram, also in combination with the new time-span reporting capability
+   ** Indirectly related elements can be included in the diagram as well, to show constellations like Product, supporting Information Systems, and underlying Technical Components
+   ** Restructured configuration UI for better usability with new features
+   ** Some new functionality is not yet available in Visio exports, but in all other export formats (this is still work in progress and we will further improve it)
+* Custom-defined Dashboards: Use Wiki syntax to define dashboard templates for each building block type. Users are then able to create individual dashboard instances where they can chose the base set of building blocks that the embedded diagrams should reflect. (this is still work in progress and we will further improve it)
+* Tree View for hierarchical types: In addition to flat list views, hierarchies can now be viewed as trees
+* Export/Import: XLSX Excel file format support further improved for import and export
+* Deployment: iteraplan bundles include Tomcat 7 now, Java 7 is supported
+* Deployment: Compatibility with Java 7; Java 6 support is unaffected and still the required minimum
+* Deployment: Now all settings in iteraplan.properties can be overridden by iteraplan_local.properties, making it easier to maintain site-specific settings across version updates
+
+
+Fixed Bugs:
+
+* Fixed caching parameters for lists of building blocks. This led to missing/ outdated entries in dropdowns when setting relations between building blocks
+* Composite Diagrams: Write permissions for at least one building block were required; fixed to require read permissions only
+* Removal of values from Enumeration or Responsibility attributes caused an internal error; fixed
+* Wiki syntax in multi-line text attributes was not parsed properly; fixed
+* Excel Import: Improved checking for reserved characters in names
+* Special characters in names of saved queries were not correctly displayed in dropdown choices "filter by saved query" on building block overview pages; fixed
+
+
+New Features and Changes in 3.1.M1 (compared to Version 3.0.4)
+=========================================
+
+* Search saved queries: The reporting user interface offers a full-text search on names and descriptions in a list of saved queries
+* Master plan diagram: Additional time spans can be reported for each building block; they must be captured in date attributes (this is still work in progress and we will further improve it)
+* Export/Import: XLSX Excel file format is supported for import and export (default in Excel 2007/2010/2013, a converter for older Excel versions is available from Microsoft)
+* Export/Import: Exported templates include dropdown lists to assist entering relations between building blocks
+* Metamodel: Infrastructure Elements have a usage relation
+* Improved support for Active Directory Domain forrests when using LDAP authentication
+* Deployment: Compatibility with Tomcat 7; Tomcat 6 support is unchanged
+
+Fixed Bugs:
+
+* Improved an insufficient log message in XMI import
+* Information Flow Diagram: Diagram title and content can no longer overlap in Visio Exports
+* Excel Import: Improved normalization of names with releases, avoiding "Not found with that name" errors
+* Excel Import: Numbers in text-formatted cells can now be imported into text attributes
+
+
+Improvements and fixed bugs for iteraplan 3.0.4 (compared to Version 3.0.3)
+=========================================
+
+Improvements and fixed bugs
+* Copying a Responsibility attribute does not copy its assigned values
+* Mail address validation in user management fails on dashes in domain names
+* When using the French UI, some Javascript code is broken
+* Enumeration attribute values of an element can't be changed if another element has the same value assigned and hibernate second level cache is deactivated
+* Excel Import wrongly classifies addition of new enumeration literals as unapplicable change
+* Underscores in Interface names are not shown properly in Interface section of Information Systems/Technical Components
+* Excel Export: hierarchical names and formatting incorrect in rows > 308
+* Tooltip picture does not appear when running iteraplan without an explicit context root
+* Wiki syntax for text attributes is not interpreted properly
+* XMI import doesn't respect relations defined in the xmi file
+* Importer causes non-critical database corruption when changing hierarchical relationships of already existing elements
+* Importer won't accept a number when it's expecting a string in attribute values
+* Attribute Detail popups cannot be closed in Chrome
+* Excel Template Export of a metamodel with enumeration properties with many and/or long literals can result in an Error
+* ModelLoader throws exception when running against oracle databases with many building blocks (affects Excel import)
+* Ecore import can't handle string values where the first character was escaped during export
+
+New Feature
+* Excel Import via REST
+
+
+Improvements and fixed bugs for iteraplan 3.0.3 (compared to Version 3.0.2)
+=========================================
+
+* Improved MetaModelMatcher and MetaModelDiffer to make imports more robust
+
+Fixed bugs
+* Excel-Import: check for duplicate names not always working for Information Systems and Technical Components
+* Excel Import is only possible with supervisor user
+* Massupdate cannot edit text attributes (freely defined ones)
+* Select-Dropdowns always add first element after clicking on them
+* Print View: Missing images - e.g. Interface-Direction
+
+New features and fixed bugs in iteraplan 3.0.2 (compared to Version 3.0.1)
+=========================================
+
+* Attributes on relation between Technical Component and Infrastructure Element
+* UI: Show attribute details on-click not mouse-over
+* UI: Show active datasource in breadcrumbs
+* Fixed: IE8 cannot download saved Excel reports over HTTPS connections
+
+New features and fixed bugs in iteraplan 3.0.1 (compared to Version 3.0)
+=========================================
+
+* Improved layout and content page for exported Excel sheets.
+* Improved web UI for Excel Import.
+* Detailed user documentation for new Excel export.
+* Warning when showing business mappings fixed.
+* Bugfixes in diagram configurations.
+* Bugfixes in subscriptions.
+* Several minor bugfixes concerning navigation, form usability, security and UI.
+
+New features, changes and fixed bugs in iteraplan 3.0 (compared to Version 3.0.RC2)
+=========================================
+
+* Support for various devices and resolutions (like smartphones/tablets) with responsive design
+* Improved Print View with all tab sections expanded
+* Several minor bugfixes regarding GUI, export, bulk updates and more
+
+New features, changes and fixed bugs in iteraplan 3.0.RC2 (compared to Version 3.0.RC1)
+=========================================
+
+* New Excel-Export and Import, removed old Excel-Import
+* Improved Email Subscriptions (Watched Elements)
+* Improved example data and documentation, reflecting new features
+* Several bugs regarding GUI, export, query console and more
+
+New Features and Changes in 3.0.RC2 (compared to Version 3.0.M2)
+=========================================
+
+* Improvements on new UI - based on Twitter Bootstrap, HTML5/CSS
+** Show subscriptions in Context Menu
+** Allow refresh in reporting and close all for open elements of one type
+** Keep collapse state of open elements and watched elements
+** Breadcrumb navigation showing hierarchy
+** Dashboard integrated in visualisation overview
+** Replaced Dojo with JQuery as standard JavaScript framework
+** Many further improvements with less tables, new tooltips, help, ...
+* Great enhancements of InformationFlow Diagram (thx. to Sponsorings)
+** Upload Visio template to retain layout in InformationFlow Diagram
+** Filtering BusinessObjects in InformationFlow Diagram
+** New option to show attributes of relation BusinessObject - InformationSystem
+* Nesting Cluster Graphic: Colouring based on number attributes
+* Upload Excel templates for spreadsheet reports
+* Filter attributes on relation BusinessObject - InformationSystem
+* Add user-chosen columns to building block type overview pages
+* Edit/Copy/Delete actions directly accessible in element overview page
+* Reordered hierarchy and relation tabs to reflect same schema across all EA data elements
+* Changed QueryConsole - new iteraQL-Syntax
+* Improved example data, including attribute CRUD on relation BusinessObject - InformationSystem
+* Improved documentation, with new screenshots, reflecting new UI
+
+Fixed Bugs
+* Several minor bugs regarding GUI, export and more
+
+New Features and Changes in 3.0.RC1 (compared to Version 3.0.M2)
+=========================================
+
+* Improvements on new UI - based on Twitter Bootstrap, HTML5/CSS
+** Show subscriptions in Context Menu
+** Allow refresh in reporting and close all for open elements of one type
+** Keep collapse state of open elements and watched elements
+** Breadcrumb navigation showing hierarchy
+** Dashboard integrated in visualisation overview
+** Replaced Dojo with JQuery as standard JavaScript framework
+** Many further improvements with less tables, new tooltips, help, ...
+* Great enhancements of InformationFlow Diagram (thx. to Sponsorings)
+** Upload Visio template to retain layout in InformationFlow Diagram
+** Filtering BusinessObjects in InformationFlow Diagram
+** New option to show attributes of relation BusinessObject - InformationSystem
+* Nesting Cluster Graphic: Colouring based on number attributes
+* Upload Excel templates for spreadsheet reports
+* Filter attributes on relation BusinessObject - InformationSystem
+* Add user-chosen columns to building block type overview pages
+* Edit/Copy/Delete actions directly accessible in element overview page
+* Reordered hierarchy and relation tabs to reflect same schema across all EA data elements
+* Changed QueryConsole - new iteraQL-Syntax
+* Improved example data, including attribute CRUD on relation BusinessObject - InformationSystem
+* Improved documentation, with new screenshots, reflecting new UI
+
+Fixed Bugs
+* Several minor bugs regarding GUI, export and more
+
+New Features and Changes in 3.0.M2 (compared to Version 3.0.M1)
+=========================================
+
+* New UI - based on Twitter Bootstrap, HTML5/CSS
+  * cleaner design, nice Icons for most actions
+  * better structured menu, showing Visualisations in TopMenu
+  * default actions highlighted
+* Finer Permission Control - Distinguish between Create, Delete and Update
+* Filtering Interfaces in InformationFlow Diagram
+* Sorting of columns in Element Overview/Search pages
+* Theming - Define colors of attributes as default color schema
+* Color range for numerical attributes
+* Improved permission names
+* Enhanced History functionality (EE only)
+
+Fixed Bugs:
+* Attribute order gets updated after save
+* Updated libraries and refactorings
+* several other minor bugs regarding GUI, export and more
+
+
+New Features and Changes in 3.0.M1 (compared to Version 2.9.1)
+=========================================
+
+* Show/edit self relations of InformationSystems in both directions
+* The association from Information System Release to Business Object is attributable 
+* New overview page showing top elements for all building blocks
+* Drop-down boxes for relations are combined with search filters and offer better performance
+* Landscape diagram: new options to fine-tune aggregation of hierarchical elements
+* Nesting Cluster Diagram: hierarchy can be unrolled and relations with attributes can be visualized
+* Information flow diagram: Line captions can show more than one aspect
+* Enhanced History functionality (EE only)
+* Added localizations for Swedish (contributed by Peter Svensson)
+* Several GUI Improvements
+
+Fixed Bugs:
+* Filtering Information System based on their Interface direction returned wrong results
+* Bulk update: "Add link or file" button works in all lines now
+* Attribute groups for Business Mappings could not be expanded / collapsed
+* XMI Export lacks values of date attributes
+* Printing with the non-default theme showed a broken page
+* Bad server adress in url of direct link to visualization was fixed 
+* several other minor bugs regarding GUI, export and more
+
+
+=========================================
+==   Release notes for iteraplan 2.9   ==
+=========================================
+
+Release Notes for iteraplan 2.9.1 
+=========================================
+
+Bugs fixed which were part of release 2.9.0:
+ *  ITERAPLAN-140 - Error-page when selecting an invalid ExcelWorkbook as template for excel export
+ *  ITERAPLAN-306 - Several Context Graphic trigger TechnicalException (EntityNotFound)
+ *  ITERAPLAN-307 - Dashboard not shown in the menu navigation if an user has functional permissions only for dashboard
+ *  ITERAPLAN-308 - NullPointerException when deleting an attribute within a new created ATG
+ *  ITERAPLAN-323 - Mouseover image partially overlayed by other page content
+ *  ITERAPLAN-327 - Tabular reportings Xmi-Export: the availableForInterfaces attribute is not exported
+ *  ITERAPLAN-364 - Clear error messages in Excel Import page on new load
+ *  ITERAPLAN-365 - Page number not reset after reload
+ *  ITERAPLAN-366 - Untrimmed values for responsibility attributes cause an error after Excel import
+ *  ITERAPLAN-369 - Improve GUI validation for attribute type input fields
+ *  ITERAPLAN-382 - Inserted additional columns in Master plan graphic shown as black cells
+ *  ITERAPLAN-386 - Nesting Cluster Diagram and Permissions
+ *  ITERAPLAN-399 - Landscape Diagram: NullPointerException when not using a names legend
+ *  ITERAPLAN-412 - Direct execution of saved queries fails to download with IE + HTTPS
+
+
+New Features and Changes in 2.9 (compared to Version 2.8)
+=========================================
+
+* New diagram types:
+  * Nesting Cluster Diagram
+  * Bar Chart
+  * Pie Chart
+  * Composite Bar and Pie Charts
+* Information flow diagram (Enterprise Edition only)
+  * Visio exports include macros for impact analysis
+  * Visio macros for copying diagram layout
+* Landscape Diagram - new options & improved readability
+* Masterplan Diagram - additional self-defined columns available
+* PowerQueries (Enterprise Edition only) - Multiple hops on the meta-model & Traversing hierarchies
+* Generating a Bar-Code on diagrams
+* Performance improvements
+* Management of Business Mappings in matrix style
+* Quality Seal on Information Systems
+* Custom Excel templates for exports
+* Improved Excel import (Performance, Subscriptions, AttributeDef.)
+* Improved XMI Import
+* Unified copy & new release function
+* Successor/Predecessor reports for Technical Components
+* User Interface: New Action Icons on Building Block pages
+* Possibility to clear the Hibernate second-level cache
+* Further improvements based on community feedback, contributions and sponsoring
+
+Fixed Bugs
+
+* see detailed Milestone Release Notes for all Bugfixes below
+
+
+New Features and Changes in 2.9.0 (compared to Version 2.9.RC1)
+=========================================
+New Features and Changes
+
+* Management of Business Mappings in matrix form was improved further
+* Dashboard: Improved visual alignment of the diagrams and tables
+* iTURM allows administrator users to reset other users' passwords
+* Building block dialogs: attribute groups do no longer show "Edit" links for users without the required permission
+* Information Flow diagrams: Improved layouting performance when many sub-IS are to be displayed
+* Full text search boxes handle special characters more gracefully, giving better warning/error messages
+
+Fixed Bugs
+
+* User and role management: Several bugs have been fixed
+* XML export for spreadsheet reports: attribute type information was not exported: Fixed
+* Nesting Cluster Diagram robustness was improved
+* Attribute type group management: Sometimes permission changes were not saved: Fixed
+* Dashboard: Permissions on attributes were ignored: Fixed
+* Some Javascripts were not properly loaded during first page load if advanced authentication mechanisms are in use: Fixed
+* Visualization tab in building block details works more reliably on older browsers
+* Role permissions were not completely respected when change notifications were sent out: Fixed
+* Permissions were enforced too strictly when loading saved reports involving business mappings: Fixed
+* Various Performance improvements and bug fixes
+
+
+New Features, Changes and Bugfixes in 2.9.RC1 (compared to Version 2.9.M3)
+=========================================
+New Features and Changes
+
+- Information flow diagrams: Visio exports include macros for impact analysis (Enterprise Edition only)
+- Information flow diagrams: Visio macros for copying diagram layouts (Enterprise Edition only)
+- Landscape diagrams: Improved readability (Axis elements on level 3 were made higher, to give room for longer names)
+- Performance improvements
+  * Performance improvements for SVG-based graphics. With large numbers of building blocks, graphics generation is multiple times faster
+  * Javascript performance for editing business mappings has been improved
+  * Various other improvements
+- Excel Import (Enterprise Edition only):
+  * Improved detection of interface flow direction
+  * Attributes of all types can now be created via Excel Import (using a dedicated workbook)
+  * Importing workbooks with macro formulas or formula references to other files is now possible; cached formula results are used
+  * Warnings and error message now include coordinates of the cell which caused the problem
+  * Modifications via Excel Import now cause notification mails to be sent to subscribers
+- iteraQL Power Queries: The query knowledge base is automatically kept in sync with the database (Enterprise Edition only)
+- Management of Business Mappings in matrix form was added as prototype implementation
+- Saved queries with result format Excel can now also be loaded for bulk updates
+- Full-text search: Error messages and documentation have been improved with respect to special characters
+- Improved layout of graphical report type overview page
+- Export format select box in Spreadsheet reports was widened, to improve readability in Internet Explorer
+- Dashboard: The list of available attributes is now sorted alphabetically
+
+Fixed Bugs
+
+- Configuration option "Elements with Status 'Inactive' are shown" does filter inactive technical components
+- Syntactical errors in XMI/Ecore export after repeated exports. Fixed
+- XMI Export: Some attributes values were serialized incorrectly: Fixed
+- Several bugs in Excel Import were fixed
+- References to User Groups could not be created in permission management functions: Fixed
+- Attribute groups containing at least one attribute could not be deleted: Fixed
+- Attributes could not be copied in some constellations: Fixed
+- Managing Attribute Groups led to internal error in some cases: Fixed
+- Responsibilty attributes: it was possible to assign an already assigned user again, leading to an error message: Fixed
+- Number attributes could not be edited when their ranges were not uniformly distributed (user-defined ranges): Fixed
+- Changing a number attribute value for a copied building block changed it for the original building block as well: Fixed
+- Deleting more than one value at a time in enumeration and responsibility values caused an internal error: Fixed
+- Deleting business mappings from a Business Process, a Product, or a Business Unit left zombie entries in the database: Fixed
+- Spreadsheet reports: After choosing an post-processing option, some export formats were no longer available: Fixed
+- Bulk updates: Insufficient permission checking on building block types: Fixed
+- Hotkeys for Copy and Save did not work as expected: Fixed
+- Landscape diagram: Business Process names were not rendered for SVG/PDF output: Fixed
+- After subscribing to a building block, the list of subscribers was not updated visually: Fixed
+
+
+New Features, Changes and Bugfixes in 2.9.M3 (compared to Version 2.9.M2)
+=========================================
+New Features and Changes
+
+- New Diagram: Nesting Cluster Diagram
+- Performance improvements (Read, Edit, Excel-Import)
+- PowerQueries using our new Query-Console, enabling multiple hops on the meta-model as well as traversing hierarchies.
+- Landscape Diagram - Readability improvements & new Options
+  * new Option to not scale content to fit into page
+  * content spanning of the Landscape Diagram optional
+  * Correct default behaviour and wrong/unclear description of Landscape Diagram option - Strict BusinessMapping
+  * Non-hierarchical names on landscape diagram (PDF) axis labels
+  * Long Colour legends moved to second page
+- Improved Excel Import
+  * Performance
+  * handle exceptions during the import of a row without error page, but log warnings and skip of the erroneous row
+  * Partial Import possible (Massupdate via Excel)
+- Quality Seal on InformationSystems
+- UI: New Action Icons on Building Block Pages
+- Unified Copy: InformationSystems and TechnicalComponents copy now in one step
+- Added possibility to clear the Hibernate second-level cache
+- Interface Name is no longer marked as mandatory
+- Piechart in Dashboard shows also empty values
+
+Fixed Bugs
+
+- Switching to second page showed unfiltered results on overview page, even though a filter was specified
+- Changesets for subscription emails not correct
+- Wrong Results with BusinessMapping as QueryExtension in TabularReporting
+- Error after deleting an element of an enumeration attribute
+- Landscape Diagram: remove empty columns/rows not working properly
+- Excel-Import: Date attributes can not be imported
+- Error after deleting two elements of an enumeration attribute
+- IS release (copy) function duplicates all enum attribute values
+- Saved query "Information systems affected by projects but without accountability" loaded with errors
+- Cluster Diagram with Attributes criterion could not be loaded
+- Cannot open the Attribute Groups page under some circumstances
+- Error based on Corrupted Database (Hierarchy&Positions) - Enhance robustness
+- Notification emails: Number-attributes mistakenly recognized as changed
+
+
+New Features and Changes in 2.9.M2 (compared to Version 2.8)
+=========================================
+- New diagram types: Bar charts, pie charts, composite diagrams bar and pie charts
+- Enhanced filtering for Interfaces, based on interface direction
+- Enhanced filtering: Products and Business Units can be filtered with respect to linked Information Systems
+- Reporting enhancements: Landscape Diagram with new options
+- Excel exports offer more than one generation template
+- Successor/Predecessor reports for Technical Components, in addition to those for Information Systems
+- Additional self-defined columns in masterplan diagrams available
+- Improved Browser compatibility of Dashboard page
+- Improved XMI import
+- Improved Excel import
+- Compatibility between Scenario functionality and database caching
+- Performance improvements
+- Many Improvements, bug fixes, updated libraries, … thanks to all reporters!
+
+
+Distinguishing features in the Enterprise Edition 
+==========================================================
+
+Following features are exclusively available in the Enterprise Edition of iteraplan, 
+and are not included in the Community Edition: 
+
+- Support for MySQL and Oracle Database storage (while Community Edition is restricted to HSQLDB)
+- User management with roles and permissions
+- Supporting queries
+- Integration capability with an LDAP infrastructure for central Authentication and Authorization
+- Import data from Excel and XMI files
+- Visio-Helper (Infoflow-Layout & Impact-Analysis)
+- Power-Queries (iteraQL)
+
+
+Installation Instructions
+=========================================
+
+Detailed installation instruction can be found in the iteraplan Operating Manual.
+In order to continue using the data set from an existing older iteraplan installation,
+a migration of your existing data is necessary. 
+Please contact iteratec GmbH directly to receive migration support. See the Contact page
+in iteraplan for contact details.
+
+
+Known limitations and bugs
+=========================================
+iteratec encourages users to report bugs or feature requests
+to the development team. Code patches are equally welcome.
+Please see "Contact" page in iteraplan for contact details and 
+our e-mail address.
+
+
+=========================================
+==  Releases Notes of past versions    ==
+=========================================
+
+Change history for versions prior to iteraplan 2.5 is available 
+only German, and is included below.
+
+=========================================
+==   Release notes for iteraplan 2.8.x ==
+=========================================
+
+New Features and Changes (compared to Version 2.7)
+=========================================
+- New dashboard with basic diagrams of the application landscape data
+- Enhanced Metamodel - New relation on Information Systems (IS uses another IS - n:m)
+- Interfaces can now be assigned names and an interface flow direction
+- Business mappings can now be edited from all involved building block types
+- Improved excel import  
+- Reporting enhancements: Landscape Diagram with new options
+- History-light – Subscription Emails show changes
+- Performance improvements
+- Extended possibilities to assign permissions for reports
+- Improvements, bug fixes, updated libraries, … thanks to all reporters!
+
+=========================================
+==   Release notes for iteraplan 2.7.x ==
+=========================================
+
+New Features and Changes (compared to Version 2.6)
+=========================================
+- Saved queries are now saved in the database instead of the file system, enabling a simpler 
+  backup and migration process
+- Saved queries for tabular and graphical reporting are now directly executable and bookmarkable, 
+  the export format can be changed dynamically
+- Searching elements enhanced. Dialogs now include Fulltext search, filtering based on 
+  attributes or applying a saved query
+- Improved graphical exports (performance optimizations, long words moved to legend)
+- Improved cluster diagram. It is now possible to use the swimlane option, which will arrange 
+  elements so that one item appears always in the same row in all columns
+- Information Flow Diagram - Showing Interface descriptions; Possibility to remove BusinessObjects
+- Spreadsheet reports now use case-insensitive string comparison
+- Excel exporter now uses a template file that can be customized and enriched with user-defined macros
+- Improved usability: bulk delete, warnings, position of saved queries, title of page, ...
+- Wiki functionality offering the possibility to style descriptions (XWiki syntax)
+- Subscribe to Elements to get notification emails about updates
+- Bulk update offering standard values also for relations 
+- Installer can now roll out iteraplan and iTurm in one step
+- Added localizations for French (contributed by Olivier Thiery and Michel Bénard), 
+  Hungarian (contributed by Tibor Timar) and Bulgarian; added support for non-ascii languages
+- Added more support and some examples for different css layouts / theme switcher
+- More UI elements can now be localized and customized (including the labels in the startscreen)
+- Many minor enhancements and bug fixes, thanks to all reporters!
+
+
+=========================================
+==   Release notes for iteraplan 2.6.x ==
+=========================================
+
+New Features and Changes (compared to Version 2.5)
+=========================================
+
+- XMI (XML) Import (beta) (only Enterprise Edition)
+- MS Project Export
+- Context diagrams showing elements in perspective
+- New relation Technical Component - Infrastructure Element
+- New relation Business Domain - Business Unit
+- Improved Web interface
+  - Shortcuts for many actions (highlighted as tooltip)
+  - W3C-conformant HTML Output
+  - Interfaces: Change Information Systems, simplified search, ...
+  - List custom attributes as core attributes
+- Bookmarks/URLs to elements simplified
+- Many minor enhancements and bug fixes, thanks to all reporters!
+
+- Bugfixes in 2.6.2:
+  - Cluster diagrams always had empty rows in some constellations (#2007)
+  - Cluster diagrams could not be created for business objects (#2005)
+- Improvements in 2.6.2:
+  - Cluster diagrams can now visualize multi-value assignments and attributes (#1971)
+  - Saved queries are now sorted alphabetically (#2032)
+  - A fine-tuning option was added that speeds up edge routing in information flow diagrams (#2022)
+  - The placement of connector points in Visio information flow diagrams is now adjusted to the number of connecting edges (#2016)
+  - Interfaces are now allowed to have equal endpoint information systems (#2021)
+
+- Bugfixes in 2.6.1:
+  - Deleting business mappings does not longer corrupt the database structure, 
+    which prevented creation of new information systems (#1987)
+  - Saved reports save the selection drop-down/free-text field for attributes (#1802)
+  - The cluster diagram configuration is refreshed after loading a saved query (#1991)
+  - Date validation works also properly if iteraplan is using LDAP authentication (#1974)
+  - Directions of arrows in the Information Flow Diagram are displayed correctly again (#1998)
+
+========================================
+== Release Notes for iteraplan 2.5.x  ==
+========================================
+
+- Full-Text search across all elements (Google-Like)
+- Export to XMI/XML (eXtensible Metadata Interchange Format)
+- New diagram type: Cluster graphic
+- All diagrams now also available in SVG, JPG, PNG and PDF
+- Every element can be addressed directly with an URL (e.g. http://iteraplan-host/iteraplan/project/start.flow?id=42&_eventId=show)
+- Link from graphics back to details within iteraplan (with SVG)
+- Editing different elements of one building block type simultaneously
+- Enhanced bulk update
+- Improved Import / Export
+- Visualisation of Interface attributes in information flow diagrams
+- Bulk delete (e.g. after wrong imports or to evict old data)
+- URI-Encoding was changed to UTF-8 to support a wider range of languages
+- Improvements to stability and security
+- Added a Spanish localization (thanks to a contribution by Alejandro Gaviria L.)
+- Java 6 is required for running iteraplan. Java 5 is no longer supported.
+
+- Bugfix in 2.5.1: Creating/Copying a new release from Information Systems does now 
+  also copy its interfaces
+- Changed in 2.5.1: Reverted to compile iteraplan for Java 5 compatibility. Using 
+  Java 6 is strongly recommended, however.
+
+- Bugfixes in 2.5.2:
+  - Under some circumstances, navigation ended up in an inconsistent flow state 
+    because links were interpreted incorrectly (#1755)
+  - In some environments, users of IE could not add new business mappings (#1789). 
+    Thanks to D. Voser for reporting this issue. 
+  - After loading a saved query, no mass update could be performed (#1782)
+  - When lots of business mappings exist, some reports could not be created (#1785) 
+
+=========================================
+== Release-Übersicht für iteraplan 2.3 ==
+=========================================
+
+Neue Funktionen und Änderungen (gegenüber Version 2.2)
+======================================================
+
+- Gespeichert Abfragen werden geupdatet, wenn man sie unter dem gleichen Namen speichert
+- Die mitgelieferten Abfragen können gelöscht werden
+- Tabellarische Abfragen können gespeichert und gelöscht werden
+- Gespeicherte Tabellarische Abfragen können im Massenupdate verwendet werden
+- Bebauungsplan-Grafik: Fachliche Funktionen können beliebig kombiniert werden (Bekannte Einschränkungen und Fehler)
+- Gespeicherte Abfragen: Fachliche Zuordnung kann gespeichert werden 
+- Bidirektionale Verbindungen werden nun einheitlich auf beiden Seiten dargestellt
+  und können von beiden Richtungen aus manipuliert werden
+- Für hierarchische Bebauungselemente können sowohl die unter- als auch die übergeordneten Elemente gepflegt werden
+- Englisches Handbuch
+- Konsistenzchecks lassen sich auch gebündelt nach Sub-Gruppen ausführen
+- Merkmalsgruppen lassen sich auf- und zuklappen; Beschreibende Informationen werden als Tooltip angezeigt
+- Javascript-Funktionen wurde in entsprechende Dateien ausgelagert
+- Das Visio-Zertifikat lässt sich in der Anwendung runterladen
+- Abfrageerweiterungen sind nun nach den Bebauungen strukturiert
+- Beta Version: Neue Ausgabeformate für die Portfolio-Grafik (SVG, JPG)
+- Die Spalten der Ergebnismenge bei Tabellarische Abfragen können individuell angepasst werden
+- Das Hauptmenü (linke Seite) hat eine neue Struktur und kann auf- bzw. zugeklappt werden
+- Excel-Export: Zusätzlich zum hierarchischen Namen wird der exakte Name des Bebauungselement ausgegeben
+
+
+
+=========================================
+== Release-Übersicht für iteraplan 2.2 ==
+=========================================
+
+Neue Funktionen und Änderungen (gegenüber Version 2.1)
+======================================================
+
+Grafische Auswertungen können gespeichert werden. Für alle Grafiken können Suchanfragen 
+mit den spezifischen Einstellungen gespeichert und gelöscht werden (sofern die Rechte 
+dafür eingeräumt werden). Somit können wiederkehrende Abfragen hinterlegt werden und 
+müssen nicht mühsam eingegeben werden. Die gespeicherten Abfragen sind dabei für alle 
+Benutzer sichtbar. 
+ 
+Die Informationsfluss-, Bebauungsplan-, Portfolio- und Masterplan-Grafiken wurden 
+angeglichen. In diesen Grafiken ist ein einheitliches Vorgehen umgesetzt. Dies bezieht 
+sich auf die Suchanfragen, den Workflow und die farbliche Gestaltung von Merkmalen. Es 
+können Anfrageerweiterungen benutzt werden und man kann Ergebnisse nachbearbeiten. Nach 
+Auswahl der Ergebnissmenge wird ein zweiter Schritt geladen, in dem Farben für Merkmale 
+gewählt und Abfragen gespeichert werden können. Für alle Grafiken stehen nun auch Merkmale 
+zur Codierung von Farben zur Verfügung. Der Status (von Informationssystemen und 
+Technischen Bausteinen) wird als normales Merkmal aufgelistet und steht nun in allen 
+Grafiken zur Verfügung. Mögliche Farben können über Einstellungsdateien definiert werden.
+
+Numerische Attribute können für Grafische Auswertungen in Wertebereiche eingeteilt werden. 
+Hierzu wurde die Definition der Zahl-Merkmale erweitert. Es kann gewählt werden, zwischen 
+einer Gleichverteilung aller Merkmalsausprägungen und benutzerdefinierten Grenzen.
+
+In Tabellarischen Auswertungen sind neue Merkmale hinzugekommen. Es kann zusätzlich nach 
+'Letzter Benutzer' bzw. 'Letzte Änderung' gesucht werden. Somit können Änderungen im System 
+schnell visualisiert werden, Falls das sogenannte Last-Modification-Logging eingeschalten 
+ist. 
+ 
+Die Version wurde internationalisiert. Momentan stehen eine deutsche und eine englische 
+Version zur Verfügung. 
+ 
+Neben diversen Qualitätsverbesserungen wurden noch folgende Funktionen ergänzt: 
+Excel-Export ist nun für alle Bebauungselemente verfügbar. 
+Der Umfang der Konsistenzchecks wurde erweitert.
+Kleinere Verbesserungen an der Benutzeroberfläche
+Firefox 3 Kompatibilität
+Behebung von kleineren Fehlern
+
+Diverse Java-Bibliotheken wurden aktualisiert.
+
+
+
+=========================================
+== Release-Übersicht für iteraplan 2.1 ==
+=========================================
+
+Neue Funktionen und Änderungen (gegenüber Version 2.0)
+======================================================
+
+Die Pflege der fachlichen Bebauung wurde um die Konzepte 'Fachliche Funktionen' und 'Fach-
+liche Domänen' erweitert. Diese sind vollständig in sämtliche Bereiche von iteraplan inte-
+griert, z.B. tabellarische/grafische Auswertungen und Massenupdate. 
+
+  Fachliche Funktionen: Eine fachliche Funktion ist eine in sich abgeschlossene und zusam-
+  menhängende fachliche Tätigkeit, wie beispielsweise 'Kunde anlegen' oder 'Produktkonfi-
+  guration verändern'. Fachliche Funktionen können den Informationssystemen direkt zugeord-
+  net werden. Dies ermöglicht die Modellierung der fachlichen Funktionalität von Informa-
+  tionssystemen. Zudem ist eine Zuordnung von Geschäftsobjekten zu fachlichen Funktionen 
+  modellierbar.
+
+  Fachliche Domänen: Fachliche Domänen sind fachliche Einteilungen. Sie strukturieren die 
+  fachliche Bebauung. Die fachliche Bebauung beschreibt die wesentlichen fachlichen Ein-
+  heiten eines Unternehmens, die maßgeblich das Geschäft bestimmen. Die wesentlichen Ele-
+  mente der fachlichen Bebauung sind Geschäftsprozesse, fachliche Funktionen, Produkte, 
+  Geschäftseinheiten und Geschäftsdaten.
+    
+Die Terminologie von iterplan wurde weiter verfeinert und die folgenden Begriffe innerhalb 
+der Anwendung konsistent umbenannt:
+ 
+ IT-Vorhaben -> Projekte
+ Organisationseinheiten -> Geschäftseinheiten
+ Business-Unterstützung -> Fachliche Zuordnung
+
+Die Masterplan-Grafik wurde um die Möglichkeit erweitert, nicht nur 'Informationssysteme' 
+und 'Technische Bausteine' anzuzeigen, sondern auch 'Projekte'. Im weiteren Verlauf kann 
+bei der Auswahl von Projekten die Option 'Hierarchisch' dazu genutzt werden, den Pro-
+jekten zugeordnete Informationssysteme ebenfalls in der Grafik anzeigen zu lassen.
+
+Für die Erzeugung einer Portfolio-Grafik steht die neue Option 'Skalierung' zur Verfügung.
+Dadurch kann die Betrachtung einer Portfolio-Grafik auf einen lokalen Ausschnitt begrenzt 
+werden. Dieser wird durch die in der Grafik enthaltenen Elemente bestimmt, d.h. die maxi-
+male bzw. minimale Ausprägungen eines Merkmals in der Grafik bilden die Achsenbegrenzung.
+
+Die Pflege der Basisdaten 'Infrastrukturelement', 'Geschäftsobjekt', 'Projekt' sowie der 
+neu hinzugekommenen Elemente 'Fachliche Funktion' und 'Fachliche Domäne' erfolgt im Gegen-
+satz zu iteraplan 2.0 nun mittels geordneter Hierarchien. Mit diesem Release sind daher 
+alle Ausprägungen von Basisdaten innerhalb geordneter Hierarchien pflegbar.
+
+Die neue Einstiegsgrafik veranschaulicht die Gesamtheit aller möglichen Beziehungen zwischen 
+den Bebauungselementen und legt besonderen Wert auf die Einstufung dieser in die verschiedenen 
+Bereiche des Bebauungsmanagements 'Fachliche Bebauung', 'Informationsbebauung', 'Technische 
+Bebauung', 'Betriebsinfrastruktur-Bebauung' sowie 'Produktportfolio'. Über einheitliche 
+Symbole werden nun neben den Beziehungen zwischen den Modellelementen auch Aspekte wie
+z.B. hierarchische Strukturierungen und Vorgänger/Nachfolger-Relationen abgebildet.
+
+Die Möglichkeit der Vererbung von Merkmalen auf Teil-Bebauungselemente wurde entfernt, da
+identische Merkmalswerte für hierarchische Strukturen nun auf einfache Weise über das
+Massenupdate gepflegt werden können.
+
+Darüber hinaus wurde sehr viel Wert darauf gelegt, eine Optimierung der Darstellung der 
+grafischen Auswertungen zu erreichen, vorhandene Unstimmigkeiten und kleinere Fehler zu be-
+seitigen sowie insgesamt Performance und Stabilität der Anwendung zu erhöhen.

@@ -1,0 +1,2056 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation=
+       "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/util  http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+	
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:selenium-tests-input-data.properties</value>
+				<value>classpath:selenium-tests-locators.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<import resource="selenium-tests-input-data.xml"/>
+	<import resource="selenium-tests-factories.xml"/>
+    
+    <bean id="openProductAction" class="de.iteratec.iteraplan.webtests.action.NavigateAction">  
+    	<property name="links">
+    		<list>
+    			<value>${page.main.navigation.product}</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="selectGiroAction" class="de.iteratec.iteraplan.webtests.action.SelectAction">  
+    	<property name="link"><value>${page.product.link}</value></property>
+    	<property name="value" value="Giro"/>
+    </bean>
+    
+    <bean id="editAction" class="de.iteratec.iteraplan.webtests.action.EditAction">  
+    	<property name="editButton"><value>${page.product.edit}</value></property>
+    	<property name="saveButton"><value>${page.product.save}</value></property>
+    </bean>
+    
+    <bean id="openInformationSystemsAction" class="de.iteratec.iteraplan.webtests.action.NavigateAction">  
+    	<property name="links">
+    		<list>
+    			<value>${page.main.navigation.information.system}</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="selectInformationSystemAction" class="de.iteratec.iteraplan.webtests.action.SelectAction">  
+    	<property name="link"><value>${page.main.navigation.information.system.link}</value></property>
+    	<property name="value" value="Biz-CRM # 2.6"/>
+    </bean>
+    
+    <bean id="selectEditInformationSystemAction" class="de.iteratec.iteraplan.webtests.action.NavigateAction">  
+    	<property name="links">
+    		<list>
+    			<value>${page.main.navigation.information.system.edit}</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="loginAction" factory-bean="loginActionFactory" factory-method="create">
+        <property name="user" ref="user"/>
+    </bean>
+    
+    <bean id="wrongUserAction" factory-bean="loginActionFactory" factory-method="create">
+        <property name="user" ref="nonExistingUser"/>
+    </bean>
+    
+    <bean id="wrongPasswordAction" factory-bean="loginActionFactory" factory-method="create">
+        <property name="user" ref="wrongPasswordUser"/>
+    </bean>
+    
+    <bean id="userCaseInsensitiveAction" factory-bean="loginActionFactory" factory-method="create">
+        <property name="user" ref="userCaseInsensitive"/>
+    </bean>
+    
+    <bean id="logoutAction" factory-bean="logoutActionFactory" factory-method="create">
+    	<property name="confirmationMessage"><value>
+    		<![CDATA[
+    			^Wenn Sie sich abmelden, werden alle offenen Transaktionen abgebrochen\. Wollen Sie fortfahren[\s\S]$
+    		]]></value>
+    	</property>
+    </bean>
+    
+    <bean id="createEnummerationAttributeAction" factory-bean="createEnummerationAttributeActionFactory" factory-method="create">  
+    	<property name="attribute" ref="testAttribute"/>
+    </bean>
+    
+    <bean id="deleteEnummerationAttributeAction" factory-bean="deleteAttributeActionFactory" factory-method="create">
+    	<property name="attribute" ref="testAttribute"/>
+    </bean>
+    
+    <bean id="createNumberAttributeAction" factory-bean="createNumberAttributeActionFactory" factory-method="create">  
+    	<property name="attribute" ref="testAttribute"/>
+    </bean>
+    
+    <bean id="deleteNumberAttributeAction" factory-bean="deleteAttributeActionFactory" factory-method="create">
+    	<property name="attribute" ref="testAttribute"/>
+    </bean>
+    
+    <bean id="createTextAttributeAction" factory-bean="createTextAttributeActionFactory" factory-method="create">  
+    	<property name="attribute" ref="testAttribute"/>
+    </bean>
+    
+    <bean id="deleteTextAttributeAction" factory-bean="deleteAttributeActionFactory" factory-method="create">
+    	<property name="attribute" ref="testAttribute"/>
+    </bean>
+    
+    <bean id="createDateAttributeAction" factory-bean="createDateAttributeActionFactory" factory-method="create">  
+    	<property name="attribute" ref="testAttribute"/>
+    </bean>
+    
+    <bean id="deleteDateAttributeAction" factory-bean="deleteAttributeActionFactory" factory-method="create">
+    	<property name="attribute" ref="testAttribute"/>
+    </bean>
+    
+    <bean id="createResponsibilityAttributeAction" factory-bean="createResponsibilityAttributeActionFactory" factory-method="create">  
+    	<property name="attribute" ref="testAttribute"/>
+    </bean>
+    
+    <bean id="deleteResponsibilityAttributeAction" factory-bean="deleteAttributeActionFactory" factory-method="create">
+    	<property name="attribute" ref="testAttribute"/>
+    </bean>
+    
+    <bean id="createAttributeGroupAction" factory-bean="createAttributeGroupActionFactory" factory-method="create">  
+    	<property name="attributeGroup" ref="testAttributeGroup"/>
+    </bean>
+    
+    <bean id="deleteAttributeGroupAction" factory-bean="deleteAttributeGroupActionFactory" factory-method="create">  
+    	<property name="attributeGroup" ref="testAttributeGroup"/>
+    </bean>
+    
+    <bean id="createProjAction" factory-bean="createProjectActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="project"/>
+    </bean>
+    
+    <bean id="createSubprojectAction" factory-bean="createProjectActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="subproject"/>
+    </bean>
+    
+    <bean id="deleteProjAction" factory-bean="deleteProjectActionFactory" factory-method="create">
+    	<property name="project" ref="project"/>
+    </bean>
+    
+    <bean id="createInformationSystemAction" factory-bean="createInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="release"/>
+    </bean>
+    
+    <bean id="createSuccessorInformationSystemAction" factory-bean="createInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="successor"/>
+    </bean>
+    
+    <bean id="deleteInformationSystemAction" factory-bean="deleteInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="release"/>
+    </bean>
+    
+    <bean id="deleteSuccessorInformationSystemAction" factory-bean="deleteInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="successor"/>
+    </bean>
+    
+    <bean id="createBuildingBlockAction" factory-bean="createBuildingBlockActionFactory" factory-method="create">
+    	<property name="buildingBlock" ref="techBB"/>
+    </bean>
+    
+    <bean id="deleteBuildingBlockAction" factory-bean="deleteBuildingBlockActionFactory" factory-method="create">
+    	<property name="buildingBlock" ref="techBB"/>
+    </bean>
+    
+    <bean id="createTestInformationSystemAction" factory-bean="createInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="testIS"/>
+    </bean>
+    
+    <bean id="deleteTestInformationSystemAction" factory-bean="deleteInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="testIS"/>
+    </bean>
+    
+    <bean id="createInterfaceTransportAction" factory-bean="createInterfaceTransportActionFactory" factory-method="create">
+    	<property name="interfaceTransport" ref="testISITransport"/>
+    </bean>
+    
+    <bean id="deleteInterfaceTransportAction" factory-bean="deleteInterfaceTransportActionFactory" factory-method="create">
+    	<property name="interfaceTransport" ref="testISITransport"/>
+    </bean>
+    
+     <bean id="createInterfaceAction" factory-bean="createInterfaceActionFactory" factory-method="create">
+    	<property name="interface1" ref="testISI"/>
+    	<property name="systemA" ref="is1"/>
+    	<property name="systemB" ref="is2"/>
+    </bean>
+    
+     <bean id="createArchitecturalDomainAction" factory-bean="createArchitecturalDomainActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testArchitecturalDomain"/>
+    </bean>
+    
+    <bean id="createArchitecturalDomainParentAction" factory-bean="createArchitecturalDomainActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testArchitecturalDomainParent"/>
+    </bean>
+    
+    <bean id="createArchitecturalDomainChildAction" factory-bean="createArchitecturalDomainActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testArchitecturalDomainChild"/>
+    </bean>
+    
+    <bean id="deleteArchitecturalDomainAction" factory-bean="deleteArchitecturalDomainActionFactory" factory-method="create">
+    	<property name="architecturalDomain" ref="testArchitecturalDomain"/>
+    </bean>
+    
+    <bean id="deleteArchitecturalDomainParentAction" factory-bean="deleteArchitecturalDomainActionFactory" factory-method="create">
+    	<property name="architecturalDomain" ref="testArchitecturalDomainParent"/>
+    </bean>
+    
+    <bean id="deleteArchitecturalDomainChildAction" factory-bean="deleteArchitecturalDomainActionFactory" factory-method="create">
+    	<property name="architecturalDomain" ref="testArchitecturalDomainChild"/>
+    </bean>
+    
+    <bean id="createBusinessDomainAction" factory-bean="createBusinessDomainActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testBusinessDomain"/>
+    </bean>
+    
+    <bean id="createBusinessDomainParentAction" factory-bean="createBusinessDomainActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testBusinessDomainParent"/>
+    </bean>
+    
+     <bean id="createBusinessDomainChildAction" factory-bean="createBusinessDomainActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testBusinessDomainChild"/>
+    </bean>
+    
+    <bean id="deleteBusinessDomainAction" factory-bean="deleteBusinessDomainActionFactory" factory-method="create">
+    	<property name="businessDomain" ref="testBusinessDomain"/>
+    </bean>
+    
+    <bean id="deleteBusinessDomainParentAction" factory-bean="deleteBusinessDomainActionFactory" factory-method="create">
+    	<property name="businessDomain" ref="testBusinessDomainParent"/>
+    </bean>
+    
+    <bean id="deleteBusinessDomainChildAction" factory-bean="deleteBusinessDomainActionFactory" factory-method="create">
+    	<property name="businessDomain" ref="testBusinessDomainChild"/>
+    </bean>
+    
+    <bean id="createBusinessProcessAction" factory-bean="createBusinessProcessActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testBusinessProcess"/>
+    </bean>
+    
+    <bean id="createBusinessProcessParentAction" factory-bean="createBusinessProcessActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testBusinessProcessParent"/>
+    </bean>
+    
+    <bean id="createBusinessProcessChildAction" factory-bean="createBusinessProcessActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testBusinessProcessChild"/>
+    </bean>
+    
+    <bean id="deleteBusinessProcessAction" factory-bean="deleteBusinessProcessActionFactory" factory-method="create">
+    	<property name="businessProcess" ref="testBusinessProcess"/>
+    </bean>
+    
+    <bean id="deleteBusinessProcessParentAction" factory-bean="deleteBusinessProcessActionFactory" factory-method="create">
+    	<property name="businessProcess" ref="testBusinessProcessParent"/>
+    </bean>
+    
+    <bean id="deleteBusinessProcessChildAction" factory-bean="deleteBusinessProcessActionFactory" factory-method="create">
+    	<property name="businessProcess" ref="testBusinessProcessChild"/>
+    </bean>
+    
+    <bean id="createBusinessUnitAction" factory-bean="createBusinessUnitActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testBusinessUnit"/>
+    </bean>
+    
+    <bean id="createBusinessUnitParentAction" factory-bean="createBusinessUnitActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testBusinessUnitParent"/>
+    </bean>
+    
+    <bean id="createBusinessUnitChildAction" factory-bean="createBusinessUnitActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testBusinessUnitChild"/>
+    </bean>
+    
+    <bean id="deleteBusinessUnitAction" factory-bean="deleteBusinessUnitActionFactory" factory-method="create">
+    	<property name="businessUnit" ref="testBusinessUnit"/>
+    </bean>
+    
+    <bean id="deleteBusinessUnitParentAction" factory-bean="deleteBusinessUnitActionFactory" factory-method="create">
+    	<property name="businessUnit" ref="testBusinessUnitParent"/>
+    </bean>
+    
+    <bean id="deleteBusinessUnitChildAction" factory-bean="deleteBusinessUnitActionFactory" factory-method="create">
+    	<property name="businessUnit" ref="testBusinessUnitChild"/>
+    </bean>
+    
+    <bean id="createBusinessFunctionAction" factory-bean="createBusinessFunctionActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testBusinessFunction"/>
+    </bean>
+    
+    <bean id="createBusinessFunctionParentAction" factory-bean="createBusinessFunctionActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testBusinessFunctionParent"/>
+    </bean>
+    
+    <bean id="createBusinessFunctionChildAction" factory-bean="createBusinessFunctionActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testBusinessFunctionChild"/>
+    </bean>
+    
+    <bean id="deleteBusinessFunctionAction" factory-bean="deleteBusinessFunctionActionFactory" factory-method="create">
+    	<property name="businessFunction" ref="testBusinessFunction"/>
+    </bean>
+    
+    <bean id="deleteBusinessFunctionParentAction" factory-bean="deleteBusinessFunctionActionFactory" factory-method="create">
+    	<property name="businessFunction" ref="testBusinessFunctionParent"/>
+    </bean>
+    
+    <bean id="deleteBusinessFunctionChildAction" factory-bean="deleteBusinessFunctionActionFactory" factory-method="create">
+    	<property name="businessFunction" ref="testBusinessFunctionChild"/>
+    </bean>
+    
+    <bean id="createBusinessObjectAction" factory-bean="createBusinessObjectActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testBusinessObject"/>
+    </bean>
+    
+    <bean id="createBusinessObjectParentAction" factory-bean="createBusinessObjectActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testBusinessObjectParent"/>
+    </bean>
+    
+    <bean id="createBusinessObjectChildAction" factory-bean="createBusinessObjectActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testBusinessObjectChild"/>
+    </bean>
+    
+    <bean id="deleteBusinessObjectAction" factory-bean="deleteBusinessObjectActionFactory" factory-method="create">
+    	<property name="businessObject" ref="testBusinessObject"/>
+    </bean>
+    
+    <bean id="deleteBusinessObjectParentAction" factory-bean="deleteBusinessObjectActionFactory" factory-method="create">
+    	<property name="businessObject" ref="testBusinessObjectParent"/>
+    </bean>
+    
+    <bean id="deleteBusinessObjectChildAction" factory-bean="deleteBusinessObjectActionFactory" factory-method="create">
+    	<property name="businessObject" ref="testBusinessObjectChild"/>
+    </bean>
+    
+    <bean id="createProductAction" factory-bean="createProductActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testProduct"/>
+    </bean>
+    
+    <bean id="createProductParentAction" factory-bean="createProductActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testProductParent"/>
+    </bean>
+    
+    <bean id="createProductChildAction" factory-bean="createProductActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testProductChild"/>
+    </bean>
+    
+    <bean id="deleteProductAction" factory-bean="deleteProductActionFactory" factory-method="create">
+    	<property name="product" ref="testProduct"/>
+    </bean>
+    
+    <bean id="deleteProductParentAction" factory-bean="deleteProductActionFactory" factory-method="create">
+    	<property name="product" ref="testProductParent"/>
+    </bean>
+    
+    <bean id="deleteProductChildAction" factory-bean="deleteProductActionFactory" factory-method="create">
+    	<property name="product" ref="testProductChild"/>
+    </bean>
+    
+    <bean id="createProjectAction" factory-bean="createProjectActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testProject"/>
+    </bean>
+    
+    <bean id="createProjectParentAction" factory-bean="createProjectActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testProjectParent"/>
+    </bean>
+    
+    <bean id="createProjectChildAction" factory-bean="createProjectActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testProjectChild"/>
+    </bean>
+    
+    <bean id="deleteProjectAction" factory-bean="deleteProjectActionFactory" factory-method="create">
+    	<property name="project" ref="testProject"/>
+    </bean>
+    
+    <bean id="deleteProjectParentAction" factory-bean="deleteProjectActionFactory" factory-method="create">
+    	<property name="project" ref="testProjectParent"/>
+    </bean>
+    
+    <bean id="deleteProjectChildAction" factory-bean="deleteProjectActionFactory" factory-method="create">
+    	<property name="project" ref="testProjectChild"/>
+    </bean>
+    
+    <bean id="createISDomainAction" factory-bean="createISDomainActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testISDomain"/>
+    </bean>
+    
+    <bean id="createISDomainParentAction" factory-bean="createISDomainActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testISDomainParent"/>
+    </bean>
+    
+    <bean id="createISDomainChildAction" factory-bean="createISDomainActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testISDomainChild"/>
+    </bean>
+    
+    <bean id="deleteISDomainAction" factory-bean="deleteISDomainActionFactory" factory-method="create">
+    	<property name="informationSystemDomain" ref="testISDomain"/>
+    </bean>
+    
+    <bean id="deleteISDomainParentAction" factory-bean="deleteISDomainActionFactory" factory-method="create">
+    	<property name="informationSystemDomain" ref="testISDomainParent"/>
+    </bean>
+    
+    <bean id="deleteISDomainChildAction" factory-bean="deleteISDomainActionFactory" factory-method="create">
+    	<property name="informationSystemDomain" ref="testISDomainChild"/>
+    </bean>
+    
+    <bean id="createInfrastructureElementAction" factory-bean="createInfrastructureElementActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testInfrastructureElement"/>
+    </bean>
+    
+    <bean id="createInfrastructureElementParentAction" factory-bean="createInfrastructureElementActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testInfrastructureElementParent"/>
+    </bean>
+    
+    <bean id="createInfrastructureElementChildAction" factory-bean="createInfrastructureElementActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testInfrastructureElementChild"/>
+    </bean>
+    
+    <bean id="deleteInfrastructureElementAction" factory-bean="deleteInfrastructureElementActionFactory" factory-method="create">
+    	<property name="infrastructureElement" ref="testInfrastructureElement"/>
+    </bean>
+    
+    <bean id="deleteInfrastructureElementParentAction" factory-bean="deleteInfrastructureElementActionFactory" factory-method="create">
+    	<property name="infrastructureElement" ref="testInfrastructureElementParent"/>
+    </bean>
+    
+    <bean id="deleteInfrastructureElementChildAction" factory-bean="deleteInfrastructureElementActionFactory" factory-method="create">
+    	<property name="infrastructureElement" ref="testInfrastructureElementChild"/>
+    </bean>
+    
+    <bean id="createBusinessMappingAction" factory-bean="createBusinessMappingActionFactory" factory-method="create">
+    	<property name="businessMapping" ref="testBusinessMapping"/>
+    </bean>
+    
+    <bean id="createBusinessMappingRowColumnAction" factory-bean="createBusinessMappingRowColumnActionFactory" factory-method="create">
+    	<property name="businessMapping" ref="testBusinessMappingWithTestBusinessUnit"/>
+    </bean>
+    
+    <bean id="deleteBusinessMappingAction" factory-bean="deleteBusinessMappingActionFactory" factory-method="create">
+    	<property name="businessMapping" ref="testBusinessMapping"/>
+    </bean>
+    
+    <bean id="createTextAttributeForIsr2BoAssocAction" factory-bean="createTextAttributeActionFactory" factory-method="create">  
+    	<property name="attribute" ref="testAttributeForIsr2BoAssoc"/>
+    </bean>
+    
+    <bean id="deleteTextAttributeForIsr2BoAssocAction" factory-bean="deleteAttributeActionFactory" factory-method="create">
+    	<property name="attribute" ref="testAttributeForIsr2BoAssoc"/>
+    </bean>
+    
+    <bean id="createIsrWithBoAssocAction" factory-bean="createInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="testInformationSystemReleaseWithBoAssoc"/>
+    </bean>
+    
+    <bean id="deleteIsrWithBoAssocAction" factory-bean="deleteInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="testInformationSystemReleaseWithBoAssoc"/>
+    </bean>
+    
+    <bean id="createBoWithIsrAssocAction" factory-bean="createBusinessObjectActionFactory" factory-method="create">
+    	<property name="hierarchicalBb" ref="testBusinessObjectWithIsrAssoc"/>
+    </bean>
+    
+    <bean id="deleteBoWithIsrAssocAction" factory-bean="deleteBusinessObjectActionFactory" factory-method="create">
+    	<property name="businessObject" ref="testBusinessObjectWithIsrAssoc"/>
+    </bean>
+    
+    <bean id="createJPPBuildingBlockAction" factory-bean="createBuildingBlockActionFactory" factory-method="create">
+    	<property name="buildingBlock" ref="jpp"/>
+    </bean>
+    
+    <bean id="createJPPABuildingBlockAction" factory-bean="createBuildingBlockActionFactory" factory-method="create">
+    	<property name="buildingBlock" ref="jppA"/>
+    </bean>
+    
+    <bean id="createJPPBBuildingBlockReleaseAction" factory-bean="createBuildingBlockReleaseActionFactory" factory-method="create">
+    	<property name="buildingBlock" ref="jppB"/>
+    </bean>
+    
+    <bean id="createJPPABBuildingBlockAction" factory-bean="createBuildingBlockActionFactory" factory-method="create">
+    	<property name="buildingBlock" ref="jppAB"/>
+    </bean>
+    
+    <bean id="editJPPBuildingBlockAction" factory-bean="editBuildingBlockActionFactory" factory-method="create">
+    	<property name="buildingBlock" ref="jpp"/>
+    </bean>
+    
+    <bean id="deleteJPPBuildingBlockAction" factory-bean="deleteBuildingBlockActionFactory" factory-method="create">
+    	<property name="buildingBlock" ref="jpp"/>
+    </bean>
+    
+    <bean id="deleteJPPABuildingBlockAction" factory-bean="deleteBuildingBlockActionFactory" factory-method="create">
+    	<property name="buildingBlock" ref="jppA"/>
+    </bean>
+    
+    <bean id="deleteJPPBBuildingBlockAction" factory-bean="deleteBuildingBlockActionFactory" factory-method="create">
+    	<property name="buildingBlock" ref="jppB"/>
+    </bean>
+    
+    <bean id="deleteJPPABBuildingBlockAction" factory-bean="deleteBuildingBlockActionFactory" factory-method="create">
+    	<property name="buildingBlock" ref="jppAB"/>
+    </bean>
+    
+    <bean id="createTestIS1Action" factory-bean="createInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="testIS1"/>
+    </bean>
+    
+    <bean id="createTestIS2Action" factory-bean="createInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="testIS2"/>
+    </bean>
+    
+     <bean id="createTestIS3Action" factory-bean="createInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="testIS3"/>
+    </bean>
+    
+    <bean id="deleteTestIS1Action" factory-bean="deleteInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="testIS1"/>
+    </bean>
+    
+    <bean id="deleteTestIS2Action" factory-bean="deleteInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="testIS2"/>
+    </bean>
+    
+    <bean id="deleteTestIS3Action" factory-bean="deleteInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="testIS3"/>
+    </bean>
+    
+    <bean id="createIS1Action" factory-bean="createInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="is1"/>
+    </bean>
+    
+    <bean id="createIS2Action" factory-bean="createInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="is2"/>
+    </bean>
+    
+    <bean id="createIS3Action" factory-bean="createInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="is3"/>
+    </bean>
+    
+    <bean id="createIS11Action" factory-bean="createInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="is11"/>
+    </bean>
+    
+    <bean id="createIS111Action" factory-bean="createInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="is111"/>
+    </bean>
+    
+    <bean id="deleteIS1Action" factory-bean="deleteInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="is1"/>
+    </bean>
+    
+    <bean id="deleteIS2Action" factory-bean="deleteInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="is2"/>
+    </bean>
+    
+    <bean id="deleteIS3Action" factory-bean="deleteInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="is3"/>
+    </bean>
+    
+    <bean id="deleteIS11Action" factory-bean="deleteInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="is11"/>
+    </bean>
+    
+    <bean id="deleteIS111Action" factory-bean="deleteInformationSystemActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="is111"/>
+    </bean>
+    
+    <bean id="exportBundleAction" factory-bean="exportActionFactory" factory-method="create">
+      <property name="exportButton"><value>${page.export.combined.button}</value></property>
+    </bean>
+    
+    <bean id="exportEcoreAction" factory-bean="exportActionFactory" factory-method="create">
+    	<property name="exportButton"><value>${page.export.ecore.button}</value></property>
+    </bean>
+    
+    <bean id="exportTemplateExcel2003Action" factory-bean="exportActionFactory" factory-method="create" >
+    	<property name="exportButton"><value>${page.export.template.excel2003.button}</value></property>
+    </bean>
+    
+    <bean id="exportFullModelExcel2003Action" factory-bean="exportActionFactory" factory-method="create" >
+    	<property name="exportButton"><value>${page.export.fullmodel.excel2003.button}</value></property>
+    </bean>
+        
+    <bean id="exportTemplateExcel2007Action" factory-bean="exportActionFactory" factory-method="create" >
+    	<property name="exportButton"><value>${page.export.template.excel2007.button}</value></property>
+    </bean>
+    
+    <bean id="exportFullModelExcel2007Action" factory-bean="exportActionFactory" factory-method="create" >
+    	<property name="exportButton"><value>${page.export.fullmodel.excel2007.button}</value></property>
+    </bean>
+    
+    <bean id="exportTimeseriesTemplateExcel2003Action" factory-bean="exportActionFactory" factory-method="create" >
+    	<property name="exportButton"><value>${page.export.timeseries.template.excel2003.button}</value></property>
+    </bean>
+    
+    <bean id="exportTimeseriesDataExcel2003Action" factory-bean="exportActionFactory" factory-method="create" >
+    	<property name="exportButton"><value>${page.export.timeseries.data.excel2003.button}</value></property>
+    </bean>
+        
+    <bean id="exportTimeseriesTemplateExcel2007Action" factory-bean="exportActionFactory" factory-method="create" >
+    	<property name="exportButton"><value>${page.export.timeseries.template.excel2007.button}</value></property>
+    </bean>
+    
+    <bean id="exportTimeseriesDataExcel2007Action" factory-bean="exportActionFactory" factory-method="create" >
+    	<property name="exportButton"><value>${page.export.timeseries.data.excel2007.button}</value></property>
+    </bean>
+    
+    <bean id="timeseriesImportAction" factory-bean="timeseriesImportActionFactory" factory-method="create" />
+    
+    <bean id="sessionCleanupAction" factory-bean="sessionCleanupActionFactory" factory-method="create">
+    	<property name="confirmationMessage"><value>
+    		<![CDATA[
+    			^Wenn Sie die Session aufräumen, werden alle offenen Transaktionen abgebrochen\. Wollen Sie fortfahren[\s\S]$
+    		]]></value>
+    	</property>
+    </bean>
+    
+    <bean id="changeDbAction" factory-bean="changeDbActionFactory" factory-method="create">
+    	<property name="dbName" value="MASTER"></property>
+    </bean>
+   
+    <bean id="cancelTransactionAction" class="de.iteratec.iteraplan.webtests.action.CancelTransactionAction"/>
+    
+    <bean id="newAttributeDuringTransactionAction" class="de.iteratec.iteraplan.webtests.action.NewAttributeDuringTransactionAction"/>
+    
+    <bean id="createInformationFlowDiagramJPEGAction" factory-bean="createInformationFlowDiagramActionFactory" factory-method="create">  
+    	<property name="data" ref="informationFlowDiagram"/>
+    	<property name="format" value="JPEG"/>
+    </bean>
+    
+    <bean id="createInformationFlowDiagramSVGAction" factory-bean="createInformationFlowDiagramActionFactory" factory-method="create">  
+    	<property name="data" ref="informationFlowDiagram"/>
+    	<property name="format" value="SVG"/>
+    </bean>
+    
+    <bean id="createInformationFlowDiagramPNGAction" factory-bean="createInformationFlowDiagramActionFactory" factory-method="create">  
+    	<property name="data" ref="informationFlowDiagram"/>
+    	<property name="format" value="PNG"/>
+    </bean>
+    
+    <bean id="createInformationFlowDiagramPDFAction" factory-bean="createInformationFlowDiagramActionFactory" factory-method="create">  
+    	<property name="data" ref="informationFlowDiagram"/>
+    	<property name="format" value="PDF"/>
+    </bean>
+    
+    <bean id="createInformationFlowDiagramVisioAction" factory-bean="createInformationFlowDiagramActionFactory" factory-method="create">  
+    	<property name="data" ref="informationFlowDiagram"/>
+    	<property name="format" value="Visio"/>
+    </bean>
+    
+    <bean id="createMasterplanDiagramJPEGAction" factory-bean="createMasterplanDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="masterplanDiagram"/>
+    	<property name="format" value="JPEG"/>
+    </bean>
+    
+    <bean id="createMasterplanDiagramSVGAction" factory-bean="createMasterplanDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="masterplanDiagram"/>
+    	<property name="format" value="SVG"/>
+    </bean>
+    
+    <bean id="createMasterplanDiagramPNGAction" factory-bean="createMasterplanDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="masterplanDiagram"/>
+    	<property name="format" value="PNG"/>
+    </bean>
+    
+    <bean id="createMasterplanDiagramPDFAction" factory-bean="createMasterplanDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="masterplanDiagram"/>
+    	<property name="format" value="PDF"/>
+    </bean>
+    
+    <bean id="createMasterplanDiagramVisioAction" factory-bean="createMasterplanDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="masterplanDiagram"/>
+    	<property name="format" value="Visio"/>
+    </bean>
+    
+    <bean id="createPortfolioDiagramJPEGAction" factory-bean="createPortfolioDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="portfolioDiagram"/>
+    	<property name="format" value="JPEG"/>
+    </bean>
+    
+    <bean id="createPortfolioDiagramSVGAction" factory-bean="createPortfolioDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="portfolioDiagram"/>
+    	<property name="format" value="SVG"/>
+    </bean>
+    
+    <bean id="createPortfolioDiagramPNGAction" factory-bean="createPortfolioDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="portfolioDiagram"/>
+    	<property name="format" value="PNG"/>
+    </bean>
+    
+    <bean id="createPortfolioDiagramPDFAction" factory-bean="createPortfolioDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="portfolioDiagram"/>
+    	<property name="format" value="PDF"/>
+    </bean>
+    
+    <bean id="createPortfolioDiagramVisioAction" factory-bean="createPortfolioDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="portfolioDiagram"/>
+    	<property name="format" value="Visio"/>
+    </bean>
+    
+    <bean id="createLandscapeDiagramJPEGAction" factory-bean="createLandscapeDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="landscapeDiagram"/>
+    	<property name="format" value="JPEG"/>
+    </bean>
+    
+    <bean id="createLandscapeDiagramSVGAction" factory-bean="createLandscapeDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="landscapeDiagram"/>
+    	<property name="format" value="SVG"/>
+    </bean>
+    
+    <bean id="createLandscapeDiagramPNGAction" factory-bean="createLandscapeDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="landscapeDiagram"/>
+    	<property name="format" value="PNG"/>
+    </bean>
+    
+    <bean id="createLandscapeDiagramPDFAction" factory-bean="createLandscapeDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="landscapeDiagram"/>
+    	<property name="format" value="PDF"/>
+    </bean>
+    
+    <bean id="createLandscapeDiagramVisioAction" factory-bean="createLandscapeDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="landscapeDiagram"/>
+    	<property name="format" value="Visio"/>
+    </bean>
+    
+    <bean id="createClusterDiagramJPEGAction" factory-bean="createClusterDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="clusterDiagram"/>
+    	<property name="format" value="JPEG"/>
+    </bean>
+    
+    <bean id="createClusterDiagramSVGAction" factory-bean="createClusterDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="clusterDiagram"/>
+    	<property name="format" value="SVG"/>
+    </bean>
+    
+    <bean id="createClusterDiagramPNGAction" factory-bean="createClusterDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="clusterDiagram"/>
+    	<property name="format" value="PNG"/>
+    </bean>
+    
+    <bean id="createClusterDiagramPDFAction" factory-bean="createClusterDiagramActionFactory" factory-method="create">
+    	<property name="data" ref="clusterDiagram"/>
+    	<property name="format" value="PDF"/>
+    </bean>
+    
+    <bean id="colourChangeAction" class="de.iteratec.iteraplan.webtests.action.ClusterDiagramColourChangeAction">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.menu.evaluation.graphical}</value>
+    		</list>
+    	</property>
+    	<property name="clusterDiagramLink"><value>${page.reporting.graphical.cluster}</value></property>
+    	<property name="queryButton"><value>${page.reporting.graphical.cluster.query.button}</value></property>
+    	<property name="allCheckbox"><value>${page.reporting.graphical.cluster.query.all.checkbox}</value></property>
+    	<property name="systemElement"><value>${page.reporting.graphical.cluster.query.system.element}</value></property>
+    	<property name="confirmSelectionButton"><value>${page.reporting.graphical.cluster.query.confirm.button}</value></property>
+    	<property name="colourAttributeOption"><value>${page.reporting.graphical.cluster.colour.option}</value></property>
+    	<property name="colourAttributeOptionToChange"><value>graphicalOptions.colorOptionsBean.valueToColorMap['Ist'].color</value></property>
+    	<property name="formatOption"><value>${page.reporting.graphical.cluster.format.option}</value></property>
+    	<property name="generateButton"><value>${page.reporting.graphical.cluster.generate.button}</value></property>
+    	<property name="data" ref="clusterDiagram"/>
+    	<property name="format" value="PDF"/>
+    </bean>
+  
+    <bean id="clusterWithAttribute" factory-bean="createClusterDiagramWithAttributesActionFactory" factory-method="create">
+    	<property name="navigationLinks">
+    		<list>
+    			<value>${page.main.navigation.menu.evaluation.graphical}</value>
+    		</list>
+    	</property>
+    	<property name="clusterDiagramLink"><value>${page.reporting.graphical.cluster}</value></property>
+    	<property name="criterionOption"><value>${page.reporting.graphical.cluster.modus.option}</value></property>
+    	<property name="attributeOption"><value>${page.reporting.graphical.cluster.attribute.option}</value></property>
+    	<property name="formatOption"><value>${page.reporting.graphical.cluster.format.option}</value></property>
+    	<property name="generateButton"><value>${page.reporting.graphical.cluster.generate.button}</value></property>
+    	<property name="data" ref="clusterDiagram"/>
+    	<property name="criterion" value="Merkmale"/>
+    	<property name="attribute" value="State of health"/>
+    	<property name="format" value="PDF"/>
+    </bean>
+    
+    <bean id="createSavedQueryLandscapeDiagramAction" factory-bean="createSavedQueryDiagramActionFactory" factory-method="create">
+    	<property name="queryLink"><value>${page.reporting.graphical.saved.query.landscape.0}</value></property>
+    </bean>
+    
+    <bean id="createSavedQueryClusterDiagramAction" factory-bean="createSavedQueryDiagramActionFactory" factory-method="create">
+    	<property name="queryLink"><value>${page.reporting.graphical.saved.query.cluster.0}</value></property>
+    </bean>
+    
+    <bean id="createSavedQueryInformationFlowDiagramAction" factory-bean="createSavedQueryDiagramActionFactory" factory-method="create">
+    	<property name="queryLink"><value>${page.reporting.graphical.saved.query.information.flow.0}</value></property>
+    </bean>
+    
+    <bean id="createSavedQueryPortfolioDiagramAction" factory-bean="createSavedQueryDiagramActionFactory" factory-method="create">
+    	<property name="queryLink"><value>${page.reporting.graphical.saved.query.portfolio.0}</value></property>
+    </bean>
+    
+    <bean id="createSavedQueryMasterplanDiagramAction" factory-bean="createSavedQueryDiagramActionFactory" factory-method="create">
+    	<property name="queryLink"><value>${page.reporting.graphical.saved.query.masterplan.0}</value></property>
+    </bean>
+    
+    <bean id="tabularReportingSimpleAction" factory-bean="createTabularReportActionFactory" factory-method="create">
+    	<property name="format" value="Einfache Liste"/>
+    </bean>
+    
+    <bean id="tabularReportingExcel2003Action" factory-bean="createTabularReportActionFactory" factory-method="create">
+    	<property name="format" value="Excel 2003 (XLS)"/>
+    </bean>
+    
+    <bean id="tabularReportingExcel2007Action" factory-bean="createTabularReportActionFactory" factory-method="create">
+    	<property name="format" value="Excel (XLSX)"/>
+    </bean>
+    
+    <bean id="tabularReportingXMLAction" factory-bean="createTabularReportActionFactory" factory-method="create">
+    	<property name="format" value="XML"/>
+    </bean>
+    
+    <bean id="tabularReportingCSVAction" factory-bean="createTabularReportActionFactory" factory-method="create">
+    	<property name="format" value="CSV"/>
+    </bean>
+    
+    <bean id="tabularReportingMPXAction" factory-bean="createTabularReportActionFactory" factory-method="create">
+    	<property name="format" value="Gantt Project MPX Format"/>
+    </bean>
+    
+    <bean id="tabularReportingMPXWithSubelementsAction" factory-bean="createTabularReportActionFactory" factory-method="create">
+    	<property name="format" value="Gantt Project MPX Format inklusive der untergeordneten Bebauungselemente"/>
+    </bean>
+    
+    <bean id="consistencyCheckSingleAction" factory-bean="consistencyCheckActionFactory" factory-method="create">
+    	<property name="checkButtons">
+    		<list>
+    			<value>${page.constistency.check.1.0}</value>
+    			<value>${page.constistency.check.1.1}</value>
+    			<value>${page.constistency.check.1.2}</value>
+    			<value>${page.constistency.check.1.3}</value>
+    			<value>${page.constistency.check.1.4}</value>
+    			<value>${page.constistency.check.1.5}</value>
+    			<value>${page.constistency.check.1.6}</value>
+    			<value>${page.constistency.check.1.7}</value>
+    			<value>${page.constistency.check.1.8}</value>
+    			<value>${page.constistency.check.1.9}</value>
+    			<value>${page.constistency.check.1.10}</value>
+    			<!-- <value>${page.constistency.check.1.11}</value> -->
+    			<value>${page.constistency.check.1.12}</value>
+    			
+    			<value>${page.constistency.check.2.0}</value>
+    			<value>${page.constistency.check.2.1}</value>
+    			<value>${page.constistency.check.2.2}</value>
+    			<value>${page.constistency.check.2.3}</value>
+    			<value>${page.constistency.check.2.4}</value>
+    			<value>${page.constistency.check.2.5}</value>
+    			<value>${page.constistency.check.2.6}</value>
+    			<value>${page.constistency.check.2.7}</value>
+    			<value>${page.constistency.check.2.8}</value>
+    			<!-- <value>${page.constistency.check.2.9}</value> -->
+    			
+    			<value>${page.constistency.check.3.0}</value>
+    			<value>${page.constistency.check.3.1}</value>
+    			<value>${page.constistency.check.3.2}</value>
+    			<value>${page.constistency.check.3.3}</value>
+    			
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="consistencyCheckGroupAction" factory-bean="consistencyCheckActionFactory" factory-method="create">
+    	<property name="checkButtons">
+    		<list>
+    			<value>${page.constistency.check.1.all}</value>
+    			<value>${page.constistency.check.2.all}</value>
+    			<value>${page.constistency.check.3.all}</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="consistencyCheckAllAction" factory-bean="consistencyCheckActionFactory" factory-method="create">
+    	<property name="checkButtons">
+    		<list>
+    			<value>${page.constistency.check.all}</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="childrenListSimpleAction" factory-bean="createISSuccessorReportActionFactory" factory-method="create">
+    	<property name="showChildren" value="true"/>
+    	<property name="system" ref="isSuccessorList"/>
+    	<property name="format" value="Einfache Liste"/>
+    </bean>
+    
+    <bean id="childrenListExcel2003Action" factory-bean="createISSuccessorReportActionFactory" factory-method="create">
+    	<property name="showChildren" value="true"/>
+    	<property name="system" ref="isSuccessorList"/>
+    	<property name="format" value="Excel 2003 (XLS)"/>
+    </bean>
+    
+    <bean id="childrenListExcel2007Action" factory-bean="createISSuccessorReportActionFactory" factory-method="create">
+    	<property name="showChildren" value="true"/>
+    	<property name="system" ref="isSuccessorList"/>
+    	<property name="format" value="Excel (XLSX)"/>
+    </bean>
+    
+    <bean id="parentsListSimpleAction" factory-bean="createISSuccessorReportActionFactory" factory-method="create">
+    	<property name="showParents" value="true"/>
+    	<property name="system" ref="isSuccessorList"/>
+    	<property name="format" value="Einfache Liste"/>
+    </bean>
+    
+    <bean id="parentsListExcel2003Action" factory-bean="createISSuccessorReportActionFactory" factory-method="create">
+    	<property name="showParents" value="true"/>
+    	<property name="system" ref="isSuccessorList"/>
+    	<property name="format" value="Excel 2003 (XLS)"/>
+    </bean>
+    
+    <bean id="parentsListExcel2007Action" factory-bean="createISSuccessorReportActionFactory" factory-method="create">
+    	<property name="showParents" value="true"/>
+    	<property name="system" ref="isSuccessorList"/>
+    	<property name="format" value="Excel (XLSX)"/>
+    </bean>
+    
+    <bean id="technicalSuccessorReportSimpleAction" factory-bean="createTCSuccessorReportActionFactory" factory-method="create">
+        <property name="showChildren" value="true" />
+        <property name="system" ref="tcSuccessorSystem" />
+        <property name="format" value="Einfache Liste" />
+    </bean>
+    
+    <bean id="technicalPredecessorReportSimpleAction" factory-bean="createTCSuccessorReportActionFactory" factory-method="create">
+        <property name="showParents" value="true" />
+        <property name="system" ref="tcSuccessorSystem" />
+        <property name="format" value="Einfache Liste" />
+    </bean>
+    
+    <bean id="technicalSuccessorReportExcel2003Action" factory-bean="createTCSuccessorReportActionFactory" factory-method="create">
+        <property name="showChildren" value="true" />
+        <property name="system" ref="tcSuccessorSystem" />
+        <property name="format" value="Excel 2003 (XLS)" />
+    </bean>
+    
+    <bean id="technicalSuccessorReportExcel2007Action" factory-bean="createTCSuccessorReportActionFactory" factory-method="create">
+        <property name="showChildren" value="true" />
+        <property name="system" ref="tcSuccessorSystem" />
+        <property name="format" value="Excel (XLSX)" />
+    </bean>
+    
+    <bean id="technicalPredecessorReportExcel2003Action" factory-bean="createTCSuccessorReportActionFactory" factory-method="create">
+        <property name="showParents" value="true" />
+        <property name="system" ref="tcSuccessorSystem" />
+        <property name="format" value="Excel 2003 (XLS)" />
+    </bean>
+    
+    <bean id="technicalPredecessorReportExcel2007Action" factory-bean="createTCSuccessorReportActionFactory" factory-method="create">
+        <property name="showParents" value="true" />
+        <property name="system" ref="tcSuccessorSystem" />
+        <property name="format" value="Excel (XLSX)" />
+    </bean>
+    
+    <bean id="fastExportJPEGAction0" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_0_text"/>
+    	<property name="format" value="JPEG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportSVGAction0" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_0_text"/>
+    	<property name="format" value="SVG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportPNGAction0" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_0_text"/>
+    	<property name="format" value="PNG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportPDFAction0" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_0_text"/>
+    	<property name="format" value="PDF"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportVisioAction0" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_0_text"/>
+    	<property name="format" value="Visio"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportJPEGAction1" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_1_text"/>
+    	<property name="format" value="JPEG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportSVGAction1" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_1_text"/>
+    	<property name="format" value="SVG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportPNGAction1" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_1_text"/>
+    	<property name="format" value="PNG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportPDFAction1" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_1_text"/>
+    	<property name="format" value="PDF"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportVisioAction1" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_1_text"/>
+    	<property name="format" value="Visio"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportJPEGAction3" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_3_text"/>
+    	<property name="format" value="JPEG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportSVGAction3" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_3_text"/>
+    	<property name="format" value="SVG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportPNGAction3" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_3_text"/>
+    	<property name="format" value="PNG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportPDFAction3" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_3_text"/>
+    	<property name="format" value="PDF"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportVisioAction3" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_3_text"/>
+    	<property name="format" value="Visio"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportJPEGAction5" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_5_text"/>
+    	<property name="format" value="JPEG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportSVGAction5" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_5_text"/>
+    	<property name="format" value="SVG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportPNGAction5" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_5_text"/>
+    	<property name="format" value="PNG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportPDFAction5" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_5_text"/>
+    	<property name="format" value="PDF"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportVisioAction5" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_5_text"/>
+    	<property name="format" value="Visio"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportJPEGAction6" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_6_text"/>
+    	<property name="format" value="JPEG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportSVGAction6" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_6_text"/>
+    	<property name="format" value="SVG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportPNGAction6" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_6_text"/>
+    	<property name="format" value="PNG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportPDFAction6" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_6_text"/>
+    	<property name="format" value="PDF"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportVisioAction6" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_6_text"/>
+    	<property name="format" value="Visio"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportJPEGAction8" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_8_text"/>
+    	<property name="format" value="JPEG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportSVGAction8" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_8_text"/>
+    	<property name="format" value="SVG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportPNGAction8" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_8_text"/>
+    	<property name="format" value="PNG"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportPDFAction8" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_8_text"/>
+    	<property name="format" value="PDF"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="fastExportVisioAction8" factory-bean="fastExportActionFactory" factory-method="create">
+    	<property name="queryLink" value="dijit_MenuItem_8_text"/>
+    	<property name="format" value="Visio"/>
+    	<property name="data" value="CRM # 3.1"/>
+    </bean>
+    
+    <bean id="searchAction" factory-bean="searchActionFactory" factory-method="create">
+    	<property name="searchTerm" value="bank"/>
+    </bean>
+    
+    <bean id ="searchWithDifferentSelectedAttributesAction" factory-bean="searchWithDifferentSelectedAttributesActionFactory" factory-method="create">
+    	<property name="project" ref="testSearchWithDifferentSelectedAttributes"/>
+    </bean>
+    
+    <bean id="searchEmptyAction" factory-bean="searchActionFactory" factory-method="create">
+    	<property name="searchTerm" value=""/>
+    </bean>
+    
+    <bean id="searchNonsenseAction" factory-bean="searchActionFactory" factory-method="create">
+    	<property name="searchTerm" value="sdcasdcsa"/>
+    </bean>
+    
+    <bean id="deleteInterfaceAction" class="de.iteratec.iteraplan.webtests.action.DeleteInterfaceAction">
+        <property name="interface1" ref="testISI"/>
+    	<property name="systemA" ref="is1"/>
+    	<property name="systemB" ref="is2"/>
+    </bean>
+    
+    <bean id="bulkUpdateAction" factory-bean="bulkUpdateActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="testIS1"/>
+    </bean>
+    
+    <bean id="bulkDeleteAction" factory-bean="bulkDeleteActionFactory" factory-method="create">
+    	<property name="informationSystem" ref="testIS1"/>
+    </bean>
+    
+    <bean id="languageChangeAction" class="de.iteratec.iteraplan.webtests.action.ChangeLanguageAction"/>
+    
+    <util:list id="loginActions">
+    	<ref local="loginAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createEnummerationAttributeTestActions">
+    	<ref local="loginAction"/>
+    	<ref local="createEnummerationAttributeAction"/>
+    	<ref local="deleteEnummerationAttributeAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createNumberAttributeTestActions">
+    	<ref local="loginAction"/>
+    	<ref local="createNumberAttributeAction"/>
+    	<ref local="deleteNumberAttributeAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createTextAttributeTestActions">
+    	<ref local="loginAction"/>
+    	<ref local="createTextAttributeAction"/>
+    	<ref local="deleteTextAttributeAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createDateAttributeTestActions">
+    	<ref local="loginAction"/>
+    	<ref local="createDateAttributeAction"/>
+    	<ref local="deleteDateAttributeAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createResponsibilityAttributeTestActions">
+    	<ref local="loginAction"/>
+    	<ref local="createResponsibilityAttributeAction"/>
+    	<ref local="deleteResponsibilityAttributeAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="duplicateEnummerationAttributeTestActions">
+    	<ref local="loginAction"/>
+    	<ref local="createEnummerationAttributeAction"/>
+    	<ref local="createEnummerationAttributeAction"/>
+    	<ref local="deleteEnummerationAttributeAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="duplicateNumberAttributeTestActions">
+    	<ref local="loginAction"/>
+    	<ref local="createNumberAttributeAction"/>
+    	<ref local="createNumberAttributeAction"/>
+    	<ref local="deleteNumberAttributeAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="duplicateTextAttributeTestActions">
+    	<ref local="loginAction"/>
+    	<ref local="createTextAttributeAction"/>
+    	<ref local="createTextAttributeAction"/>
+    	<ref local="deleteTextAttributeAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="duplicateDateAttributeTestActions">
+    	<ref local="loginAction"/>
+    	<ref local="createDateAttributeAction"/>
+    	<ref local="createDateAttributeAction"/>
+    	<ref local="deleteDateAttributeAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="duplicateResponsibilityAttributeTestActions">
+    	<ref local="loginAction"/>
+    	<ref local="createResponsibilityAttributeAction"/>
+    	<ref local="createResponsibilityAttributeAction"/>
+    	<ref local="deleteResponsibilityAttributeAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="editActions">
+    	<ref local="loginAction"/>
+    	<ref local="openProductAction"/>
+    	<ref local="selectGiroAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="deleteSubprojectsActions">
+    	<ref local="loginAction"/>
+    	<ref local="createProjAction"/>
+    	<ref local="createSubprojectAction"/>
+    	<ref local="deleteProjAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="deleteSuccessorActions">
+    	<ref local="loginAction"/>
+    	<ref local="createInformationSystemAction"/>
+    	<ref local="createSuccessorInformationSystemAction"/>
+    	<ref local="deleteInformationSystemAction"/>
+    	<ref local="deleteSuccessorInformationSystemAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="deleteBuildingBlockInUseActions">
+    	<ref local="loginAction"/>
+    	<ref local="createBuildingBlockAction"/>
+    	<ref local="createTestInformationSystemAction"/>
+    	<ref local="deleteBuildingBlockAction"/>
+    	<ref local="deleteTestInformationSystemAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="noBuildingBlockCyclesActions">
+    	<ref local="loginAction"/>
+    	<ref local="createJPPBuildingBlockAction"/>
+    	<ref local="createJPPABuildingBlockAction"/>
+    	<ref local="createJPPBBuildingBlockReleaseAction"/>
+    	<ref local="createJPPABBuildingBlockAction"/>
+    	<ref local="editJPPBuildingBlockAction"/>
+    	<ref local="deleteJPPBuildingBlockAction"/>
+    	<ref local="deleteJPPABuildingBlockAction"/>
+    	<ref local="deleteJPPBBuildingBlockAction"/>
+    	<ref local="deleteJPPABBuildingBlockAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="noInformationSystemCyclesActions">
+    	<ref local="loginAction"/>
+    	<ref local="createTestIS1Action"/>
+    	<ref local="createTestIS2Action"/>
+    	<ref local="createTestIS3Action"/>
+    	<ref local="deleteTestIS1Action"/>
+    	<ref local="deleteTestIS2Action"/>
+    	<ref local="deleteTestIS3Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="copyInterfacesActions">
+    	<ref local="loginAction"/>
+    	<ref local="createIS1Action"/>
+    	<ref local="createIS2Action"/>
+    	<ref local="createIS3Action"/>
+    	<ref local="createIS11Action"/>
+    	<ref local="createIS111Action"/>
+    	<ref local="deleteIS1Action"/>
+    	<ref local="deleteIS2Action"/>
+    	<ref local="deleteIS3Action"/>
+    	<!-- <ref local="deleteIS11Action"/>
+    	<ref local="deleteIS111Action"/>
+    	<ref local="logoutAction"/> -->
+    </util:list>
+    
+    <util:list id="exportBundleActions">
+    	<ref local="loginAction"/>
+    	<ref local="exportBundleAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="exportEcoreActions">
+    	<ref local="loginAction"/>
+    	<ref local="exportEcoreAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="exportTemplateExcel2003Actions">
+    	<ref local="loginAction"/>
+    	<ref local="exportTemplateExcel2003Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="exportTemplateExcel2007Actions">
+    	<ref local="loginAction"/>
+    	<ref local="exportTemplateExcel2007Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="exportFullModelExcel2003Actions">
+    	<ref local="loginAction"/>
+    	<ref local="exportFullModelExcel2003Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="exportFullModelExcel2007Actions">
+    	<ref local="loginAction"/>
+    	<ref local="exportFullModelExcel2007Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="exportTimeseriesTemplateExcel2003Actions">
+    	<ref local="loginAction"/>
+    	<ref local="exportTimeseriesTemplateExcel2003Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="exportTimeseriesTemplateExcel2007Actions">
+    	<ref local="loginAction"/>
+    	<ref local="exportTimeseriesTemplateExcel2007Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="exportTimeseriesDataExcel2003Actions">
+    	<ref local="loginAction"/>
+    	<ref local="exportTimeseriesDataExcel2003Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="exportTimeseriesDataExcel2007Actions">
+    	<ref local="loginAction"/>
+    	<ref local="exportTimeseriesDataExcel2007Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="timeseriesImportActions">
+    	<ref local="loginAction"/>
+    	<ref local="timeseriesImportAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="sessionCleanupActions">
+    	<ref local="loginAction"/>
+    	<ref local="sessionCleanupAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="changeDbActions">
+    	<ref local="loginAction"/>
+    	<ref local="changeDbAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="cancelTransactionActions">
+    	<ref local="loginAction"/>
+    	<ref local="selectInformationSystemAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="newAttributeDuringTransactionActions">
+    	<ref local="loginAction"/>
+    	<ref local="newAttributeDuringTransactionAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="informationFlowJPEGActions">
+    	<ref local="loginAction"/>
+    	<ref local="createInformationFlowDiagramJPEGAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="informationFlowSVGActions">
+    	<ref local="loginAction"/>
+    	<ref local="createInformationFlowDiagramSVGAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="informationFlowPNGActions">
+    	<ref local="loginAction"/>
+    	<ref local="createInformationFlowDiagramPNGAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="informationFlowPDFActions">
+    	<ref local="loginAction"/>
+    	<ref local="createInformationFlowDiagramPDFAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="informationFlowVisioActions">
+    	<ref local="loginAction"/>
+    	<ref local="createInformationFlowDiagramVisioAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    
+    <util:list id="masterplanJPEGActions">
+    	<ref local="loginAction"/>
+    	<ref local="createMasterplanDiagramJPEGAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="masterplanSVGActions">
+    	<ref local="loginAction"/>
+    	<ref local="createMasterplanDiagramSVGAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="masterplanPNGActions">
+    	<ref local="loginAction"/>
+    	<ref local="createMasterplanDiagramPNGAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="masterplanPDFActions">
+    	<ref local="loginAction"/>
+    	<ref local="createMasterplanDiagramPDFAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="masterplanVisioActions">
+    	<ref local="loginAction"/>
+    	<ref local="createMasterplanDiagramVisioAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="portfolioJPEGActions">
+    	<ref local="loginAction"/>
+    	<ref local="createPortfolioDiagramJPEGAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="portfolioSVGActions">
+    	<ref local="loginAction"/>
+    	<ref local="createPortfolioDiagramSVGAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="portfolioPNGActions">
+    	<ref local="loginAction"/>
+    	<ref local="createPortfolioDiagramPNGAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="portfolioPDFActions">
+    	<ref local="loginAction"/>
+    	<ref local="createPortfolioDiagramPDFAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="portfolioVisioActions">
+    	<ref local="loginAction"/>
+    	<ref local="createPortfolioDiagramVisioAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="landscapeJPEGActions">
+    	<ref local="loginAction"/>
+    	<ref local="createLandscapeDiagramJPEGAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="landscapeSVGActions">
+    	<ref local="loginAction"/>
+    	<ref local="createLandscapeDiagramSVGAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="landscapePNGActions">
+    	<ref local="loginAction"/>
+    	<ref local="createLandscapeDiagramPNGAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="landscapePDFActions">
+    	<ref local="loginAction"/>
+    	<ref local="createLandscapeDiagramPDFAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="landscapeVisioActions">
+    	<ref local="loginAction"/>
+    	<ref local="createLandscapeDiagramVisioAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="clusterJPEGActions">
+    	<ref local="loginAction"/>
+    	<ref local="createClusterDiagramJPEGAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="clusterSVGActions">
+    	<ref local="loginAction"/>
+    	<ref local="createClusterDiagramSVGAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="clusterPNGActions">
+    	<ref local="loginAction"/>
+    	<ref local="createClusterDiagramPNGAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="clusterPDFActions">
+    	<ref local="loginAction"/>
+    	<ref local="createClusterDiagramPDFAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="colourChangeActions">
+        <ref local="loginAction"/>
+        <ref local="colourChangeAction"/>
+        <ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="clusterWithAttributes">
+    	<ref local="loginAction"/>
+    	<ref local="clusterWithAttribute"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="tabularReportingSimpleActions">
+    	<ref local="loginAction"/>
+    	<ref local="tabularReportingSimpleAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="tabularReportingExcel2003Actions">
+    	<ref local="loginAction"/>
+    	<ref local="tabularReportingExcel2003Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="tabularReportingExcel2007Actions">
+    	<ref local="loginAction"/>
+    	<ref local="tabularReportingExcel2007Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="tabularReportingXMLActions">
+    	<ref local="loginAction"/>
+    	<ref local="tabularReportingXMLAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="tabularReportingCSVActions">
+    	<ref local="loginAction"/>
+    	<ref local="tabularReportingCSVAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="tabularReportingMPXActions">
+    	<ref local="loginAction"/>
+    	<ref local="tabularReportingMPXAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="tabularReportingMPXWithSubelementsActions">
+    	<ref local="loginAction"/>
+    	<ref local="tabularReportingMPXWithSubelementsAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="consistencyCheckSingleActions">
+    	<ref local="loginAction"/>
+    	<ref local="consistencyCheckSingleAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="consistencyCheckGroupActions">
+    	<ref local="loginAction"/>
+    	<ref local="consistencyCheckGroupAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="consistencyCheckAllActions">
+    	<ref local="loginAction"/>
+    	<ref local="consistencyCheckAllAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createSavedQueryLandscapeDiagramActions">
+    	<ref local="loginAction"/>
+    	<ref local="createSavedQueryLandscapeDiagramAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createSavedQueryClusterDiagramActions">
+    	<ref local="loginAction"/>
+    	<ref local="createSavedQueryClusterDiagramAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createSavedQueryInformationFlowDiagramActions">
+    	<ref local="loginAction"/>
+    	<ref local="createSavedQueryInformationFlowDiagramAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createSavedQueryPortfolioDiagramActions">
+    	<ref local="loginAction"/>
+    	<ref local="createSavedQueryPortfolioDiagramAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createSavedQueryMasterplanDiagramActions">
+    	<ref local="loginAction"/>
+    	<ref local="createSavedQueryMasterplanDiagramAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="fastExportJPEGActions">
+    	<ref local="loginAction"/>
+    	<ref local="fastExportJPEGAction0"/>
+    	<ref local="logoutAction"/>
+    	<!-- <ref local="loginAction"/>
+    	<ref local="fastExportJPEGAction1"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportJPEGAction3"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportJPEGAction5"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportJPEGAction6"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportJPEGAction8"/>
+    	<ref local="logoutAction"/> -->
+    </util:list>
+    
+    <util:list id="fastExportSVGActions">
+    	<ref local="loginAction"/>
+    	<ref local="fastExportSVGAction0"/>
+    	<ref local="logoutAction"/>
+    	<!-- <ref local="loginAction"/>
+    	<ref local="fastExportSVGAction1"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportSVGAction3"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportSVGAction5"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportSVGAction6"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportSVGAction8"/>
+    	<ref local="logoutAction"/> -->
+    </util:list>
+    
+    <util:list id="fastExportPNGActions">
+    	<ref local="loginAction"/>
+    	<ref local="fastExportPNGAction0"/>
+    	<ref local="logoutAction"/>
+    	<!-- <ref local="loginAction"/>
+    	<ref local="fastExportPNGAction1"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportPNGAction3"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportPNGAction5"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportPNGAction6"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportPNGAction8"/>
+    	<ref local="logoutAction"/> -->
+    </util:list>
+    
+    <util:list id="fastExportPDFActions">
+    	<ref local="loginAction"/>
+    	<ref local="fastExportPDFAction0"/>
+    	<ref local="logoutAction"/>
+    	<!-- <ref local="loginAction"/>
+    	<ref local="fastExportPNGAction1"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportPNGAction3"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportPNGAction5"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportPNGAction6"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportPNGAction8"/>
+    	<ref local="logoutAction"/> -->
+    </util:list>
+    
+    <util:list id="fastExportVisioActions">
+    	<ref local="loginAction"/>
+    	<ref local="fastExportVisioAction0"/>
+    	<ref local="logoutAction"/>
+    	<!-- <ref local="loginAction"/>
+    	<ref local="fastExportVisioAction1"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportVisioAction3"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportVisioAction5"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportVisioAction6"/>
+    	<ref local="logoutAction"/>
+    	<ref local="loginAction"/>
+    	<ref local="fastExportVisioAction8"/>
+    	<ref local="logoutAction"/> -->
+    </util:list>
+    
+    <util:list id="wrongUserActions">
+    	<ref local="wrongUserAction"/>
+    </util:list>
+    
+    <util:list id="wrongPasswordActions">
+    	<ref local="wrongPasswordAction"/>
+    </util:list>
+    
+    <util:list id="userCaseInsensitiveActions">
+    	<ref local="userCaseInsensitiveAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="searchActions">
+    	<ref local="loginAction"/>
+    	<ref local="searchAction"/>
+    	<ref local="searchEmptyAction"/>
+    	<ref local="searchNonsenseAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="searchWithDifferentSelectedAttributesActions">
+    	<ref local="loginAction"/>
+    	<ref local="searchWithDifferentSelectedAttributesAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="isSuccessorReportSimpleActions">
+    	<ref local="loginAction"/>
+    	<ref local="childrenListSimpleAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="isSuccessorReportExcel2003Actions">
+    	<ref local="loginAction"/>
+    	<ref local="childrenListExcel2003Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="isSuccessorReportExcel2007Actions">
+    	<ref local="loginAction"/>
+    	<ref local="childrenListExcel2007Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="isPredecessorReportSimpleActions">
+    	<ref local="loginAction"/>
+    	<ref local="parentsListSimpleAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="isPredecessorReportExcel2003Actions">
+    	<ref local="loginAction"/>
+    	<ref local="parentsListExcel2003Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="isPredecessorReportExcel2007Actions">
+    	<ref local="loginAction"/>
+    	<ref local="parentsListExcel2007Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="tcSuccessorReportSimpleActions">
+      <ref local="loginAction"/>
+      <ref local="technicalSuccessorReportSimpleAction"/>
+      <ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="tcSuccessorReportExcel2003Actions">
+      <ref local="loginAction"/>
+      <ref local="technicalSuccessorReportExcel2003Action"/>
+      <ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="tcSuccessorReportExcel2007Actions">
+      <ref local="loginAction"/>
+      <ref local="technicalSuccessorReportExcel2007Action"/>
+      <ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="tcPredecessorReportSimpleActions">
+      <ref local="loginAction"/>
+      <ref local="technicalPredecessorReportSimpleAction"/>
+      <ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="tcPredecessorReportExcel2003Actions">
+      <ref local="loginAction"/>
+      <ref local="technicalPredecessorReportExcel2003Action"/>
+      <ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="tcPredecessorReportExcel2007Actions">
+      <ref local="loginAction"/>
+      <ref local="technicalPredecessorReportExcel2007Action"/>
+      <ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createInterfaceActions">
+    	<ref local="loginAction"/>
+    	<ref local="createIS1Action"/>
+    	<ref local="createIS2Action"/>
+    	<ref local="createInterfaceAction"/>
+    	<ref local="deleteInterfaceAction"/>
+    	<ref local="deleteIS1Action"/>
+    	<ref local="deleteIS2Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createInterfaceTransportActions">
+       <ref local="loginAction"/>
+       <ref local="createInterfaceTransportAction"/>
+       <ref local="deleteInterfaceTransportAction"/>
+       <ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createAttributeGroupActions">
+    	<ref local="loginAction"/>
+    	<ref local="createEnummerationAttributeAction"/>
+    	<ref local="createAttributeGroupAction"/>
+    	<ref local="deleteAttributeGroupAction"/>
+    	<ref local="deleteEnummerationAttributeAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createArchitecturalDomainActions">
+    	<ref local="loginAction"/>
+    	<ref local="createArchitecturalDomainParentAction"/>
+    	<ref local="createArchitecturalDomainChildAction"/>
+    	<ref local="createArchitecturalDomainAction"/>
+    	<ref local="deleteArchitecturalDomainChildAction"/>
+    	<ref local="deleteArchitecturalDomainAction"/>
+    	<ref local="deleteArchitecturalDomainParentAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createBusinessDomainActions">
+    	<ref local="loginAction"/>
+    	<ref local="createBusinessDomainParentAction"/>
+    	<ref local="createBusinessDomainChildAction"/>
+    	<ref local="createBusinessDomainAction"/>
+    	<ref local="deleteBusinessDomainChildAction"/>
+    	<ref local="deleteBusinessDomainAction"/>
+    	<ref local="deleteBusinessDomainParentAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createBusinessProcessActions">
+    	<ref local="loginAction"/>
+    	<ref local="createBusinessProcessParentAction"/>
+    	<ref local="createBusinessProcessChildAction"/>
+    	<ref local="createBusinessProcessAction"/>
+    	<ref local="deleteBusinessProcessChildAction"/>
+    	<ref local="deleteBusinessProcessAction"/>
+    	<ref local="deleteBusinessProcessParentAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createBusinessUnitActions">
+    	<ref local="loginAction"/>
+    	<ref local="createBusinessUnitParentAction"/>
+    	<ref local="createBusinessUnitChildAction"/>
+    	<ref local="createBusinessUnitAction"/>
+    	<ref local="deleteBusinessUnitChildAction"/>
+    	<ref local="deleteBusinessUnitAction"/>
+    	<ref local="deleteBusinessUnitParentAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createBusinessFunctionActions">
+    	<ref local="loginAction"/>
+    	<ref local="createBusinessFunctionParentAction"/>
+    	<ref local="createBusinessFunctionChildAction"/>
+    	<ref local="createBusinessFunctionAction"/>
+    	<ref local="deleteBusinessFunctionChildAction"/>
+    	<ref local="deleteBusinessFunctionAction"/>
+    	<ref local="deleteBusinessFunctionParentAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createBusinessObjectActions">
+    	<ref local="loginAction"/>
+    	<ref local="createBusinessObjectParentAction"/>
+    	<ref local="createBusinessObjectChildAction"/>
+    	<ref local="createBusinessObjectAction"/>
+    	<ref local="deleteBusinessObjectChildAction"/>
+    	<ref local="deleteBusinessObjectAction"/>
+    	<ref local="deleteBusinessObjectParentAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createProductActions">
+    	<ref local="loginAction"/>
+    	<ref local="createProductParentAction"/>
+    	<ref local="createProductChildAction"/>
+    	<ref local="createProductAction"/>
+    	<ref local="deleteProductChildAction"/>
+    	<ref local="deleteProductAction"/>
+    	<ref local="deleteProductParentAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createProjectActions">
+    	<ref local="loginAction"/>
+    	<ref local="createProjectParentAction"/>
+    	<ref local="createProjectChildAction"/>
+    	<ref local="createProjectAction"/>
+    	<ref local="deleteProjectChildAction"/>
+    	<ref local="deleteProjectAction"/>
+    	<ref local="deleteProjectParentAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createISDomainActions">
+    	<ref local="loginAction"/>
+    	<ref local="createISDomainParentAction"/>
+    	<ref local="createISDomainChildAction"/>
+    	<ref local="createISDomainAction"/>
+    	<ref local="deleteISDomainChildAction"/>
+    	<ref local="deleteISDomainAction"/>
+    	<ref local="deleteISDomainParentAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createInfrastructureElementActions">
+    	<ref local="loginAction"/>
+    	<ref local="createInfrastructureElementParentAction"/>
+    	<ref local="createInfrastructureElementChildAction"/>
+    	<ref local="createInfrastructureElementAction"/>
+    	<ref local="deleteInfrastructureElementChildAction"/>
+    	<ref local="deleteInfrastructureElementAction"/>
+    	<ref local="deleteInfrastructureElementParentAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createBusinessMappingActions">
+    	<ref local="loginAction"/>
+    	<ref local="createBusinessMappingAction"/>
+    	<ref local="sessionCleanupAction"/>
+    	<ref local="deleteBusinessMappingAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createBusinessMappingRowColumnActions">
+    	<ref local="loginAction"/>
+    	<ref local="createBusinessUnitParentAction"/>
+    	<ref local="createBusinessMappingRowColumnAction"/>
+    	<ref local="deleteBusinessUnitParentAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createIsrWithBoAssociationActions">
+    	<ref local="loginAction"/>
+    	<ref local="createTextAttributeForIsr2BoAssocAction"/>
+    	<ref local="createBusinessObjectParentAction"/>
+    	<ref local="createIsrWithBoAssocAction"/>
+    	<ref local="deleteBusinessObjectParentAction"/>
+    	<ref local="deleteIsrWithBoAssocAction"/>
+    	<ref local="deleteTextAttributeForIsr2BoAssocAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="createBoWithIsrAssociationActions">
+    	<ref local="loginAction"/>
+    	<ref local="createTextAttributeForIsr2BoAssocAction"/>
+    	<ref local="createInformationSystemAction"/>
+    	<ref local="createBoWithIsrAssocAction"/>
+    	<ref local="deleteInformationSystemAction"/>
+    	<ref local="deleteBoWithIsrAssocAction"/>
+    	<ref local="deleteTextAttributeForIsr2BoAssocAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="bulkUpdateActions">
+    	<ref local="loginAction"/>
+    	<ref local="createTestIS1Action"/>
+    	<ref local="bulkUpdateAction"/>
+    	<ref local="deleteTestIS1Action"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="bulkDeleteActions">
+    	<ref local="loginAction"/>
+    	<ref local="createTestIS1Action"/>
+    	<ref local="bulkDeleteAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+    
+    <util:list id="languageChangeActions">
+    	<ref local="loginAction"/>
+    	<ref local="languageChangeAction"/>
+    	<ref local="logoutAction"/>
+    </util:list>
+</beans>

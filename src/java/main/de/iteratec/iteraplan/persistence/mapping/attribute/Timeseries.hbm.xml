@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.iteratec.iteraplan.model.attribute">
+  <class name="Timeseries" table="TIMESERIES" lazy="false">
+  	<cache usage="read-write"/>
+    <id name="id" column="ID" type="java.lang.Integer">
+       <generator class="org.hibernate.id.enhanced.TableGenerator">
+        <param name="segment_value">timeseries</param>
+      </generator>
+    </id>
+    <version name="olVersion" column="VERSION" type="integer" unsaved-value="negative" />
+    <many-to-one name="attribute" column="ID_AT" foreign-key="FK_TIMESERIES_AT" not-null="true" unique-key="UNIQUE_TIMESERIES"/>
+    <many-to-one name="buildingBlock" column="ID_BB" foreign-key="FK_TIMESERIES_BB" not-null="true" unique-key="UNIQUE_TIMESERIES"/>
+    <property name="series" column="SERIES" type="materialized_clob" />
+  </class>
+
+  <query name="deleteByBuildingBlocks">
+    <![CDATA[delete from Timeseries timeseries
+              where timeseries.buildingBlock.id in (:ids)]]>
+  </query>
+
+  <query name="deleteByAttributeType">
+    <![CDATA[delete from Timeseries timeseries
+              where timeseries.attribute.id = :id]]>
+  </query>
+
+  <query name="getTimseriesForBuildingBlockAndAttributeType">
+    <![CDATA[from Timeseries timeseries
+              where timeseries.buildingBlock.id = :bbID
+              and timeseries.attribute.id = :atID]]>
+  </query>
+  
+  <query name="getTimeseriesForBuildingBlocks">
+    <![CDATA[from Timeseries timeseries
+              where timeseries.buildingBlock.id in (:bbIDs)
+              and timeseries.attribute.id = :atID]]>
+  </query>
+
+</hibernate-mapping>

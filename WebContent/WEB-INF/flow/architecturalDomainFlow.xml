@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+	    http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd "
+	start-state="start"  parent="timeseriesBaseFlow">
+
+	<input name="id" type="java.lang.Integer" />
+
+	<decision-state id="start">
+		<on-entry>
+			<set name="flowScope.entityName"
+				value="architecturalDomainFrontendService.getEntityName()" type="java.lang.String" />
+		</on-entry>
+		<if test="requestParameters['_eventId']=='show'" then="show" />
+		<if test="requestParameters['_eventId']=='edit'" then="pre-edit" />
+    	<if test="requestParameters['_eventId']=='delete'" then="pre-delete" />
+    	<if test="requestParameters['_eventId']=='create'" then="initCreate" />
+		<if test="requestParameters['_eventId']=='copyBB'" then="copyBB" />
+		<if test="requestParameters['_eventId']=='closeAll'" then="closeAll" />
+		<if test="requestParameters['_eventId']==null" then="show" />
+	</decision-state>
+
+	<view-state id="show" model="memBean" view="architecturaldomain/show">
+		<on-entry>
+			<evaluate expression="architecturalDomainFrontendService.getMemBean(id)"
+				result="flowScope.memBean" />
+			<set name="flowScope.FLOW_LABEL" type="java.lang.String"
+				value="architecturalDomainFrontendService.getFlowLabel(flowScope.memBean.componentModel.nameModel.name)" />
+			<set name="flowScope.isHistoryEnabled" value="historyService.isHistoryEnabled()" />
+		</on-entry>
+		<transition on="edit" to="edit">
+			<set name="flowScope.setFocusOnTextfield" value="true" type="java.lang.String" />
+			<evaluate
+				expression="architecturalDomainFrontendService.getEditMemBean(flowScope.memBean, id, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="delete" to="delete" />
+
+<!-- 		<transition on="timeseriesUpdate"> -->
+<!-- 			<evaluate -->
+<!-- 				expression="timeseriesUpdateFrontendService.updateTimeseriesComponentModels(flowScope.memBean, flowRequestContext, flowExecutionContext)" /> -->
+<!-- 			<render fragments="timeseriesDialogContent" /> -->
+<!-- 		</transition> -->
+	</view-state>
+	
+	<view-state id="edit" model="memBean" view="architecturaldomain/edit">
+		<transition on="save" to="show" history="invalidate">
+			<evaluate
+				expression="architecturalDomainFrontendService.saveComponentModel(flowScope.memBean, id, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="update" to="edit">
+			<set name="flowScope.setFocusOnTextfield" value="false" type="java.lang.String" />
+			<evaluate
+				expression="architecturalDomainFrontendService.updateComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="sort" to="edit">
+			<set name="flowScope.setFocusOnTextfield" value="false" type="java.lang.String" />
+			<evaluate
+				expression="architecturalDomainFrontendService.sortEverythingInComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="cancel" to="show" validate="false">
+			<evaluate
+				expression="architecturalDomainFrontendService.leaveEditMode(flowExecutionContext)" />
+		</transition>
+	</view-state>
+	
+	<view-state id="copyBB" model="memBean" view="architecturaldomain/create">
+    <on-entry>
+      <evaluate expression="architecturalDomainFrontendService.getCreateMemBeanWithDataFromId(id)"
+        result="flowScope.memBean" />
+      
+      <set name="flowScope.FLOW_LABEL" type="java.lang.String"
+        value="architecturalDomainFrontendService.getFlowLabel(null)" />    
+        <set name="flowScope.setFocusOnTextfield" value="true" type="java.lang.String" />	  
+    </on-entry>
+	<on-render>
+		<evaluate
+			expression="architecturalDomainFrontendService.enterEditMode(flowExecutionContext)" />
+	</on-render>
+    <transition on="save" to="refreshAfterSave" history="invalidate">
+      <evaluate expression="architecturalDomainFrontendService.saveNewComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+        result="flowScope.id"/>
+    </transition>
+    <transition on="update" to="create">
+    <set name="flowScope.setFocusOnTextfield" value="false" type="java.lang.String" />	
+      <evaluate
+        expression="architecturalDomainFrontendService.updateComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+    </transition>
+    <transition on="sort" to="create">
+        <set name="flowScope.setFocusOnTextfield" value="false" type="java.lang.String" />	
+			<evaluate
+				expression="architecturalDomainFrontendService.sortEverythingInComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+	</transition>
+    <transition on="cancel" to="close" validate="false" /> 
+  </view-state>	
+
+	<view-state id="initCreate" model="memBean"
+		view="architecturaldomain/create">
+		<on-entry>
+			<evaluate
+				expression="architecturalDomainFrontendService.getCreateMemBean(flowExecutionContext)"
+				result="flowScope.memBean" />
+			<set name="flowScope.FLOW_LABEL" type="java.lang.String"
+				value="architecturalDomainFrontendService.getFlowLabel(null)" />
+				<set name="flowScope.setFocusOnTextfield" value="true" type="java.lang.String" />
+		</on-entry>
+
+		<on-render>
+			<evaluate
+				expression="architecturalDomainFrontendService.enterEditMode(flowExecutionContext)" />
+		</on-render>
+
+		<transition on="save" to="refreshAfterSave" history="invalidate">
+			<evaluate
+				expression="architecturalDomainFrontendService.saveNewComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.id" />
+		</transition>
+		<transition on="update" to="create">
+			<evaluate
+				expression="architecturalDomainFrontendService.updateComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+				<set name="flowScope.setFocusOnTextfield" value="false" type="java.lang.String" />
+		</transition>
+		<transition on="sort" to="create">
+			<evaluate
+				expression="architecturalDomainFrontendService.sortEverythingInComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+			<set name="flowScope.setFocusOnTextfield" value="false" type="java.lang.String" />	
+		</transition>
+		<!--
+			going to 'show' doesn't appear really meaningful in this case, so
+			close the flow
+		-->
+		<transition on="cancel" to="close" validate="false" />
+	</view-state>
+
+	<view-state id="create" model="memBean" view="architecturaldomain/edit">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL" type="java.lang.String"
+				value="architecturalDomainFrontendService.getFlowLabel(flowScope.memBean.componentModel.nameModel.name)" />
+		</on-entry>
+		<transition on="save" to="refreshAfterSave" history="invalidate">
+			<evaluate
+				expression="architecturalDomainFrontendService.saveNewComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.id" />
+		</transition>
+		<transition on="update" to="create">
+			<evaluate
+				expression="architecturalDomainFrontendService.updateComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="sort" to="create">
+			<evaluate
+				expression="architecturalDomainFrontendService.sortEverythingInComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="cancel" to="close" validate="false" />
+	</view-state>
+	
+	<action-state id="pre-edit">
+  	 <on-entry>
+  		<evaluate expression="architecturalDomainFrontendService.getMemBean(id)"
+        	result="flowScope.memBean" />
+      	<set name="flowScope.FLOW_LABEL"
+        	value="architecturalDomainFrontendService.getFlowLabel(flowScope.memBean.componentModel.nameModel.name)"
+        	type="java.lang.String" />
+     </on-entry>
+     <evaluate expression="architecturalDomainFrontendService.getEditMemBean(flowScope.memBean, id, flowRequestContext, flowExecutionContext)"
+        	result="flowScope.memBean" />
+     <transition on="success" to="edit">
+     	<set name="flowScope.setFocusOnTextfield" value="true" type="java.lang.String" />
+     </transition>
+  </action-state>
+  
+  <action-state id="pre-delete">
+  	 <evaluate expression="architecturalDomainFrontendService.getMemBean(id)"
+        	result="flowScope.memBean" />
+     <set name="flowScope.FLOW_LABEL"
+        	value="architecturalDomainFrontendService.getFlowLabel(flowScope.memBean.componentModel.nameModel.name)"
+        	type="java.lang.String" />
+  	 <transition on="success" to="delete" />
+  </action-state>
+  
+  <action-state id="delete">
+  	 <evaluate
+        expression="architecturalDomainFrontendService.deleteEntity(id, flowRequestContext, flowExecutionContext)" />
+	 <transition on="yes" to="confirmed" />
+	 <transition on="no" to="onError" />
+  </action-state>
+
+	<end-state id="close"
+		view="externalRedirect:contextRelative:/architecturaldomain/init.do" />
+	<end-state id="confirmed" commit="true"
+		view="externalRedirect:contextRelative:/architecturaldomain/init.do" />
+	<end-state id="closeAll" view="externalRedirect:contextRelative:/architecturaldomain/init.do">
+		<on-entry>
+			<evaluate expression="architecturalDomainFrontendService.closeAllFlows(flowRequestContext)"></evaluate>
+		</on-entry>
+	</end-state>
+
+</flow>

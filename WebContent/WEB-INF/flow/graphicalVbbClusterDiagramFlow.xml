@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+      http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+	start-state="start" parent="baseGraphicFlow">
+	
+	
+	<decision-state id="start">
+		<if test="requestParameters['_eventId']=='init'" then="init" />
+		<if test="requestParameters['_eventId']=='loadSavedQuery'" then="pre-load" />
+		<if test="requestParameters['_eventId']=='closeAll'" then="closeAll" />
+		<if test="requestParameters['_eventId']==null" then="init" />		
+	</decision-state>
+	
+	<action-state id="init">
+			<evaluate expression="vbbClusterGraphicFrontendService.getInitialMemBean()"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="configuration" />
+	</action-state>
+	
+	<action-state id="pre-load">
+		<evaluate expression="vbbClusterGraphicFrontendService.getInitialMemBean()"
+			result="flowScope.memBean" />
+		<transition on="success" to="loadSavedQuery">
+			<set name="flowScope.FLOW_LABEL"
+				value="vbbClusterGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+			<set name="memBean.savedQueryId"
+				value="requestParameters.savedQueryId"
+				type="java.lang.Integer" />
+		</transition>			
+	</action-state>
+	
+	<action-state id="loadSavedQuery">
+		<evaluate expression="vbbClusterGraphicFrontendService.loadSavedQuery(flowScope.memBean)" 
+				result="flowScope.memBean"/>
+		<transition on="success" to="configuration" />			
+	</action-state>
+	
+	<view-state id="configuration" model="memBean" view="graphicalreporting/vbbclustergraphic">
+
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL"
+				value="vbbClusterGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+		</on-entry>
+
+		<transition on="saveQuery" to="configuration">
+			<evaluate expression="vbbClusterGraphicFrontendService.saveQuery(flowScope.memBean, flowRequestContext)" />
+		</transition>
+
+		<transition on="saveQueryAs" to="configuration">
+			<evaluate expression="vbbClusterGraphicFrontendService.saveQueryAs(flowScope.memBean, flowRequestContext)" />
+		</transition>
+
+		<transition on="loadSavedQuery" to="configuration">
+			<evaluate expression="vbbClusterGraphicFrontendService.loadSavedQuery(flowScope.memBean)"
+				result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="deleteSavedQuery" to="configuration">
+			<evaluate expression="vbbClusterGraphicFrontendService.deleteSavedQuery(flowScope.memBean)" />
+		</transition>	
+
+		<transition on="generateExport" to="configuration">
+			<evaluate expression="vbbClusterGraphicFrontendService.generateGraphicFileResponse(flowScope.memBean, flowRequestContext, flowExecutionContext)"/>
+		</transition>
+		
+		<transition on="triggerDownloadEvent" to="configuration">
+			<evaluate expression="vbbClusterGraphicFrontendService.triggerDownloadEvent(flowRequestContext, 'generateExport')" />
+		</transition>
+		
+		<transition on="filterOuterResults" to="filterresults">
+			<set name="flowScope.cachedReportMemBean" value="flowScope.memBean" />
+			<evaluate expression="vbbClusterGraphicFrontendService.filterOuterResults(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+			result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="filterInnerResults" to="filterresults">
+			<set name="flowScope.cachedReportMemBean" value="flowScope.memBean" />
+			<evaluate expression="vbbClusterGraphicFrontendService.filterInnerResults(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+			result="flowScope.memBean" />
+		</transition>
+
+		<transition on="switchTypes" to="configuration">
+			<evaluate
+				expression="vbbClusterGraphicFrontendService.switchTypes(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="resetOuter" to="configuration">
+			<evaluate expression="vbbClusterGraphicFrontendService.resetOuter(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="resetInner" to="configuration">
+			<evaluate expression="vbbClusterGraphicFrontendService.resetInner(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		
+	</view-state>
+	
+	
+	
+	<view-state id="filterresults" model="memBean" view="graphicalreporting/filterRecursive">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL"
+				value="vbbClusterGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+		</on-entry>
+		
+		<transition on="backFromFilter" to="configuration">
+			<set name="flowScope.memBean" value="flowScope.cachedReportMemBean" />			
+		</transition>
+		
+		<transition on="resumeFromFilter" to="configuration" >
+			<set name="flowScope.vbbClusterMemBean" value="flowScope.cachedReportMemBean" />
+			<evaluate expression="vbbClusterGraphicFrontendService.resumeFromFilter(flowScope.memBean, flowScope.vbbClusterMemBean,flowRequestContext, flowExecutionContext)" 
+				result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="refreshReport" to="filterresults">
+			<evaluate result="flowScope.memBean"
+				expression="vbbClusterGraphicFrontendService.refreshReport(flowScope.memBean, flowRequestContext, flowExecutionContext, true)" />
+		</transition>
+		
+		<transition on="requestReport" to="filterresults">
+			<evaluate expression="vbbClusterGraphicFrontendService.requestEntityList(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="requestAndConfirmReport" to="configuration" >
+			<evaluate expression="vbbClusterGraphicFrontendService.requestEntityList(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+			<set name="flowScope.vbbClusterMemBean" value="flowScope.cachedReportMemBean" />
+			<evaluate expression="vbbClusterGraphicFrontendService.resumeFromFilter(flowScope.memBean, flowScope.vbbClusterMemBean,flowRequestContext, flowExecutionContext)" 
+				result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="resetReport" to="filterresults">
+			<evaluate expression="vbbClusterGraphicFrontendService.resetReport(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="addReportExtension" to="filterresults">
+			<evaluate expression="vbbClusterGraphicFrontendService.addReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="removeReportExtension" to="filterresults">
+			<evaluate expression="vbbClusterGraphicFrontendService.removeReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="expandFirstLevel" to="filterresults">
+			<evaluate expression="vbbClusterGraphicFrontendService.expandFirstLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="expandSecondLevel" to="filterresults">
+			<evaluate expression="landscapeDiagramFrontendService.expandSecondLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />		
+		</transition>
+		<transition on="shrinkLevel" to="filterresults">
+			<evaluate expression="vbbClusterGraphicFrontendService.shrinkLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+	</view-state>
+	
+	
+	<end-state id="close" view="externalRedirect:contextRelative:/show/graphicalreporting/vbbclusterdiagram" />
+		
+	<end-state id="closeAll" view="externalRedirect:contextRelative:/graphicalreporting/init.do">
+		<on-entry>
+			<evaluate expression="vbbClusterGraphicFrontendService.closeAllFlows(flowRequestContext)"></evaluate>
+		</on-entry>
+	</end-state>
+	
+	
+	
+</flow>

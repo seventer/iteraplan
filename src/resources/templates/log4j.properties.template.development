@@ -1,0 +1,93 @@
+#############################################################################
+# Define log Levels for packages or specific classes.
+#
+# To use this file as a template for your own development environment, please 
+# rename this file to log4j.properties and copy it to src/resources/develop.
+#############################################################################
+
+# iteraplan general logging
+# #########################
+log4j.rootLogger=WARN, stdout
+
+# iteraplan audit logging
+# #######################
+log4j.logger.de.iteratec.iteraplan.businesslogic.common.AuditLogger=DEBUG, auditlogfile
+log4j.additivity.de.iteratec.iteraplan.businesslogic.common.AuditLogger=false
+
+# iteraplan login & data source caching and handling
+# ##################################################
+log4j.logger.de.iteratec.iteraplan.presentation.ContextListener=INFO
+
+# iteraplan presentation tier logging
+# ###################################
+
+# iteraplan businesslogic logging
+# ###############################
+log4j.logger.ExcelImportProcessingLog=DEBUG
+
+# iteraplan textual queries logging
+# #################################
+log4j.logger.de.iteratec.iteraplan.businesslogic.reports.query.node=WARN
+log4j.logger.de.iteratec.iteraplan.persistence.dao.QueryDaoImpl=WARN
+
+# iteraplan persistence layer logging
+# ###################################
+
+# spring logging
+# ##############
+log4j.logger.org.springframework=WARN
+log4j.logger.org.springframework.transaction=WARN
+log4j.logger.org.springframework.dao.support=WARN
+log4j.logger.org.springframework.aop.interceptor=WARN
+
+log4j.logger.org.springframework.security=WARN
+
+# hibernate logging
+# #################
+log4j.logger.org.hibernate.SQL=WARN, logfile
+log4j.additivity.org.hibernate.SQL=false
+
+log4j.logger.org.hibernate.type=WARN, logfile
+log4j.additivity.org.hibernate.type.SQL=false
+
+log4j.logger.org.hibernate.transaction=WARN
+
+# Hibernate Transaction logging 
+log4j.logger.org.springframework.orm.hibernate3.HibernateTransactionManager=WARN
+
+# JAWR logging
+##############
+log4j.logger.net.jawr=INFO
+
+# misc logging
+# ############
+
+#Enable SWF debug logging
+log4j.category.org.springframework.webflow=INFO
+
+###############################################################
+#FileAppender "logfile"
+###############################################################
+log4j.appender.logfile=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.logfile.File=@LOG_FILE@
+log4j.appender.logfile.encoding=UTF-8
+log4j.appender.logfile.DatePattern='.'yyyy-MM-dd
+log4j.appender.logfile.layout=org.apache.log4j.PatternLayout
+log4j.appender.logfile.layout.ConversionPattern=[%-5p] [%d{yyyy-MM-dd HH:mm:ss}] (%c{3}) %m%n
+
+###############################################################
+#FileAppender "auditlogfile"
+###############################################################
+log4j.appender.auditlogfile=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.auditlogfile.File=@AUDIT.LOGGING.PATH@
+log4j.appender.auditlogfile.encoding=UTF-8
+log4j.appender.auditlogfile.DatePattern='.'yyyy-MM-dd
+log4j.appender.auditlogfile.layout=org.apache.log4j.PatternLayout
+log4j.appender.auditlogfile.layout.ConversionPattern=[%d{yyyy-MM-dd HH:mm:ss}] %m%n
+
+###############################################################
+# Console Appender "stdout"
+###############################################################
+log4j.appender.stdout = org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=[%-5p] [%d{yyyy-MM-dd HH:mm:ss}] (%c{3}) %m%n

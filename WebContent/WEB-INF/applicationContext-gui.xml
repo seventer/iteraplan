@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+
+
+	<bean class="de.iteratec.iteraplan.presentation.SpringGuiFactory"
+		factory-method="getInstance">
+		<property name="extensionFormHelper" ref="extensionFormHelper" />
+        <property name="defaultColor" value="${defaultColor}"/>
+		<property name="portfolioColors" ref="portfolioColors" />
+		<property name="attributeColors" ref="attributeColors" />
+		<property name="landscapeColors" ref="landscapeColors" />
+		<property name="informationFlowColors" ref="informationFlowColors" />
+		<property name="masterplanColors" ref="masterplanColors" />
+	    <property name="clusterColors" ref="clusterColors" />
+	    <property name="pieBarColors" ref="pieBarColors" />
+	    <property name="lineColors" ref="lineColors" />
+	    <property name="vbbClusterColors" ref="vbbClusterColors" />
+        <property name="defaultLineTypeKey" value="${defaultLineType.key}"/>
+        <property name="defaultLineTypePresentation" value="${defaultLineType.presentation}" />
+        <property name="availableLineTypes" ref="lineTypes" />
+ 	</bean>
+	
+	<util:list id="attributeColors" list-class="java.util.ArrayList">
+		<value>${attributeColor.1}</value>
+		<value>${attributeColor.2}</value>
+		<value>${attributeColor.3}</value>
+		<value>${attributeColor.4}</value>
+		<value>${attributeColor.5}</value>
+		<value>${attributeColor.6}</value>
+		<value>${attributeColor.7}</value>
+	</util:list>
+	
+	<util:list id="portfolioColors" list-class="java.util.ArrayList">
+		<value>${portfolioColor.1}</value>
+		<value>${portfolioColor.2}</value>
+		<value>${portfolioColor.3}</value>
+		<value>${portfolioColor.4}</value>
+		<value>${portfolioColor.5}</value>
+		<value>${portfolioColor.6}</value>
+		<value>${portfolioColor.7}</value>
+	</util:list>
+
+	<util:list id="landscapeColors" list-class="java.util.ArrayList">
+		<value>${landscapeColor.1}</value>
+		<value>${landscapeColor.2}</value>
+		<value>${landscapeColor.3}</value>
+		<value>${landscapeColor.4}</value>
+		<value>${landscapeColor.5}</value>
+		<value>${landscapeColor.6}</value>
+		<value>${landscapeColor.7}</value>
+	</util:list>
+
+	<util:list id="informationFlowColors" list-class="java.util.ArrayList">
+		<value>${informationFlowColor.1}</value>
+		<value>${informationFlowColor.2}</value>
+		<value>${informationFlowColor.3}</value>
+		<value>${informationFlowColor.4}</value>
+		<value>${informationFlowColor.5}</value>
+		<value>${informationFlowColor.6}</value>
+		<value>${informationFlowColor.7}</value>
+	</util:list>
+	
+	<util:list id="masterplanColors" list-class="java.util.ArrayList">
+		<value>${masterplanColor.1}</value>
+		<value>${masterplanColor.2}</value>
+		<value>${masterplanColor.3}</value>
+		<value>${masterplanColor.4}</value>
+		<value>${masterplanColor.5}</value>
+		<value>${masterplanColor.6}</value>
+		<value>${masterplanColor.7}</value>
+	</util:list>
+	
+	<util:list id="clusterColors" list-class="java.util.ArrayList">
+        <value>${clusterColor.1}</value>
+        <value>${clusterColor.2}</value>
+        <value>${clusterColor.3}</value>
+        <value>${clusterColor.4}</value>
+        <value>${clusterColor.5}</value>
+        <value>${clusterColor.6}</value>
+        <value>${clusterColor.7}</value>
+    </util:list>
+    
+    <util:list id="pieBarColors" list-class="java.util.ArrayList">
+        <value>${pieBarColor.1}</value>
+        <value>${pieBarColor.2}</value>
+        <value>${pieBarColor.3}</value>
+        <value>${pieBarColor.4}</value>
+        <value>${pieBarColor.5}</value>
+        <value>${pieBarColor.6}</value>
+        <value>${pieBarColor.7}</value>
+    </util:list>
+    
+    <util:list id="lineColors" list-class="java.util.ArrayList">
+        <value>${lineColor.1}</value>
+        <value>${lineColor.2}</value>
+        <value>${lineColor.3}</value>
+        <value>${lineColor.4}</value>
+        <value>${lineColor.5}</value>
+        <value>${lineColor.6}</value>
+        <value>${lineColor.7}</value>
+    </util:list>
+    
+    <util:list id="vbbClusterColors" list-class="java.util.ArrayList">
+        <value>${vbbClusterColor.1}</value>
+        <value>${vbbClusterColor.2}</value>
+        <value>${vbbClusterColor.3}</value>
+        <value>${vbbClusterColor.4}</value>
+        <value>${vbbClusterColor.5}</value>
+        <value>${vbbClusterColor.6}</value>
+        <value>${vbbClusterColor.7}</value>
+    </util:list>
+    
+    <util:map id="lineTypes" map-class="java.util.HashMap">
+      <entry key="${lineType.3.key}" value="${lineType.3.presentation}"/>
+      <entry key="${lineType.2.key}" value="${lineType.2.presentation}"/>
+      <entry key="${lineType.1.key}" value="${lineType.1.presentation}"/>
+    </util:map>
+    
+</beans>

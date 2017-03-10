@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+  <class name="de.iteratec.iteraplan.model.BuildingBlockType" table="BBT" lazy="false">
+  	<cache usage="read-write"/>
+    <id name="id" column="ID" type="java.lang.Integer">
+      <generator class="org.hibernate.id.enhanced.TableGenerator">
+        <param name="segment_value">bbt</param>
+      </generator>
+    </id>
+    <property name="typeOfBuildingBlock" type="enumBbType" column="TYPE" not-null="true" unique="true" />
+    <property name="availableForAttributes" column="AVAILABLE_FOR_AT" length="1" not-null="true" />
+
+    <set name="attributeTypes" table="AT_BBT" lazy="true" inverse="true" cascade="lock">
+      <key column="ID_BBT" />
+      <many-to-many class="de.iteratec.iteraplan.model.attribute.AttributeType" column="ID_AT" foreign-key="FK_BBT_AT"/>
+    </set>
+
+    <set name="rolePermissions" inverse="true" lazy="true" cascade="lock,delete-orphan">
+      <key column="ID_BBT" />
+      <one-to-many class="de.iteratec.iteraplan.model.user.Role2BbtPermission"/>
+    </set>
+
+    <set name="subscribedUsers" table="BBT_SU" lazy="true" cascade="lock">
+    	<cache usage="read-write"/>
+      	<key column="ID_BBT" foreign-key="FK_SU_BBT"/>
+      	<many-to-many class="de.iteratec.iteraplan.model.user.User" column="ID_UE" fetch="join" foreign-key="FK_BBT_UE"/>
+    </set>
+  </class>
+
+  <query name="getBuildingBlockTypeByTypeOf">
+    <![CDATA[select bbt from BuildingBlockType bbt
+              where bbt.typeOfBuildingBlock = :typeOf]]>
+  </query>
+
+  <query name="getAvailableWriteableBbTypesForRole">
+    <![CDATA[select bbt from BuildingBlockType bbt
+              where bbt not in (select bbt2 from Role role join role.permissionsBbt perm join perm.bbt bbt2 where role.id = :roleId)]]>
+  </query>
+
+  <query name="getConnectedWriteableBbTypesForRole">
+    <![CDATA[select perm.bbt from Role role join role.permissionsBbt perm
+              where role.id = :roleId]]>
+  </query>
+
+  <query name="getBuildingBlockTypesAvailableForAttributes">
+    <![CDATA[from BuildingBlockType bbt
+              where availableForAttributes = :true]]>
+  </query>
+
+</hibernate-mapping>
+

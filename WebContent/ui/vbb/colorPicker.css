@@ -1,0 +1,18 @@
+/* Formatting for color picker */
+.smallColorPicker_button_back {
+	background: url("../../images/colorPicker.gif") repeat scroll 0 0 transparent;
+	height: 22px;
+	width: 32px;
+}
+.smallColorPicker_button_color {
+	height: 4px;
+	margin: 16px 0 0 2px;
+	overflow: hidden;
+	width: 18px;
+}
+
+.colorPanel ul li div { width: 1.3em; height: 1.3em; margin: 0.3em; border: 1px solid #999999; cursor: pointer; }
+.colorPanel ul li.selected div { border: 1px solid #000000; }
+.colorPanel ul li { list-style: none; float: left; }
+.colorPanel ul { padding: 0; margin: 0; overflow: auto; }
+.colorPanel { border: 1px solid #999999; position: absolute; margin-left: 0.3em; background-color: #FFFFFF; z-index: 1; }

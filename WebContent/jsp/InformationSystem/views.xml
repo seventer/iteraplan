@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+	"-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+	"http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+
+	<definition name="informationsystem/init" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="informationSystemRelease.plural" />
+		<put-attribute name="title_style" value="global.overview" />
+		<put-attribute name="form_id" value="informationSystem_search" />
+		<put-attribute name="form_action" value="search.do" />
+		<put-attribute name="form_model" value="dialogMemory" />
+		<put-attribute name="form_method" value="get" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/InformationSystem/Search.jsp" />
+		</put-list-attribute>
+	</definition>
+
+	<definition name="informationsystem/search" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="informationSystemRelease.plural" />
+		<put-attribute name="title_style" value="global.overview" />
+		<put-attribute name="form_id" value="informationSystem_search" />
+		<put-attribute name="form_action" value="search.do" />
+		<put-attribute name="form_model" value="dialogMemory" />
+		<put-attribute name="form_method" value="get" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/InformationSystem/Search.jsp" />
+		</put-list-attribute>
+	</definition>
+
+	<definition name="informationsystem/show" extends="buildingBlockDetailViewWithTimeseriesLayout">
+		<put-attribute name="title" value="informationSystemRelease.plural" />
+		<put-attribute name="title_style" value="details" />
+		<put-attribute name="form_id" value="informationSystem_show" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/InformationSystem/Manage.jsp" />
+			<add-attribute value="/jsp/common/LastModificationInfo.jsp" />
+		</put-list-attribute>
+	</definition>
+
+	<definition name="informationsystem/edit" extends="buildingBlockDetailViewWithTimeseriesLayout">
+		<put-attribute name="title" value="informationSystemRelease.plural" />
+		<put-attribute name="title_style" value="global.edit" />
+		<put-attribute name="form_id" value="informationSystem_edit" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/InformationSystem/Manage.jsp" />
+			<add-attribute value="/jsp/common/LastModificationInfo.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+	<definition name="informationsystem/create" extends="buildingBlockDetailViewWithTimeseriesLayout">
+		<put-attribute name="title" value="informationSystemRelease.plural" />
+		<put-attribute name="title_style" value="global.new" />
+		<put-attribute name="form_id" value="informationSystem_create" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/InformationSystem/Manage.jsp" />
+		</put-list-attribute>
+	</definition>
+
+	<definition name="informationsystem/newRelease" extends="buildingBlockDetailViewWithTimeseriesLayout">
+		<put-attribute name="title" value="informationSystemRelease.plural" />
+		<put-attribute name="title_style" value="global.new" />
+		<put-attribute name="form_id" value="informationSystem_edit" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute
+				value="/jsp/InformationSystem/tiles/CopyAllRelease.jsp" />
+			<add-attribute value="/jsp/common/LastModificationInfo.jsp" />
+		</put-list-attribute>
+	</definition>
+
+	<definition name="informationsystem/copyRelease" extends="buildingBlockDetailViewWithTimeseriesLayout">
+		<put-attribute name="title" value="informationSystemRelease.plural" />
+		<put-attribute name="title_style" value="global.new" />
+		<put-attribute name="form_id" value="informationSystem_edit" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/InformationSystem/Manage.jsp" />
+			<add-attribute value="/jsp/common/LastModificationInfo.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+</tiles-definitions>

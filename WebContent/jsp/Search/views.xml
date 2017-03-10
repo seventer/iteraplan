@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+	"-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+	"http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+	
+<tiles-definitions>
+	<definition name="search/init" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="manageSearch.title" />
+  		<put-attribute name="form_id" value="search_show" />
+  		<put-attribute name="form_model" value="dialogMemory" />
+  		<put-attribute name="form_method" value="get" />
+  		<put-attribute name="form_action" value="search.do" />
+  		<put-list-attribute name="contents" >
+  		  <add-attribute value="/jsp/Search/ReportRequest.jsp" />
+  		  <add-attribute value="/jsp/Search/Manage.jsp" />
+	    </put-list-attribute>
+	</definition>
+
+	<definition name="search/search" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="manageSearch.title" />
+  		<put-attribute name="form_id" value="search_query" />
+  		<put-attribute name="form_model" value="dialogMemory" />
+  		<put-attribute name="form_method" value="get" />
+  		<put-attribute name="form_action" value="search.do" />
+  		<put-list-attribute name="contents" >
+  		  <add-attribute value="/jsp/Search/ReportRequest.jsp" />
+  		  <add-attribute value="/jsp/Search/Manage.jsp" />
+	    </put-list-attribute>
+	</definition>
+</tiles-definitions>

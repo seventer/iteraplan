@@ -1,0 +1,17 @@
+# The JNDI source for the JDBC datasource
+turm.datasource=java:/comp/env/@DB.JNDI.DATASOURCE@
+
+# Regular Expression which a new password has to fulfill in order to be accepted.
+# Note that backslashes must be escaped with another backslash!
+# 
+# A password must contain at least one lowercase letter, one digit and 
+# one uppercase letter or special character. The password must be at 
+# least eight characters long. Blanks are not allowed.
+turm.passwordPattern=^(([\\S]*[a-z]+[\\S]*[\\d]+[\\S]*[^a-z0-9\\s]+[\\S]*)|([\\S]*[a-z]+[\\S]*[^a-z0-9\\s]+[\\S]*[\\d]+[\\S]*)|([\\S]*[^a-z0-9\\s]+[\\S]*[a-z]+[\\S]*[\\d]+[\\S]*)|([\\S]*[^a-z0-9\\s]+[\\S]*[\\d]+[\\S]*[a-z]+[\\S]*)|([\\S]*[\\d]+[\\S]*[a-z]+[\\S]*[^a-z0-9\\s]+[\\S]*)|([\\S]*[\\d]+[\\S]*[^a-z0-9\\s]+[\\S]*[a-z]+[\\S]*))$
+
+# The minimum length a password must have in order to be accepted.
+turm.passwordLength=8
+
+# In some setups, iTurm is only used to map users to roles, but not for password checking
+# With this property, you can disable password management
+turm.passwordmgmt.disable=false

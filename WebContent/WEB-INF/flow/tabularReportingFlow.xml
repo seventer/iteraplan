@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+      http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+	start-state="start" parent="baseFlow">
+	
+	<decision-state id="start">
+		<if test="requestParameters['_eventId']=='fromInterchange'" then="fromInterchange" />
+		<if test="requestParameters['bbType']!=null" then="initWithType" />
+		<if test="requestParameters['_eventId']=='init'" then="init" />
+		<if test="requestParameters['_eventId']=='directRequest'" then="directRequest" />
+		<if test="requestParameters['_eventId']=='loadSavedQuery'" then="pre-load" />
+		<if test="requestParameters['_eventId']=='closeAll'" then="closeAll" />
+		<if test="requestParameters['_eventId']==null" then="init" />	
+	</decision-state>
+	
+	<action-state id="init">
+			<evaluate expression="tabularReportingFrontendService.getInitialMemBean(null)"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="show" />
+	</action-state>
+	
+	<action-state id="initWithType">
+			<evaluate expression="tabularReportingFrontendService.getInitialMemBean(requestParameters['bbType'])"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="show" />
+	</action-state>
+	
+	<action-state id="fromInterchange">
+			<evaluate expression="tabularReportingFrontendService.fromInterchange(requestParameters['bbType'],requestParameters['idList'],requestParameters['statusSelected'],requestParameters['sealSelected'],requestParameters['statusAV'],requestParameters['sealAV'])"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="show" />
+	</action-state>
+  
+    <action-state id="pre-load">
+      <evaluate expression="tabularReportingFrontendService.getInitialMemBean(null)"
+        result="flowScope.memBean" />
+      <transition on="success" to="loadSavedQuery">
+        <set name="flowScope.FLOW_LABEL"
+          value="tabularReportingFrontendService.getFlowLabel(null)"
+          type="java.lang.String" />
+        <set name="memBean.savedQueryId"
+          value="requestParameters.savedQueryId"
+          type="java.lang.Integer" />
+      </transition>     
+    </action-state>
+    
+    <action-state id="loadSavedQuery">
+      <evaluate expression="tabularReportingFrontendService.loadSavedQuery(flowScope.memBean)" 
+          result="flowScope.memBean"/>
+      <transition on="success" to="show" />
+    </action-state>
+	
+	<action-state id="directRequest">
+			<evaluate expression="tabularReportingFrontendService.getInitialMemBean(null)"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="show">
+				<evaluate expression="flowScope.memBean.setSavedQueryId(requestParameters['id'])" />
+				<evaluate expression="tabularReportingFrontendService.loadSavedQuery(flowScope.memBean)"
+					result="flowScope.memBean" />
+				<evaluate expression="tabularReportingFrontendService.requestReport(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+					result="flowScope.result"/>
+			</transition>
+	</action-state>
+
+	<view-state id="show" model="memBean" view="tabularreporting/show">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL"
+				value="tabularReportingFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+		</on-entry>
+		<transition on="changeQueryType" to="show">
+			<evaluate
+				expression="tabularReportingFrontendService.changeQueryType(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="expandFirstLevel" to="show">
+			<evaluate
+				expression="tabularReportingFrontendService.expandFirstLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="expandSecondLevel" to="show">
+			<evaluate
+				expression="tabularReportingFrontendService.expandSecondLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />		
+		</transition>
+		<transition on="shrinkLevel" to="show">
+			<evaluate
+				expression="tabularReportingFrontendService.shrinkLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="refreshReport" to="show">
+			<evaluate
+				expression="tabularReportingFrontendService.refreshReport(flowScope.memBean, flowRequestContext, flowExecutionContext, true)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="addReportExtension" to="show">
+			<evaluate expression="tabularReportingFrontendService.addReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="removeReportExtension" to="show">
+			<evaluate expression="tabularReportingFrontendService.removeReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="requestReport" to="show">
+			<evaluate expression="tabularReportingFrontendService.requestReport(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+
+		<transition on="triggerDownloadEvent" to="show">
+			<evaluate expression="tabularReportingFrontendService.triggerDownloadEvent(flowRequestContext, 'requestReport')" />
+		</transition>
+
+		<transition on="resetReport" to="show">
+			<evaluate expression="tabularReportingFrontendService.getInitialMemBean(null)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="saveQuery" to="show">
+			<evaluate expression="tabularReportingFrontendService.saveQuery(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		<transition on="saveQueryAs" to="show">
+			<evaluate expression="tabularReportingFrontendService.saveQueryAs(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		<transition on="loadSavedQuery" to="show">
+			<evaluate expression="tabularReportingFrontendService.loadSavedQuery(flowScope.memBean)"
+			result="flowScope.memBean" />
+		</transition>		
+		<transition on="deleteSavedQuery" to="show">
+			<evaluate expression="tabularReportingFrontendService.deleteSavedQuery(flowScope.memBean)" />
+		</transition>
+		<transition on="addColumn" to="show">
+			<evaluate expression="tabularReportingFrontendService.addColumn(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+			result="flowScope.memBean" />
+		</transition>
+		<transition on="updateColumn" to="show">
+			<evaluate expression="tabularReportingFrontendService.updateColumn(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="removeColumn" to="show">
+			<evaluate expression="tabularReportingFrontendService.removeColumn(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="nettoExport" to="show">
+			<evaluate expression="tabularReportingFrontendService.generateNettoExportResponse(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="clearErrors" to="show">
+			<evaluate expression="tabularReportingFrontendService.clearErrors(flowScope.memBean)" />
+		</transition>
+		<transition on="directRequest" to="directRequest">
+		</transition>
+		<transition on="fromInterchange" to="fromInterchange">
+		</transition>
+		<transition on="changeBBType" to="show">
+			<evaluate expression="tabularReportingFrontendService.getInitialMemBean(requestParameters['bbType'])"
+				result="flowScope.memBean" />
+		</transition>
+	</view-state>
+	
+	<end-state id="close"
+		view="externalRedirect:contextRelative:/show/tabularreporting" />
+		
+	<end-state id="closeAll" view="externalRedirect:contextRelative:/show/tabularreporting">
+		<on-entry>
+			<evaluate expression="tabularReportingFrontendService.closeAllFlows(flowRequestContext)"></evaluate>
+		</on-entry>
+	</end-state>
+	
+</flow>

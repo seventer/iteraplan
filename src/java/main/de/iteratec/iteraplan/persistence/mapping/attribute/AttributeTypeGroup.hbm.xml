@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.iteratec.iteraplan.model.attribute">
+
+  <class name="AttributeTypeGroup" table="ATG" lazy="false">
+    <cache usage="read-write"/>
+    <id name="id" column="ID" type="java.lang.Integer"> 
+      <generator class="org.hibernate.id.enhanced.TableGenerator">
+        <param name="segment_value">atg</param>
+      </generator>
+    </id>
+    <version name="olVersion" column="VERSION" type="integer" unsaved-value="negative" />
+    <property name="name" column="NAME" length="255" not-null="true" unique="true" />
+    <property name="description" column="DESCRIPTION" length="4000" />
+    <property name="toplevelATG" column="IS_TOPLEVEL_ATG" length="1" not-null="true" />
+    <property name="position" column="POS" not-null="true" />
+
+    <list name="attributeTypes" lazy="true" cascade="save-update,lock">
+      <key column="ID_ATG" not-null="true" />
+      <list-index column="POS" />
+      <one-to-many class="AttributeType" />
+    </list>
+    <set name="permissionsRole" inverse="true" lazy="true" cascade="all,delete-orphan" batch-size="20">
+      <key column="ID_ATG" />
+      <one-to-many class="de.iteratec.iteraplan.model.user.PermissionAttrTypeGroup" />
+    </set>
+    <property name="lastModificationUser" column="LAST_MOD_USER" length="255" />
+    <property name="lastModificationTime" column="LAST_MOD_TIME" />
+  </class>
+
+  <query name="getAvailableAttrTypeGroupsForRole">
+    <![CDATA[select atg from AttributeTypeGroup atg where atg not in (select patg.attrTypeGroup from PermissionAttrTypeGroup patg where patg.role.id = :roleId)]]>
+  </query>
+
+  <query name="getMaxATGPositionNumber">
+    <![CDATA[select max(atg.position) from AttributeTypeGroup atg]]>
+  </query>
+
+  <query name="getMinATGPositionNumber">
+    <![CDATA[select min(atg.position) from AttributeTypeGroup atg]]>
+  </query>
+
+  <query name="getAttributeTypeGroupByName">
+    <![CDATA[select atg from AttributeTypeGroup atg where atg.name like :atgName escape '|' order by atg.position asc]]>
+  </query>
+
+</hibernate-mapping>

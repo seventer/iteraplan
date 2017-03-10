@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<!--
+
+  @(#)package.html
+
+  Copyright 2008 iteratec GmbH
+  Germany, 82008 Unterhaching.  All Rights Reserved.
+
+-->
+</head>
+<body>
+<p>
+This package contains classes that can be used to describe a query.
+</p>
+<p>
+User defined queries are described by using the classes in this package. A query
+is represented as a graph that contains either leaf, operation or extension nodes.
+Leaf nodes can for example be attributes of the queried type, opertion nodes are 
+typically "and" and "or" operations and extension nodes are used for creating more
+complex queries.
+</p>
+<p>
+The presentation layer passes user defined queries to the business layer for evaluation.
+This is done by the <code>QueryDAO</code>, which converts a query
+representation into one or more Hibernate queries and returns the matching BuildingBlocks.
+</p>
+@see de.iteratec.iteraplan.businesslogic.reports.query.node.Node
+@see de.iteratec.iteraplan.businesslogic.reports.query.type
+@see de.iteratec.iteraplan.persistence.dao.QueryDAO#evaluateQueryTree(Node)
+</body>
+</html>

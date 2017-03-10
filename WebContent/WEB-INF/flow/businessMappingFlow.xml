@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+      http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+	  start-state="start" parent="baseFlow">
+
+  <input name="id" type="java.lang.Integer" />
+
+  <decision-state id="start">
+  		<if test="requestParameters['_eventId']=='init'" then="init" />
+		<if test="requestParameters['_eventId']=='closeAll'" then="closeAll" />
+		<if test="requestParameters['_eventId']==null" then="init" />	
+  </decision-state>
+  
+    	<action-state id="init">
+			<evaluate expression="businessMappingFrontendService.getInitialMemBean()"
+					  result="flowScope.memBean" />
+			<transition on="#{true}" to="selectDimensions" />
+	</action-state>
+  
+   <view-state id="selectDimensions" model="memBean" view="businessmapping/selectDimensions">
+   		<on-entry>
+			<set name="flowScope.FLOW_LABEL"
+				 value="businessMappingFrontendService.getFlowLabel(null)"
+				 type="java.lang.String" />
+		</on-entry>
+    	<transition on="changeSettings" to="selectDimensions">
+    		<evaluate expression="businessMappingFrontendService.changeSettings(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+    				  result="flowScope.memBean" />
+    	</transition>
+    	<transition on="sendBMRequest" to="show">
+    		<evaluate expression="businessMappingFrontendService.sendBusinessMappingsRequest(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+    				  result="flowScope.memBean" />
+    	</transition>
+  </view-state>
+  
+  <view-state id="show" model="memBean" view="businessmapping/show">
+  		<on-entry>
+			<evaluate expression="businessMappingFrontendService.getMemBeanWithOldCmData(flowScope.memBean, id, flowRequestContext, flowExecutionContext)"
+    				  result="flowScope.memBean" />
+		</on-entry>
+		<transition on="changeSettings" to="selectDimensions">
+    		<evaluate expression="businessMappingFrontendService.changeSettings(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+    				  result="flowScope.memBean" />
+    	</transition>
+    	<transition on="sendBMRequest" to="show">
+    		<evaluate expression="businessMappingFrontendService.sendBusinessMappingsRequest(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+    				  result="flowScope.memBean" />
+    	</transition>
+   		<transition on="edit" to="edit">
+      		<evaluate expression="businessMappingFrontendService.getEditMemBean(flowScope.memBean, id, flowRequestContext, flowExecutionContext)"
+        			  result="flowScope.memBean" />
+        	<set name="flowScope.setFocusOnTextfield" value="true" type="java.lang.String" />
+    	</transition>
+  </view-state>
+  
+  <view-state id="edit" model="memBean" view="businessmapping/edit">
+	  	<transition on="update" to="edit">
+	  	  <set name="flowScope.setFocusOnTextfield" value="false" type="java.lang.String" />
+	      <evaluate expression="businessMappingFrontendService.updateComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+	    </transition>
+	    <transition on="rowColumnUpdate" to="edit">
+	      <set name="flowScope.setFocusOnTextfield" value="false" type="java.lang.String" />
+	      <evaluate expression="businessMappingFrontendService.rowColumnUpdate(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+	    </transition>
+	  	<transition on="save" to="show" history="invalidate">
+	      <evaluate expression="businessMappingFrontendService.saveComponentModel(flowScope.memBean, id, flowRequestContext, flowExecutionContext)" />
+	    </transition>
+	    <transition on="cancel" to="show" validate="false">
+	      <evaluate expression="businessFunctionFrontendService.leaveEditMode(flowExecutionContext)" />
+	    </transition>
+  </view-state>
+    
+    <end-state id="close"
+		view="externalRedirect:contextRelative:/show/businessmapping" />
+		
+	<end-state id="closeAll" view="externalRedirect:contextRelative:/show/businessmapping">
+		<on-entry>
+			<evaluate expression="businessMappingFrontendService.closeAllFlows(flowRequestContext)"></evaluate>
+		</on-entry>
+	</end-state>
+    
+</flow>

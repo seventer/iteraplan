@@ -1,0 +1,358 @@
+<?xml version="1.0"?>
+<!DOCTYPE installer PUBLIC "-//tp23 //DTD Ant Installer Config//EN" "http://antinstaller.sf.net/dtd/antinstall-config-0.7.dtd">
+<installer
+	ui="swing,text"
+	verbose="true"
+	lookAndFeel="jgoodies"
+	name="iteraplan Installer"
+	windowIcon="/resources/iteratec.gif"
+	defaultImageResource="/resources/iteraplan-wide.jpg"
+	minJavaVersion="1.5" 
+	finishButtonText="Execute"
+	wide="600:200">
+	<page
+		type="input"
+		name="intro"
+		displayText="Welcome to the iteraplan deployment wizard"
+		target="prepare">
+		<comment displayText=""
+			explanatoryText="Follow the wizard to create deployable .WAR files for iteraplan and optionally iTURM, and to initialize their respective databases." />
+		<comment displayText=""
+			explanatoryText="Note that iTURM is required if you do not have your own identity management solution, such as LDAP." />
+	</page>
+	<page
+		type="input"
+		name="targets"
+		displayText="What would you like to do? ">
+		
+		<target target="build.war" displayText="Install iteraplan" defaultValue="true" />
+		<target target="turm.build.war" displayText="Install iTURM" defaultValue="true" />		
+	</page>
+	
+	<page
+		type="input"
+		name="errNoSelection"
+		displayText="Error: Please select something to deploy"
+		ifProperty="(${build.war}==false) AND (${turm.build.war}==false)"
+		>
+		<comment displayText=""
+			explanatoryText="Please go back and select something to deploy." />
+	</page>	
+
+	<!-- CM 21.01.08 Insert new page which will allow renaming application which change of .WAR file and name in context.xml -->
+	<page
+		type="input"
+		name="chooseappname_iteraplan"
+		displayText="iteraplan: Choose name to deploy iteraplan with"
+		ifTarget="build.war">
+    <comment displayText=""
+      explanatoryText="By default the name of the application is to be deployed with is 'iteraplan'. If you wish to change that name please enter a new one in the field below." />
+    <comment displayText=""
+      explanatoryText="This name will be part of the URI which you need to address the application. Setting it to 'iteraplan2' will make it accessible under 'http://servername:port/iteraplan2' for example." />
+		<text
+			property="deploy.warFilename"
+			displayText="Deployment name"
+			defaultValue="iteraplan" />
+	</page>
+	
+	<!-- CM 21.01.08 Insert new page which will allow renaming application which change of .WAR file and name in context.xml -->
+	<page
+		type="input"
+		name="chooseappname_iturm"
+		displayText="iTURM: Choose name to deploy iTURM with"
+		ifTarget="turm.build.war">
+    <comment displayText=""
+      explanatoryText="By default the name the application is to be deployed with is 'iturm'. If you wish to change that name please enter a new one in the field below." />
+		<text
+			property="turm.deploy.name"
+			displayText="Deployment name"
+			defaultValue="iturm" />
+	</page>
+		
+	<!-- Pages for configuring the iteraplan .WAR and set up the database -->
+	
+	<!-- Page to specify iteraplan DB -->
+	<!-- Workaround: There is a bug currently that the database.driver is always taken from this page. 
+			This means that even if only iTURM is being installed, this page must still be shown.
+			It also means that iTURM must use the same DB-Dialect (Both MySQL or both Oracle or both MS SQL Server) as iteraplan.
+			
+			Once fixed, re-insert ifTarget="build.war" into the page element to only show this when iteraplan is being installed.
+			
+			Idea to fix: use <conditional>
+	-->
+	<page
+		type="input"
+		name="databaseConnection"
+		displayText="iteraplan: Login parameters for the iteraplan database:">
+		<select
+			property="database.rdbmsName"
+			displayText="Database vendor"
+			defaultValue="sqlserver">			
+			<option text="MySQL" value="mysql5" />
+			<option text="Oracle" value="oracle" />
+			<option text="Microsoft SQL Server" value="sqlserver" />
+		</select>
+		<text
+			property="database.serverAddress"
+			displayText="Address of the DB server"
+			defaultValue="localhost" />
+		<text
+			property="database.serverPort"
+			displayText="Port of the DB server"
+			defaultValue="1433" />
+		<text
+			property="database.login"
+			displayText="User name for the DB"
+			defaultValue="" />
+		<password
+			property="database.password"
+			displayText="Password for the DB"
+			defaultValue="" regex=".*" />
+		<ext-validated
+			property="database.name"
+			displayText="Name of the DB"
+			defaultValue="${deploy.warFilename}" 
+			validationClass="de.iteratec.iteraplan.antinstaller.TestIteraplanDatabase" />
+    <comment displayText=""
+      explanatoryText="Please note that on pressing 'Next' the application will try to establish a database connection to test these settings. This could take a few seconds. If no error is detected the workflow will continue normally otherwise an error message will be shown." />
+	</page>
+		
+	<!-- when generating the iteraplan.war we need the turm db connection too in order to configure the db access -->	
+	<page
+		type="input"
+		name="databaseConnectionTurm"
+		displayText="iTURM: Login parameters for the iTURM database:">
+<!--  // Doesn't load in database.driver for some reason, so no point in letter the user pick... it unfortunately must be same as iteraplan db
+		<select
+			property="iturm.database.rdbmsName"
+			displayText="Database vendor"
+			defaultValue="sqlserver">
+			<option text="Oracle" value="oracle" />
+			<option text="MySQL" value="mysql5" />
+			<option text="Microsoft SQL Server" value="sqlserver" />
+		</select>
+-->
+		<text
+			property="iturm.database.serverAddress"
+			displayText="Address of the DB server"
+			defaultValue="${database.serverAddress}" />
+		<text
+			property="iturm.database.serverPort"
+			displayText="Port of the DB server"
+			defaultValue="${database.serverPort}" />
+		<text
+			property="iturm.database.login"
+			displayText="User name for the DB"
+			defaultValue="${database.login}" />
+		<password
+			property="iturm.database.password"
+			displayText="Password for the DB"
+			defaultValue="${database.password}" regex=".*" />
+		<ext-validated
+			property="iturm.database.name"
+			displayText="Name of the DB"
+			defaultValue="iturm"
+			validationClass="de.iteratec.iteraplan.antinstaller.TestITurmDatabase" />
+    <comment displayText=""
+      explanatoryText="Please note that on pressing 'Next' the application will try to establish a database connection to test these settings. This could take a few seconds. If no error is detected the workflow will continue normally otherwise an error message will be shown. Note to users of LDAP authentication: Please enter the same data here as on the previous page." />
+	</page>
+	<page
+		type="input"
+		name="targetLogFile"
+		displayText="iteraplan: Location for the log file"
+		ifTarget="build.war">
+    <comment displayText=""
+      explanatoryText="All technical logging will be saved in a log file called '@LOG_FILE_NAME@'. Please specify the path where the log file should be saved. Make sure that the servlet container instance has read and write permissions for that folder/file (on the server where the .WAR file will be deployed)." />
+		<text
+			property="log.path"
+			defaultValue=""
+			displayText="Path to technical logfile:" />
+	</page>
+		
+	<page
+		type="input"
+		name="targetLogFileTurm"
+		displayText="iTURM: Location for the iTURM log file"
+		ifTarget="turm.build.war">
+    <comment displayText=""
+      explanatoryText="All technical logging for iTURM will be saved in a log file called 'iturm.log'. Please specify the path where the log file should be saved. Make sure that the servlet container instance has read and write permissions for that folder/file (on the server where the .WAR file will be deployed)." />
+		<text
+			property="turm.log.path"
+			defaultValue=""
+			displayText="Path to technical logfile:" />
+	</page>
+	
+	<!-- Pages for configuring the HibernateSearch index dir -->
+	<page
+		type="input"
+		name="targetHibernateSearchIndex"
+		displayText="Location for Hibernate Search index"
+		ifTarget="build.war">
+		
+		<comment displayText=""
+      		explanatoryText="Hibernate Search creates index files to ensure data search is efficient. Configure the directory where the index files will be stored. The entered path must be a writeable directory." />
+      		
+      	<!-- This doesnt work atm
+		<ext-validated
+			property="hibernate.search.index"
+			displayText="Directory for search indexes:"
+			defaultValue="indexes" 
+			validationClass="de.iteratec.iteraplan.antinstaller.TestIteraplanIsDirectoryWriteable" />
+		-->
+		
+		<directory
+			property="hibernate.search.index"
+			defaultValue="/"
+      		defaultValueWin="${env.CATALINA_HOME}/indexes"
+			displayText="Directory for search indexes"
+			create="false" />	
+			
+	</page>
+	
+	<page
+		type="input"
+		name="auditLogging1"
+		displayText="Last Modification Information"
+		ifTarget="build.war">
+		<checkbox
+			displayText="Enable last modification info"
+			explanatoryText="With the last modification option enabled, all business data records in iteraplan are augmented with the login name of the last user who modified the record along with a timestamp. This is visible to all iteraplan users."
+			property="lastmodificationLogging"
+			defaultValue="true" />
+	</page>
+	<page
+		type="input"
+		name="auditLogging2"
+		displayText="Audit Logging"
+		ifTarget="build.war">
+		<checkbox
+			explanatoryText="With audit logging enabled, all business data changes in iteraplan are written to an audit log file."
+			displayText="Enable audit logging"
+			property="auditLogging"
+			defaultValue="false" />
+		<text
+			explanatoryText="If you enabled the previous option, please specify the path where the audit log file should be saved. The generated audit log file will be called '@AUDIT_LOG_FILE_NAME@'. Make sure that the servlet container instance has read and write permissions for that folder/file (on the server where the .WAR file will be deployed)."
+			property="auditlog.path"
+			defaultValue=""
+			displayText="Path to audit logfile:" />
+	</page>
+	
+	<page
+		type="input"
+		name="confirmInitDatabase"
+		displayText="iteraplan: Initialise the iteraplan database "
+		ifTarget="build.war">
+		<comment displayText=""
+			explanatoryText="Would you also like to initialize the specified database with the iteraplan schema? Please note, that all existing iteraplan data in that database will be lost!" />
+		<target-select
+		  property="initDB_Iteraplan"
+		  displayText="Choose a task to execute"
+		  defaultValue="">
+		<option 
+			value=""
+			text="No, I will do that at a later time." />
+		<option
+			value="database.init"
+			text="Yes, initialize the database." />
+		</target-select>
+	</page>
+	
+	<!-- Pages for configuring the iTURM .WAR file and setting up the database. -->
+	<!-- Some are also before this  -->
+	
+	<page
+			type="input"
+			name="confirmInitDatabaseTurm"
+			displayText="iTURM: Initialise the iTURM database "
+			ifTarget="turm.build.war">
+		<comment displayText=""
+			explanatoryText="Would you also like to initialize the specified database with the iTURM schema? Please note, that all existing iteraplan data in that database will be lost!" />
+		<target-select
+		  property="initDB_iTURM"
+		  displayText="Choose a task to execute"
+		  defaultValue="">
+		<option 
+			value=""
+			text="No, I will do that at a later time." />
+		<option
+			value="turm.database.init"
+			text="Yes, initialize the database." />
+		</target-select>
+	</page>
+	
+	<page
+		type="input"
+		name="targetLocationWar"
+
+		displayText="Output location for the .WAR file(s)">
+    <comment displayText=""
+      explanatoryText="Please select an output folder where the .WAR file(s) will be copied. By default this should be the 'webapps' subdirectory of your target servlet container." />
+		<directory
+			property="dist.dir"
+			defaultValue="/"
+			defaultValueWin="${env.CATALINA_HOME}/webapps"
+			displayText="Output folder:"
+			create="false"
+			checkExists="true" />
+	</page>
+
+	<!-- CM 21.01.08 Insert new page which will allow deployment of JDBC drivers to servlet container engine library location. -->
+	<page
+		type="input"
+		name="copyJDBCdrivers"
+		displayText="Copy JDBC driver libraries">
+		<comment displayText=""
+			explanatoryText="To be able to run the web applications, it is necessary to have the correct JDBC driver libraries deployed to your servlet container engine. Would you like to have them copied now?" />
+		<target-select
+		  property="installJDBC_Iteraplan"
+		  displayText="Choose a task to execute"
+		  defaultValue="">
+		<option 
+			value=""
+			text="No, I will make sure the libraries exist." />
+		<option
+			value="jdbc.drivers.init"
+			text="Yes, copy the JDBC driver libraries." />
+  		</target-select>
+		<comment displayText=""
+			explanatoryText="Please choose the root folder of the servlet engine(e.g. CATALINA_HOME for Tomcat). The installer will try to copy the drivers into the appropriate library location automatically. Note that there may be problems if similar libraries already exist." />
+		<directory
+			property="jdbc.drivers.dir"
+			defaultValue="/"
+      		defaultValueWin="${dist.dir}/../"
+			displayText="Root folder:"
+			create="false" />
+	</page>
+	
+	<page
+		type="input"
+		name="applicationSecurity"
+		displayText="Required security level">
+		<select
+			property="web.security.transport"
+			displayText="Allow HTTP or require HTTPS"
+			defaultValue="NONE">
+			<option text="Allow unencrypted HTTP" value="NONE" />
+			<option text="Enforce HTTPS (SSL)" value="CONFIDENTIAL" />
+		</select>
+	</page>
+		
+	<page
+		type="input"
+		name="adminMail"
+		displayText="Administrator Email Address">
+		<comment displayText=""
+			explanatoryText="Please enter a valid email address for a iteraplan administrator who has superuser privileges (this can be configured later in the iteraplan properties)." />
+		<text
+			property="admin.email"
+			displayText="Administrator Email Address"
+			defaultValue="" />
+	</page>	
+	
+	<page
+		type="progress"
+		name="progress"
+		displayText="Progress"
+		showTargets="false">
+	</page>
+</installer>

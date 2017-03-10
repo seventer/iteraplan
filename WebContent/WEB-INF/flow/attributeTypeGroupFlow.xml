@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+      http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+	start-state="start" parent="baseFlow">
+
+	<input name="id" type="java.lang.Integer" />
+
+	<decision-state id="start">
+		<if test="requestParameters['_eventId']=='edit'" then="initEdit" />
+		<if test="requestParameters['_eventId']=='delete'" then="delete" />
+		<if test="requestParameters['_eventId']=='create'" then="initCreate" />
+		<if test="requestParameters['_eventId']=='closeAll'" then="closeAll" />
+		<if test="requestParameters['_eventId']==null" then="initEdit" />
+	</decision-state>
+
+	<!--
+	    We enter the flow here, so we get the attributeTypeGroup for the given id.
+		To ensure the FlowExecutionContext is set up correctly, the enterEditMode method 
+		is called just before render. (Otherwise the FlowKey would still be null)
+	-->
+	<view-state id="initEdit" model="memBean" view="attributetypegroup/edit">
+		<on-entry>
+			<evaluate
+				expression="attributeTypeGroupFrontendService.getEditMemBean(id, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+			<set name="flowScope.FLOW_LABEL"
+				value="attributeTypeGroupFrontendService.getFlowLabel(flowScope.memBean.componentModel.nameModel.name)"
+				type="java.lang.String" />
+			<set name="flowScope.setFocusOnTextfield" value="true" type="java.lang.String" />
+		</on-entry>
+		<on-render>
+			<evaluate
+				expression="attributeTypeGroupFrontendService.enterEditMode(flowExecutionContext)" />
+		</on-render>
+		<transition on="save" to="confirmed" history="invalidate">
+			<evaluate
+				expression="attributeTypeGroupFrontendService.saveComponentModel(flowScope.memBean, id, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="update" to="edit">
+			<set name="flowScope.setFocusOnTextfield" value="false" type="java.lang.String" />
+			<evaluate
+				expression="attributeTypeGroupFrontendService.updateComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="sort" to="edit">
+			<set name="flowScope.setFocusOnTextfield" value="false" type="java.lang.String" />
+	 	 <evaluate
+			expression="attributeTypeGroupFrontendService.sortEverythingInComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+	</view-state>
+	
+    <view-state id="edit" model="memBean" view="attributetypegroup/edit">
+		<transition on="save" to="confirmed" history="invalidate">
+			<evaluate
+				expression="attributeTypeGroupFrontendService.saveComponentModel(flowScope.memBean, id, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="update" to="edit">
+			<set name="flowScope.setFocusOnTextfield" value="false" type="java.lang.String" />
+			<evaluate
+				expression="attributeTypeGroupFrontendService.updateComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="sort" to="edit">
+			<set name="flowScope.setFocusOnTextfield" value="false" type="java.lang.String" />
+		 	 <evaluate
+				expression="attributeTypeGroupFrontendService.sortEverythingInComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+	</view-state>
+
+	<view-state id="initCreate" model="memBean" view="attributetypegroup/create">
+		<on-entry>
+			<evaluate
+				expression="attributeTypeGroupFrontendService.getCreateMemBean()"
+				result="flowScope.memBean" />
+			<set name="flowScope.FLOW_LABEL" type="java.lang.String"
+				value="attributeTypeGroupFrontendService.getFlowLabel(null)" />
+			<set name="flowScope.setFocusOnTextfield" value="true" type="java.lang.String" />
+		</on-entry>
+		<on-render>
+			<evaluate
+				expression="attributeTypeGroupFrontendService.enterEditMode(flowExecutionContext)" />
+		</on-render>
+		<transition on="save" to="confirmed" history="invalidate">
+			<evaluate
+				expression="attributeTypeGroupFrontendService.saveNewComponentModelAndReturnId(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+				result="id" />
+		</transition>
+		<transition on="update" to="create">
+			<set name="flowScope.setFocusOnTextfield" value="false" type="java.lang.String" />
+			<evaluate
+				expression="attributeTypeGroupFrontendService.updateComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="sort" to="create">
+  		 <set name="flowScope.setFocusOnTextfield" value="false" type="java.lang.String" />
+	 	 <evaluate
+			expression="attributeTypeGroupFrontendService.sortEverythingInComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+	</view-state>
+	
+	<view-state id="create" model="memBean" view="attributetypegroup/create">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL" type="java.lang.String"
+				value="attributeTypeGroupFrontendService.getFlowLabel(flowScope.memBean.componentModel.nameModel.name)" />
+		</on-entry>
+		<transition on="save" to="confirmed" history="invalidate">
+			<evaluate
+				expression="attributeTypeGroupFrontendService.saveNewComponentModelAndReturnId(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+				result="id" />
+		</transition>
+		<transition on="update" to="create">
+			<evaluate
+				expression="attributeTypeGroupFrontendService.updateComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="sort" to="create">
+	 	 <evaluate
+			expression="attributeTypeGroupFrontendService.sortEverythingInComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+	</view-state>
+
+	<end-state id="close"
+		view="externalRedirect:contextRelative:/attributetypegroup/init.do" />
+	<end-state id="cancel"
+		view="externalRedirect:contextRelative:/attributetypegroup/init.do?id=#{id}" />
+	<end-state id="confirmed" commit="true"
+		view="externalRedirect:contextRelative:/attributetypegroup/init.do?id=#{id}" />
+	<end-state id="delete" commit="true"
+		view="externalRedirect:contextRelative:/attributetypegroup/init.do">
+		<on-entry>
+			<evaluate
+				expression="attributeTypeGroupFrontendService.getEditMemBean(id, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+			<set name="flowScope.FLOW_LABEL"
+				value="attributeTypeGroupFrontendService.getFlowLabel(flowScope.memBean.componentModel.nameModel.current)"
+				type="java.lang.String" />
+			<evaluate
+				expression="attributeTypeGroupFrontendService.deleteEntity(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</on-entry>
+	</end-state>
+	<end-state id="closeAll" view="externalRedirect:contextRelative:/attributetypegroup/init.do">
+		<on-entry>
+			<evaluate expression="attributeTypeGroupFrontendService.closeAllFlows(flowRequestContext)"></evaluate>
+		</on-entry>
+	</end-state>
+
+	<global-transitions>
+		<transition on="cancel" to="cancel" validate="false"/>
+		<transition on="refresh" to="#{flowScope.currentViewState}" />
+	</global-transitions>
+
+</flow>

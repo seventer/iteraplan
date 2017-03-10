@@ -1,0 +1,22 @@
+##################################################################################
+# Settings for the Spring Security login module (iTURM authentication)
+#
+# These settings have to be adjusted to your personal environment.
+##################################################################################
+
+login.database.driver.class=com.mysql.jdbc.Driver
+login.database.connect.url=jdbc:mysql://localhost:3306/iturm
+login.database.login=iturmDbAdmin
+login.database.password=myPassword
+
+#oracle
+#login.database.driver.class=oracle.jdbc.OracleDriver
+#login.database.connect.url=jdbc:oracle:thin:@localhost:1521:xe
+#login.database.login=iturmDbAdmin
+#login.database.password=ichBinDerMeister
+
+# ms sql server
+#login.database.driver.class=com.microsoft.sqlserver.jdbc.SQLServerDriver
+#login.database.connect.url=jdbc:sqlserver://localhost:1433;databaseName=iturm
+#login.database.login=iturmDbAdmin
+#login.database.password=myPassword

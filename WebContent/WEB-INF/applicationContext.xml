@@ -1,0 +1,1455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+           http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd">
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:iteraplan.properties</value>
+				<value>classpath:iteraplan-gui.properties</value>
+				<value>classpath:iteraplan-db.properties</value>
+				<value>classpath:iteraplan-auth.properties</value>
+				<value>classpath*:iteraplan-global.properties</value>
+				<!-- overrides previous properties due to the implementation -->
+				<value>classpath:iteraplan_local.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+	</bean>
+
+	<!-- expose specific properties to application especially JSPs -->
+	<bean id="applicationProperties"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="singleton" value="true" />
+		<property name="properties">
+			<props>
+				<prop key="build.id">${build.id}</prop>
+				<prop key="lastmodification.logging.enabled">${lastmodification.logging.enabled}</prop>
+				<prop key="audit.logging.enabled">${audit.logging.enabled}</prop>
+				<prop key="build.version">${build.version}</prop>
+				<prop key="searchresults.default.count">${searchresults.default.count}</prop>
+				<prop key="searchresults.option.1">${searchresults.option.1}</prop>
+				<prop key="searchresults.option.2">${searchresults.option.2}</prop>
+				<prop key="searchresults.option.3">${searchresults.option.3}</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- Service for iteraplan Syntax parsing -->
+	<bean id="iteraplanSyntaxParserService"
+		class="de.iteratec.iteraplan.businesslogic.service.wiki.IteraplanSyntaxParserServiceImpl">
+		<property name="wikiParserService" ref="wikiParserService" />
+		<property name="savedQueryService" ref="savedQueryService" />
+	</bean>
+
+
+	<bean class="de.iteratec.iteraplan.common.DefaultSpringApplicationContext" />
+
+	<aop:config>
+		<aop:pointcut id="serviceOperation"
+			expression="execution(* de.iteratec.iteraplan.businesslogic..*Service.*(..))" />
+		<aop:pointcut id="massUpdateLine"
+			expression="execution(* de.iteratec.iteraplan.businesslogic.service.MassUpdateServiceImpl.updateLine(..))" />
+		<aop:pointcut id="massUpdateAttributesLine"
+			expression="execution(* de.iteratec.iteraplan.businesslogic.service.MassUpdateServiceImpl.updateAttributes(..))" />
+		<aop:pointcut id="deleteEntity"
+			expression="execution(* de.iteratec.iteraplan.businesslogic.service.AbstractBuildingBlockService.deleteEntity(..))" />
+		<aop:pointcut id="excelImport"
+			expression="execution(* de.iteratec.iteraplan.businesslogic.service.legacyExcel.ExcelImportServiceImpl.importLandscapeData(..))" />
+
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
+
+		<aop:aspect ref="subscriptionsAspect">
+			<aop:around pointcut-ref="massUpdateLine" method="massUpdateLineAdvice" />
+			<aop:around pointcut-ref="massUpdateAttributesLine"
+				method="massUpdateLineAdvice" />
+			<aop:around pointcut-ref="deleteEntity" method="deleteEntityAdvice" />
+			<aop:around pointcut-ref="excelImport" method="excelImportAdvice" />
+		</aop:aspect>
+	</aop:config>
+
+	<bean id="subscriptionsAspect"
+		class="de.iteratec.iteraplan.businesslogic.common.SubscriptionsAdvice">
+		<property name="bbServiceLocator" ref="bbServiceLocator" />
+		<property name="notificationService" ref="notificationService" />
+		<property name="activated">
+			<value>${notification.activated}</value>
+		</property>
+		<property name="roleService" ref="roleService" />
+		<property name="attributeTypeService" ref="attributeTypeService" />
+		<property name="timeseriesService" ref="timeseriesService" />
+	</bean>
+
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="save*" read-only="false" />
+			<tx:method name="update*" read-only="false" />
+			<tx:method name="delete*" read-only="false" />
+			<tx:method name="copy*" read-only="false" />
+			<tx:method name="create*" read-only="false" />
+			<tx:method name="execute*" read-only="false" />
+			<tx:method name="remove*" read-only="false" />
+			<tx:method name="import*" read-only="false" />
+			<tx:method name="subscribe*" read-only="false" />
+			<tx:method name="merge*" read-only="false" />
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- Transaction Mangager -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="auditLogger" class="de.iteratec.iteraplan.businesslogic.common.AuditLogger" />
+	<bean id="lastModificationUpdateInterceptor"
+		class="de.iteratec.iteraplan.businesslogic.common.LastModificationUpdateInterceptor" />
+
+	<!-- Localization resources provider, required for Spring's validation helper 
+		classes -->
+	<bean id="messageSource"
+		class="de.iteratec.iteraplan.common.WildcardReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>classpath:de/iteratec/iteraplan/presentation/resources/custom/ApplicationResourcesCustom*
+				</value>
+				<value>classpath:de/iteratec/iteraplan/presentation/resources/ApplicationResources
+				</value>
+				<value>classpath:/iteraplan-notification-messages</value>
+			</list>
+		</property>
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="cacheSeconds" value="-1" />
+		<property name="fallbackToSystemLocale" value="false" />
+	</bean>
+
+	<!-- Building Block Factory -->
+	<bean id="buildingBlockFactory" class="de.iteratec.iteraplan.model.BuildingBlockFactory">
+	</bean>
+
+	<!-- Service for Wiki Syntax parsing -->
+	<bean id="wikiParserService" class="de.iteratec.iteraplan.businesslogic.service.wiki.XWikiParserServiceImpl" init-method="initializeWikiParserService" />
+
+	<!-- Template for all Services -->
+	<bean id="serviceProxyTemplate" abstract="true"
+		class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="interceptorNames">
+			<list>
+				<!--<value>performanceLogger</value> -->
+				<value>auditLogger</value>
+				<value>lastModificationUpdateInterceptor</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Architectural Domain Service -->
+	<bean id="architecturalDomainService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.ArchitecturalDomainService" />
+		<property name="target" ref="architecturalDomainServiceImpl" />
+	</bean>
+
+	<bean id="architecturalDomainServiceImpl" parent="abstractBuildingBlockService"
+		class="de.iteratec.iteraplan.businesslogic.service.ArchitecturalDomainServiceImpl"
+		autowire-candidate="false">
+		<property name="architecturalDomainDAO" ref="architecturalDomainDAO" />
+		<dwr:remote javascript="ArchitecturalDomainService">
+			<dwr:include method="subscribe" />
+		</dwr:remote>
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<!-- Technical Component Release to Infrastructure Element Association Service -->
+	<bean id="tcr2IeAssociationService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.Tcr2IeAssociationService" />
+		<property name="target" ref="tcr2IeAssociationServiceImpl" />
+	</bean>
+
+	<bean id="tcr2IeAssociationServiceImpl" parent="abstractBuildingBlockService"
+		class="de.iteratec.iteraplan.businesslogic.service.Tcr2IeAssociationServiceImpl"
+		autowire-candidate="false">
+		<property name="tcr2IeAssociationDAO" ref="tcr2IeAssociationDAO" />
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<!-- Information System Release to Business Object Association Service -->
+	<bean id="isr2BoAssociationService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.Isr2BoAssociationService" />
+		<property name="target" ref="isr2BoAssociationServiceImpl" />
+	</bean>
+
+	<bean id="isr2BoAssociationServiceImpl" parent="abstractBuildingBlockService"
+		class="de.iteratec.iteraplan.businesslogic.service.Isr2BoAssociationServiceImpl"
+		autowire-candidate="false">
+		<property name="isr2BoAssociationDAO" ref="isr2BoAssociationDAO" />
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<!-- Search Service -->
+	<bean id="searchService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.SearchService" />
+		<property name="target">
+			<bean class="de.iteratec.iteraplan.businesslogic.service.SearchServiceImpl">
+				<property name="searchDAO" ref="searchDAO" />
+				<property name="buildingBlockDAO" ref="generalBuildingBlockDAO" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="templateLocatorService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.exchange.templates.TemplateLocatorService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.exchange.templates.TemplateLocatorServiceImpl">
+				<constructor-arg index="0" value="${templates.basedir}" />
+				<constructor-arg index="1" value="ENABLED" />
+				<aop:scoped-proxy proxy-target-class="false" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="templatesManagerService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.exchange.templates.TemplatesManagerService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.exchange.templates.TemplatesManagerServiceImpl">
+				<constructor-arg index="0" value="${templates.basedir}" />
+				<aop:scoped-proxy proxy-target-class="false" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Notification Service -->
+	<bean id="notificationService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.notifications.NotificationService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.notifications.NotificationServiceImpl">
+				<property name="sender" ref="mailSender" />
+				<property name="emailFactory" ref="emailFactory" />
+				<property name="emailFrom">
+					<value>${notification.email.from}</value>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="emailFactory"
+		class="de.iteratec.iteraplan.businesslogic.service.notifications.FreeMarkerBasedEmailFactory">
+		<constructor-arg>
+			<bean
+				class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean">
+				<property name="templateLoaderPaths">
+					<list>
+						<value>classpath:/emails</value>
+					</list>
+				</property>
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<bean id="mailSenderFactory"
+		class="de.iteratec.iteraplan.businesslogic.service.notifications.JavaMailSenderFactory">
+		<property name="activated">
+			<value>${notification.activated}</value>
+		</property>
+		<property name="host">
+			<value>${notification.smtpserver}</value>
+		</property>
+		<property name="port">
+			<value>${notification.port}</value>
+		</property>
+		<property name="ssl">
+			<value>${notification.ssl.enable}</value>
+		</property>
+		<property name="startTls">
+			<value>${notification.starttls.enable}</value>
+		</property>
+		<property name="username">
+			<value>${notification.username}</value>
+		</property>
+		<property name="password">
+			<value>${notification.password}</value>
+		</property>
+	</bean>
+
+	<bean id="mailSender" factory-bean="mailSenderFactory"
+		factory-method="create" />
+
+	<!-- Attribute Type Service -->
+	<bean id="attributeTypeService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.AttributeTypeService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.AttributeTypeServiceImpl">
+				<property name="attributeTypeDAO" ref="attributeTypeDAO" />
+				<property name="attributeValueDAO" ref="attributeValueDAO" />
+				<property name="attributeValueAssignmentDAO" ref="attributeValueAssignmentDAO" />
+				<property name="rangeValueDAO" ref="rangeValueDAO" />
+				<property name="dateIntervalService" ref="dateIntervalService" />
+				<property name="timeseriesDAO" ref="timeseriesDAO" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Attribute Type Group Service -->
+	<bean id="attributeTypeGroupService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.AttributeTypeGroupService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.AttributeTypeGroupServiceImpl">
+				<property name="attributeTypeGroupDAO" ref="attributeTypeGroupDAO" />
+				<property name="permissionAttrTypeGroupDAO" ref="permissionAttrTypeGroupDAO" />
+				<property name="roleDAO" ref="roleDAO" />
+				<property name="attributeTypeService" ref="attributeTypeService" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Attribute Value Service -->
+	<bean id="attributeValueService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.AttributeValueService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.AttributeValueServiceImpl">
+				<property name="attributeTypeDAO" ref="attributeTypeDAO" />
+				<property name="attributeValueDAO" ref="attributeValueDAO" />
+				<property name="generalBuildingBlockDAO" ref="generalBuildingBlockDAO" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Attribute Value Assignment Service -->
+	<bean id="attributeValueAssignmentService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.AttributeValueAssignmentService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.AttributeValueAssignmentServiceImpl">
+				<property name="attributeValueAssignmentDAO" ref="attributeValueAssignmentDAO" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Building Block Type Service -->
+	<bean id="buildingBlockTypeService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.BuildingBlockTypeService" />
+		<property name="target" ref="buildingBlockTypeServiceImpl" />
+	</bean>
+
+	<bean id="buildingBlockTypeServiceImpl"
+		class="de.iteratec.iteraplan.businesslogic.service.BuildingBlockTypeServiceImpl"
+		autowire-candidate="false">
+		<property name="buildingBlockTypeDAO" ref="buildingBlockTypeDAO" />
+		<property name="notificationService" ref="notificationService" />
+		<dwr:remote javascript="BuildingBlockTypeService">
+			<dwr:include method="subscribe" />
+		</dwr:remote>
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<!-- Abstract Building Block Service -->
+	<bean id="abstractBuildingBlockService" abstract="true"
+		class="de.iteratec.iteraplan.businesslogic.service.AbstractBuildingBlockService">
+		<property name="attributeValueService" ref="attributeValueService" />
+		<property name="generalBuildingBlockService" ref="generalBuildingBlockService" />
+		<property name="notificationService" ref="notificationService" />
+		<property name="timeseriesService" ref="timeseriesService" />
+	</bean>
+
+	<!-- Business Function Service -->
+	<bean id="businessFunctionService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.BusinessFunctionService" />
+		<property name="target" ref="businessFunctionServiceImpl" />
+	</bean>
+
+	<bean id="businessFunctionServiceImpl" parent="abstractBuildingBlockService"
+		class="de.iteratec.iteraplan.businesslogic.service.BusinessFunctionServiceImpl"
+		autowire-candidate="false">
+		<property name="businessFunctionDAO" ref="businessFunctionDAO" />
+		<dwr:remote javascript="BusinessFunctionService">
+			<dwr:include method="subscribe" />
+		</dwr:remote>
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<!-- Business Object Service -->
+	<bean id="businessObjectService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.BusinessObjectService" />
+		<property name="target" ref="businessObjectServiceImpl" />
+	</bean>
+
+	<bean id="businessObjectServiceImpl" parent="abstractBuildingBlockService"
+		class="de.iteratec.iteraplan.businesslogic.service.BusinessObjectServiceImpl"
+		autowire-candidate="false">
+		<property name="isr2BoAssociationService" ref="isr2BoAssociationService" />
+		<property name="businessObjectDAO" ref="businessObjectDAO" />
+		<dwr:remote javascript="BusinessObjectService">
+			<dwr:include method="subscribe" />
+		</dwr:remote>
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<!-- Business Process Service -->
+	<bean id="businessProcessService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.BusinessProcessService" />
+		<property name="target" ref="businessProcessServiceImpl" />
+	</bean>
+
+	<bean id="businessProcessServiceImpl" parent="abstractBuildingBlockService"
+		class="de.iteratec.iteraplan.businesslogic.service.BusinessProcessServiceImpl"
+		autowire-candidate="false">
+		<property name="businessProcessDAO" ref="businessProcessDAO" />
+		<property name="businessMappingService" ref="businessMappingService" />
+		<dwr:remote javascript="BusinessProcessService">
+			<dwr:include method="subscribe" />
+		</dwr:remote>
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<!-- Business Mapping Service -->
+	<bean id="businessMappingService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.BusinessMappingService" />
+		<property name="target">
+			<bean parent="abstractBuildingBlockService"
+				class="de.iteratec.iteraplan.businesslogic.service.BusinessMappingServiceImpl">
+				<property name="businessMappingDAO" ref="businessMappingDAO" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Infrastructure Element Service -->
+	<bean id="infrastructureElementService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.InfrastructureElementService" />
+		<property name="target" ref="infrastructureElementServiceImpl" />
+	</bean>
+
+	<bean id="infrastructureElementServiceImpl" parent="abstractBuildingBlockService"
+		class="de.iteratec.iteraplan.businesslogic.service.InfrastructureElementServiceImpl"
+		autowire-candidate="false">
+		<property name="tcr2IeAssociationService" ref="tcr2IeAssociationService" />
+		<property name="infrastructureElementDAO" ref="infrastructureElementDAO" />
+		<dwr:remote javascript="InfrastructureElementService">
+			<dwr:include method="subscribe" />
+		</dwr:remote>
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<!-- Information System Interface Service -->
+	<bean id="informationSystemInterfaceService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.InformationSystemInterfaceService" />
+		<property name="target" ref="informationSystemInterfaceServiceImpl" />
+	</bean>
+
+	<bean id="informationSystemInterfaceServiceImpl" parent="abstractBuildingBlockService"
+		class="de.iteratec.iteraplan.businesslogic.service.InformationSystemInterfaceServiceImpl"
+		autowire-candidate="false">
+		<property name="informationSystemInterfaceDAO" ref="informationSystemInterfaceDAO" />
+		<property name="informationSystemReleaseDAO" ref="informationSystemReleaseDAO" />
+		<dwr:remote javascript="InformationSystemInterfaceService">
+			<dwr:include method="subscribe" />
+		</dwr:remote>
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<!-- Consistency Check Service -->
+	<bean id="consistencyCheckService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.ConsistencyCheckService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.ConsistencyCheckServiceImpl">
+				<property name="buildingBlockTypeDAO" ref="buildingBlockTypeDAO" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Export Service -->
+	<bean id="exportService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.ExportService" />
+		<property name="target">
+			<bean class="de.iteratec.iteraplan.businesslogic.service.ExportServiceImpl">
+				<property name="attributeTypeDAO" ref="attributeTypeDAO" />
+				<property name="generalBuildingBlockService" ref="generalBuildingBlockService" />
+				<property name="attributeTypeService" ref="attributeTypeService" />
+				<property name="attributeValueService" ref="attributeValueService" />
+				<property name="excelExportService" ref="excelExportService" />
+				<property name="queryService" ref="queryService" />
+				<property name="svgExportService" ref="svgExportService" />
+				<property name="visioExportService" ref="visioExportService" />
+				<property name="csvExportService" ref="csvExportService" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Excel Export Service -->
+	<bean id="excelExportService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.legacyExcel.ExcelExportService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.legacyExcel.ExcelExportServiceImpl">
+				<property name="buildingBlockTypeDAO" ref="buildingBlockTypeDAO"></property>
+				<property name="attributeTypeDAO" ref="attributeTypeDAO" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Svg Export Service -->
+	<bean id="svgExportService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.SvgExportService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.SvgExportServiceImpl">
+				<property name="attributeTypeDAO" ref="attributeTypeDAO" />
+				<property name="generalBuildingBlockService" ref="generalBuildingBlockService" />
+				<property name="generalBuildingBlockDAO" ref="generalBuildingBlockDAO" />
+				<property name="attributeTypeService" ref="attributeTypeService" />
+				<property name="attributeValueService" ref="attributeValueService" />
+				<property name="buildingBlockServiceLocator" ref="bbServiceLocator" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Visio Export Service -->
+	<bean id="visioExportService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.VisioExportService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.VisioExportServiceImpl">
+				<property name="generalBuildingBlockService" ref="generalBuildingBlockService" />
+				<property name="attributeTypeService" ref="attributeTypeService" />
+				<property name="attributeValueService" ref="attributeValueService" />
+				<property name="buildingBlockServiceLocator" ref="bbServiceLocator" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Excel Import Service -->
+	<bean id="excelImportService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.legacyExcel.ExcelImportService" />
+		<property name="target" ref="excelImportServiceImpl" />
+	</bean>
+
+	<bean id="excelImportServiceImpl"
+		class="de.iteratec.iteraplan.businesslogic.service.legacyExcel.ExcelImportServiceImpl"
+		autowire-candidate="false">
+		<property name="attributeTypeService" ref="attributeTypeService" />
+		<property name="attributeValueService" ref="attributeValueService" />
+		<property name="userService" ref="userService" />
+		<property name="buildingBlockServiceLocator" ref="bbServiceLocator" />
+
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<bean id="excelAttributesImportService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.legacyExcel.ExcelAttributesImportService" />
+		<property name="target">
+			<bean id="excelAttributesImportServiceImpl"
+				class="de.iteratec.iteraplan.businesslogic.service.legacyExcel.ExcelAttributesImportServiceImpl"
+				autowire-candidate="false">
+				<property name="attributeTypeService" ref="attributeTypeService" />
+				<property name="attributeTypeGroupService" ref="attributeTypeGroupService" />
+				<property name="attributeValueService" ref="attributeValueService" />
+				<property name="buildingBlockTypeService" ref="buildingBlockTypeService" />
+				<property name="userService" ref="userService" />
+				<property name="userGroupService" ref="userGroupService" />
+
+				<aop:scoped-proxy proxy-target-class="false" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Timeseries Import Service -->
+	<bean id="timeseriesImportService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.exchange.timeseriesExcel.importer.TimeseriesImportService" />
+		<property name="target" ref="timeseriesExcelImportService" />
+	</bean>
+
+	<bean id="timeseriesExcelImportService"
+		class="de.iteratec.iteraplan.businesslogic.exchange.timeseriesExcel.importer.TimeseriesExcelImportService"
+		autowire-candidate="false">
+		<property name="atService" ref="attributeTypeService" />
+		<property name="bbServiceLocator" ref="bbServiceLocator" />
+		<property name="timeseriesService" ref="timeseriesService" />
+	</bean>
+
+	<!-- Timeseries Export -->
+	<bean id="timeseriesExcelExportService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.exchange.timeseriesExcel.exporter.TimeseriesExcelExportService" />
+		<property name="target" ref="timeseriesExcelExportServiceImpl" />
+	</bean>
+
+	<bean id="timeseriesExcelExportServiceImpl"
+		class="de.iteratec.iteraplan.businesslogic.exchange.timeseriesExcel.exporter.TimeseriesExcelExportServiceImpl"
+		autowire-candidate="false">
+		<constructor-arg index="0"
+			value="classpath:templates/elasticExcel/iteraplanLogo670x100.PNG" />
+		<constructor-arg ref="attributeTypeService" />
+		<property name="excel2003Template"
+			value="classpath:templates/elasticExcel/ExcelWorkbook.xls" />
+		<property name="excel2007Template"
+			value="classpath:templates/elasticExcel/ExcelWorkbook.xlsx" />
+		<property name="bbServiceLocator" ref="bbServiceLocator" />
+		<property name="timeseriesService" ref="timeseriesService" />
+	</bean>
+
+	<!-- Fast Export Service -->
+	<bean id="fastExportService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.FastExportService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.FastExportServiceImpl">
+				<property name="businessProcessService" ref="businessProcessService" />
+				<property name="businessUnitService" ref="businessUnitService" />
+				<property name="infrastructureElementService" ref="infrastructureElementService" />
+				<property name="informationSystemDomainService" ref="informationSystemDomainService" />
+				<property name="informationSystemReleaseService" ref="informationSystemReleaseService" />
+				<property name="productService" ref="productService" />
+				<property name="projectService" ref="projectService" />
+				<property name="technicalComponentReleaseService" ref="technicalComponentReleaseService" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- History Service -->
+	<bean id="historyService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.HistoryService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.HistoryServiceImpl">
+				<constructor-arg ref="historyDAO" />
+				<constructor-arg ref="userService" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Business Domain Service -->
+	<bean id="businessDomainService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.BusinessDomainService" />
+		<property name="target" ref="businessDomainServiceImpl" />
+	</bean>
+
+	<bean id="businessDomainServiceImpl" parent="abstractBuildingBlockService"
+		class="de.iteratec.iteraplan.businesslogic.service.BusinessDomainServiceImpl"
+		autowire-candidate="false">
+		<property name="businessDomainDAO" ref="businessDomainDAO" />
+		<dwr:remote javascript="BusinessDomainService">
+			<dwr:include method="subscribe" />
+		</dwr:remote>
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<!-- General Building Block Service -->
+	<bean id="generalBuildingBlockService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.GeneralBuildingBlockService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.GeneralBuildingBlockServiceImpl">
+				<property name="generalBuildingBlockDAO" ref="generalBuildingBlockDAO" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Information System Service -->
+	<bean id="informationSystemService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.InformationSystemService" />
+		<property name="target">
+			<bean parent="abstractBuildingBlockService"
+				class="de.iteratec.iteraplan.businesslogic.service.InformationSystemServiceImpl">
+				<property name="informationSystemDAO" ref="informationSystemDAO" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Information System Domain Service -->
+	<bean id="informationSystemDomainService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.InformationSystemDomainService" />
+		<property name="target" ref="informationSystemDomainServiceImpl" />
+	</bean>
+
+	<bean id="informationSystemDomainServiceImpl" parent="abstractBuildingBlockService"
+		class="de.iteratec.iteraplan.businesslogic.service.InformationSystemDomainServiceImpl"
+		autowire-candidate="false">
+		<property name="informationSystemDomainDAO" ref="informationSystemDomainDAO" />
+		<dwr:remote javascript="InformationSystemDomainService">
+			<dwr:include method="subscribe" />
+		</dwr:remote>
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<!-- Information System Release Service -->
+	<bean id="informationSystemReleaseService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.InformationSystemReleaseService" />
+		<property name="target" ref="informationSystemReleaseServiceImpl" />
+	</bean>
+
+	<bean id="informationSystemReleaseServiceImpl" parent="abstractBuildingBlockService"
+		class="de.iteratec.iteraplan.businesslogic.service.InformationSystemReleaseServiceImpl"
+		autowire-candidate="false">
+		<property name="informationSystemService" ref="informationSystemService" />
+		<property name="businessMappingService" ref="businessMappingService" />
+		<property name="isr2BoAssociationService" ref="isr2BoAssociationService" />
+		<property name="informationSystemInterfaceDAO" ref="informationSystemInterfaceDAO" />
+		<property name="informationSystemDAO" ref="informationSystemDAO" />
+		<property name="informationSystemReleaseDAO" ref="informationSystemReleaseDAO" />
+
+		<dwr:remote javascript="InformationSystemReleaseService">
+			<dwr:include method="subscribe" />
+		</dwr:remote>
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<!-- Project Service -->
+	<bean id="projectService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.ProjectService" />
+		<property name="target" ref="projectServiceImpl" />
+	</bean>
+
+	<bean id="projectServiceImpl" parent="abstractBuildingBlockService"
+		class="de.iteratec.iteraplan.businesslogic.service.ProjectServiceImpl"
+		autowire-candidate="false">
+		<property name="projectDAO" ref="projectDAO" />
+		<dwr:remote javascript="ProjectService">
+			<dwr:include method="subscribe" />
+		</dwr:remote>
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<!-- Instance Permissions Service -->
+	<bean id="instancePermissionService"
+		class="de.iteratec.iteraplan.businesslogic.service.InstancePermissionServiceImpl">
+		<property name="userDAO" ref="userDAO" />
+		<property name="userEntityDAO" ref="userEntityDAO" />
+		<property name="generalBuildingBlockDAO" ref="generalBuildingBlockDAO" />
+		<property name="userEntityService" ref="userEntityService" />
+	</bean>
+
+	<!-- Business Unit Service -->
+	<bean id="businessUnitService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.BusinessUnitService" />
+		<property name="target" ref="businessUnitServiceImpl" />
+	</bean>
+
+	<bean id="businessUnitServiceImpl" parent="abstractBuildingBlockService"
+		class="de.iteratec.iteraplan.businesslogic.service.BusinessUnitServiceImpl"
+		autowire-candidate="false">
+		<property name="businessUnitDAO" ref="businessUnitDAO" />
+		<property name="businessMappingService" ref="businessMappingService" />
+
+		<dwr:remote javascript="BusinessUnitService">
+			<dwr:include method="subscribe" />
+		</dwr:remote>
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<!-- Product Service -->
+	<bean id="productService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.ProductService" />
+		<property name="target" ref="productServiceImpl" />
+	</bean>
+
+	<bean id="productServiceImpl" parent="abstractBuildingBlockService"
+		class="de.iteratec.iteraplan.businesslogic.service.ProductServiceImpl"
+		autowire-candidate="false">
+		<property name="productDAO" ref="productDAO" />
+		<property name="businessMappingService" ref="businessMappingService" />
+		<dwr:remote javascript="ProductService">
+			<dwr:include method="subscribe" />
+		</dwr:remote>
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<!-- Query Service -->
+	<bean id="queryService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.QueryService" />
+		<property name="target">
+			<bean class="de.iteratec.iteraplan.businesslogic.service.QueryServiceImpl">
+				<property name="attributeValueService" ref="attributeValueService" />
+				<property name="attributeTypeDAO" ref="attributeTypeDAO" />
+				<property name="generalBuildingBlockService" ref="generalBuildingBlockService" />
+				<property name="queryDAO" ref="queryDAO" />
+				<property name="attributeTypeService" ref="attributeTypeService" />
+				<property name="timeseriesService" ref="timeseriesService" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Role Service -->
+	<bean id="roleService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.RoleService" />
+		<property name="target">
+			<bean class="de.iteratec.iteraplan.businesslogic.service.RoleServiceImpl">
+				<property name="roleDAO" ref="roleDAO" />
+				<property name="permissionFunctionalDAO" ref="permissionFunctionalDAO" />
+				<property name="buildingBlockTypeDAO" ref="buildingBlockTypeDAO" />
+				<property name="attributeTypeGroupDAO" ref="attributeTypeGroupDAO" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Saved Query Service -->
+	<bean id="savedQueryService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.SavedQueryService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.SavedQueryServiceImpl">
+				<property name="savedQueryDAO" ref="savedQueryDAO" />
+				<property name="attributeTypeDAO" ref="attributeTypeDAO" />
+				<property name="buildingBlockTypeService" ref="buildingBlockTypeService" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Service for Reports -->
+	<bean id="extensionFormHelper"
+		class="de.iteratec.iteraplan.businesslogic.reports.query.options.TabularReporting.ExtensionFormHelper">
+		<property name="initFormHelperService" ref="initFormHelperService" />
+	</bean>
+
+	<!-- Service for Reports -->
+	<bean id="initFormHelperService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.InitFormHelperService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.InitFormHelperServiceImpl">
+				<property name="queryService" ref="queryService" />
+				<property name="savedQueryService" ref="savedQueryService" />
+				<property name="attributeValueService" ref="attributeValueService" />
+				<property name="attributeTypeService" ref="attributeTypeService" />
+				<property name="generalBuildingBlockService" ref="generalBuildingBlockService" />
+				<property name="dateIntervalService" ref="dateIntervalService" />
+				<property name="refreshHelper" ref="refreshHelperService" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Service for Reports -->
+	<bean id="refreshHelperService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.RefreshHelperService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.RefreshHelperServiceImpl">
+				<property name="queryService" ref="queryService" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Technical Component Service -->
+	<bean id="technicalComponentService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.TechnicalComponentService" />
+		<property name="target">
+			<bean parent="abstractBuildingBlockService"
+				class="de.iteratec.iteraplan.businesslogic.service.TechnicalComponentServiceImpl">
+				<property name="technicalComponentDAO" ref="technicalComponentDAO" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Technical Component Release Service -->
+	<bean id="technicalComponentReleaseService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.TechnicalComponentReleaseService" />
+		<property name="target" ref="technicalComponentReleaseServiceImpl" />
+	</bean>
+
+	<bean id="technicalComponentReleaseServiceImpl" parent="abstractBuildingBlockService"
+		class="de.iteratec.iteraplan.businesslogic.service.TechnicalComponentReleaseServiceImpl"
+		autowire-candidate="false">
+		<property name="tcr2IeAssociationService" ref="tcr2IeAssociationService" />
+		<property name="informationSystemInterfaceDAO" ref="informationSystemInterfaceDAO" />
+		<property name="technicalComponentDAO" ref="technicalComponentDAO" />
+		<property name="technicalComponentReleaseDAO" ref="technicalComponentReleaseDAO" />
+		<dwr:remote javascript="TechnicalComponentReleaseService">
+			<dwr:include method="subscribe" />
+		</dwr:remote>
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+	
+	<bean id="allBBService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.AllBuildingBlockService" />
+		<property name="target" ref="allBuildingBlockServiceImpl" />
+	</bean>
+
+	<bean id="allBuildingBlockServiceImpl" class="de.iteratec.iteraplan.businesslogic.service.AllBuildingBlockServiceImpl"
+		autowire-candidate="false">
+		<property name="bmService" ref="businessMappingService" />
+		<property name="avService" ref="attributeValueService" />
+	</bean>
+
+	<!-- Timeseries Service -->
+	<bean id="timeseriesService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.TimeseriesService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.TimeseriesServiceImpl">
+				<property name="avService" ref="attributeValueService" />
+				<property name="timeseriesDAO" ref="timeseriesDAO" />
+				<property name="bbServiceLocator" ref="bbServiceLocator" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Transport Service -->
+	<bean id="transportService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.TransportService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.TransportServiceImpl">
+				<property name="businessObjectDAO" ref="businessObjectDAO" />
+				<property name="transportDAO" ref="transportDAO" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- User Service -->
+	<bean id="userService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.UserService" />
+		<property name="target">
+			<bean class="de.iteratec.iteraplan.businesslogic.service.UserServiceImpl">
+				<property name="attributeTypeDAO" ref="attributeTypeDAO" />
+				<property name="userDAO" ref="userDAO" />
+				<property name="generalBuildingBlockDAO" ref="generalBuildingBlockDAO" />
+				<property name="buildingBlockTypeDAO" ref="buildingBlockTypeDAO" />
+				<property name="userEntityService" ref="userEntityService" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- User Group Service -->
+	<bean id="userGroupService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.UserGroupService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.UserGroupServiceImpl">
+				<property name="attributeTypeDAO" ref="attributeTypeDAO" />
+				<property name="userGroupDAO" ref="userGroupDAO" />
+				<property name="userEntityService" ref="userEntityService" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- User Entity Service -->
+	<bean id="userEntityService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.UserEntityService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.UserEntityServiceImpl">
+				<property name="generalBuildingBlockDAO" ref="generalBuildingBlockDAO" />
+				<property name="userEntityDAO" ref="userEntityDAO" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Data Source Service -->
+	<bean id="dataSourceService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.DataSourceService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.DataSourceServiceImpl">
+				<property name="dataSourceDAO" ref="dataSourceDAO" />
+				<property name="routingDataSource" ref="iteraplanDataSource" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Custom Dashboard Instances Service -->
+	<bean id="customDashboardInstancesService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.CustomDashboardInstanceService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.CustomDashboardInstanceServiceImpl">
+				<property name="dao" ref="customDashboardInstanceDAO" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Custom Dashboard Instances Service -->
+	<bean id="customDashboardTemplateService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.CustomDashboardTemplateService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.CustomDashboardTemplateServiceImpl">
+				<property name="dao" ref="customDashboardTemplateDAO" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Dashboard Service -->
+	<bean id="dashboardService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.DashboardService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.DashboardServiceImpl">
+				<property name="architecturalDomainDAO" ref="architecturalDomainDAO" />
+				<property name="businessDomainDAO" ref="businessDomainDAO" />
+				<property name="businessFunctionDAO" ref="businessFunctionDAO" />
+				<property name="businessObjectDAO" ref="businessObjectDAO" />
+				<property name="businessProcessDAO" ref="businessProcessDAO" />
+				<property name="technicalComponentReleaseDAO" ref="technicalComponentReleaseDAO" />
+				<property name="infrastructureElementDAO" ref="infrastructureElementDAO" />
+				<property name="informationSystemInterfaceDAO" ref="informationSystemInterfaceDAO" />
+				<property name="informationSystemDomainDAO" ref="informationSystemDomainDAO" />
+				<property name="informationSystemReleaseDAO" ref="informationSystemReleaseDAO" />
+				<property name="projectDAO" ref="projectDAO" />
+				<property name="businessUnitDAO" ref="businessUnitDAO" />
+				<property name="productDAO" ref="productDAO" />
+				<property name="attributeValueService" ref="attributeValueService" />
+				<property name="attributeTypeService" ref="attributeTypeService" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- Overview Service -->
+	<bean id="overviewService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.OverviewService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.OverviewServiceImpl">
+				<property name="buildingBlockServiceLocator" ref="bbServiceLocator" />
+				<property name="dashboardService" ref="dashboardService" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- This bean is used/ needed by the Spring Security infrastructure to initialize 
+	     the user sessions upon successful authentication -->	
+	<bean id="userContextInitializationService" class="de.iteratec.iteraplan.presentation.UserContextInitializationServiceImpl">
+		<property name="roleService" ref="roleService" />
+		<property name="userService" ref="userService" />
+		<property name="dataSourceService" ref="dataSourceService" />
+		<property name="transactionManager" ref="transactionManager" />
+		<property name="elasticService" ref="elasticeamService" />
+		<property name="elasticMiContextAndStakeholderManagerInitializationService" ref="miCtxAndStakeholderMgrInitService"/>
+	</bean>
+
+
+	<!-- DWR -->
+	<dwr:configuration>
+		<dwr:convert type="exception" class="java.lang.Exception" />
+		<dwr:convert type="bean" class="java.lang.StackTraceElement" />
+	</dwr:configuration>
+
+	<bean id="guiService" class="de.iteratec.iteraplan.presentation.ajax.GuiServiceImpl">
+		<dwr:remote javascript="GuiService">
+			<dwr:include method="setMenuStatus" />
+			<dwr:include method="setSelectedTab" />
+			<dwr:include method="setAttributeGroupStatus" />
+		</dwr:remote>
+	</bean>
+
+	<!-- VBB Graphics Service -->
+	<bean id="vbbGraphicsService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.VbbGraphicsService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.VbbGraphicsServiceImpl">
+				<property name="elasticeamService" ref="elasticeamService" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="vbbConfigurationService"
+		class="de.iteratec.iteraplan.presentation.ajax.VbbConfigurationServiceImpl">
+		<dwr:remote javascript="VbbConfigurationService">
+			<dwr:include method="recommend" />
+			<dwr:include method="recommendColorMapping" />
+			<dwr:convert type="bean"
+				class="de.iteratec.iteraplan.presentation.ajax.VbbConfigurationService$Tag" />
+		</dwr:remote>
+		<property name="elasticeamService" ref="elasticeamService" />
+		<property name="attributeTypeService" ref="attributeTypeService" />
+	</bean>
+
+	<bean id="metamodelExplorerService"
+		class="de.iteratec.iteraplan.presentation.ajax.MetamodelExplorerServiceImpl">
+		<dwr:remote javascript="MetamodelExplorerService">
+			<dwr:include method="getProperties" />
+			<dwr:include method="getComparisonOperators" />
+			<dwr:include method="getLiterals" />
+			<dwr:convert type="bean"
+				class="de.iteratec.iteraplan.presentation.ajax.MetamodelExplorerService$PropertyExpressionDTO" />
+			<dwr:convert type="bean"
+				class="de.iteratec.iteraplan.presentation.ajax.MetamodelExplorerService$EnumerationLiteralDTO" />
+			<dwr:convert type="bean"
+				class="de.iteratec.iteraplan.presentation.ajax.MetamodelExplorerService$ComparisonOperatorDTO" />
+		</dwr:remote>
+		<property name="elasticeamService" ref="elasticeamService" />
+	</bean>
+
+	<!-- dateIntervalService -->
+	<bean id="dateIntervalService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.DateIntervalService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.DateIntervalServiceImpl">
+				<property name="dateIntervalDAO" ref="dateIntervalDAO" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="bbServiceLocator"
+		class="de.iteratec.iteraplan.businesslogic.service.BuildingBlockServiceLocatorImpl"
+		init-method="initialize">
+		<property name="projectService" ref="projectService" />
+		<property name="ieService" ref="infrastructureElementService" />
+		<property name="tcrService" ref="technicalComponentReleaseService" />
+		<property name="tcService" ref="technicalComponentService" />
+		<property name="adService" ref="architecturalDomainService" />
+		<property name="isiService" ref="informationSystemInterfaceService" />
+		<property name="isrService" ref="informationSystemReleaseService" />
+		<property name="informationSystemService" ref="informationSystemService" />
+		<property name="isdService" ref="informationSystemDomainService" />
+		<property name="boService" ref="businessObjectService" />
+		<property name="buService" ref="businessUnitService" />
+		<property name="productService" ref="productService" />
+		<property name="bfService" ref="businessFunctionService" />
+		<property name="bpService" ref="businessProcessService" />
+		<property name="bdService" ref="businessDomainService" />
+		<property name="transportService" ref="transportService" />
+		<property name="businessMappingService" ref="businessMappingService" />
+		<property name="tcr2IeAssociationService" ref="tcr2IeAssociationService" />
+		<property name="isr2BoAssociationService" ref="isr2BoAssociationService" />
+		<property name="allBBService" ref="allBBService" />
+	</bean>
+
+	<bean id="csvExportService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.CsvExportService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.CsvExportServiceImpl">
+				<constructor-arg ref="attributeTypeDAO" />
+			</bean>
+		</property>
+	</bean>
+
+
+
+	<bean id="sessionHelper"
+		class="de.iteratec.iteraplan.businesslogic.exchange.xmi.importer.SessionHelper">
+		<property name="bbServiceLocator" ref="bbServiceLocator" />
+		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="userService" ref="userService" />
+		<property name="userGroupService" ref="userGroupService" />
+		<property name="permissionFunctionalDAO" ref="permissionFunctionalDAO" />
+		<property name="role2BbtPermissionDAO" ref="role2BbtPermissionDAO" />
+		<property name="roleService" ref="roleService" />
+		<property name="buildingBlockTypeService" ref="buildingBlockTypeService" />
+		<property name="permissionAttrTypeGroupDAO" ref="permissionAttrTypeGroupDAO" />
+		<property name="attributeTypeGroupService" ref="attributeTypeGroupService" />
+		<property name="attributeTypeService" ref="attributeTypeService" />
+		<property name="attributeValueService" ref="attributeValueService" />
+		<property name="dateIntervalService" ref="dateIntervalService" />
+		<property name="savedQueryService" ref="savedQueryService" />
+		<property name="customDashboardService" ref="customDashboardInstancesService" />
+		<property name="customDashboardTemplateService" ref="customDashboardTemplateService" />
+	</bean>
+
+	<bean id="xmiSavedQueriesHelper"
+		class="de.iteratec.iteraplan.businesslogic.exchange.xmi.importer.XmiSavedQueriesHelper">
+		<constructor-arg index="0" ref="savedQueryService" />
+		<constructor-arg index="1" ref="customDashboardTemplateService" />
+	</bean>
+
+	<bean id="sealService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.SealService" />
+		<property name="target">
+			<bean class="de.iteratec.iteraplan.businesslogic.service.SealServiceImpl"
+				parent="genericBaseDAO">
+			</bean>
+		</property>
+	</bean>
+
+	<!-- CAUTION: do not remove the '&amp;'; It ensures that the targetObject 
+		is the Bean itself - and not just a Proxy instance -->
+	<bean id="hibernateConfig"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject">
+			<ref bean="&amp;sessionFactory" />
+		</property>
+		<property name="targetMethod">
+			<value>getConfiguration</value>
+		</property>
+	</bean>
+
+	<bean id="entityIntrospectionService"
+		class="de.iteratec.iteraplan.businesslogic.exchange.xmi.exporter.ecore.EntityBeanIntrospectionServiceBean">
+		<constructor-arg ref="sessionFactory" />
+		<constructor-arg ref="hibernateConfig" />
+	</bean>
+
+	<bean id="eObjectCreator"
+		class="de.iteratec.iteraplan.businesslogic.exchange.xmi.exporter.EObjectCreatorImpl">
+		<constructor-arg ref="sessionFactory" />
+		<constructor-arg ref="entityIntrospectionService" />
+	</bean>
+
+	<bean id="xmiExportService"
+		class="de.iteratec.iteraplan.businesslogic.exchange.xmi.exporter.XmiExportServiceImpl">
+		<constructor-arg ref="eObjectCreator" />
+		<constructor-arg ref="entityIntrospectionService" />
+
+	</bean>
+
+	<bean id="xmiImportService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.exchange.xmi.importer.XmiImportService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.exchange.xmi.importer.XmiImportServiceImpl">
+				<constructor-arg ref="sessionHelper" />
+				<constructor-arg ref="entityIntrospectionService" />
+				<constructor-arg ref="xmiSavedQueriesHelper" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="ecoreServiceForTabReporting"
+		class="de.iteratec.iteraplan.businesslogic.exchange.xmi.exporter.ecore.EcoreServiceForTabReportingImpl">
+		<constructor-arg ref="buildingBlockTypeDAO" />
+		<constructor-arg ref="attributeTypeDAO" />
+	</bean>
+
+	<bean id="buildingBlocksToEcoreService"
+		class="de.iteratec.iteraplan.businesslogic.service.ecore.BuildingBlocksToEcoreServiceImpl">
+		<constructor-arg ref="buildingBlockTypeDAO" />
+	</bean>
+
+	<bean id="xmiServiceForTabReporting"
+		class="de.iteratec.iteraplan.businesslogic.exchange.xmi.exporter.XmiServiceForTabReporting">
+		<constructor-arg ref="ecoreServiceForTabReporting" />
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+
+	<bean id="xmiResponseGenerator"
+		class="de.iteratec.iteraplan.presentation.responsegenerators.XMIResponseGeneratorImpl">
+		<constructor-arg ref="xmiExportService" />
+		<constructor-arg ref="xmiServiceForTabReporting" />
+	</bean>
+
+	<bean id="metamodelLoader"
+		class="de.iteratec.iteraplan.businesslogic.exchange.elasticeam.IteraplanMetamodelLoaderImpl">
+		<constructor-arg ref="sessionFactory" />
+		<constructor-arg ref="hibernateConfig" />
+		<constructor-arg ref="buildingBlockTypeDAO" />
+	</bean>
+
+	<bean id="modelLoader"
+		class="de.iteratec.iteraplan.businesslogic.exchange.elasticeam.ModelLoader">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+
+	<!-- Elasticeam Profile -->
+	<bean id="elasticeamProfile" class="de.iteratec.iteraplan.elasticeam.ElasticeamProfile">
+		<property name="properties">
+			<map>
+				<entry key="elasticeam.loader.task"
+					value="de.iteratec.iteraplan.businesslogic.exchange.elasticeam.IteraplanMetamodelAndModelLoader" />
+				<entry key="iteraplan.metamodel.loader" value-ref="metamodelLoader" />
+				<entry key="iteraplan.model.loader" value-ref="modelLoader" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="elasticeamManager" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.elasticeam.ElasticeamManager" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.exchange.elasticeam.IteraplanElasticeamManagerImpl">
+				<constructor-arg>
+					<ref bean="elasticeamProfile" />
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="elasticeamService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.ElasticeamService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.service.ElasticeamServiceImpl">
+				<constructor-arg>
+					<ref bean="elasticeamManager" />
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- elasticMI Spring Beans: BEGIN -->
+	
+	<bean id="elasticMiLoadTaskFactory" class="de.iteratec.iteraplan.businesslogic.exchange.elasticmi.IteraplanMiLoadTaskFactory">
+		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="attributeTypeGroupDAO" ref="attributeTypeGroupDAO" />
+		<property name="configuration" ref="hibernateConfig" />
+	</bean>
+	
+	
+	<bean id="stakeholderManager" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+				value="de.iteratec.iteraplan.elasticmi.permission.StakeholderManager" />
+		<property name="target">
+			<bean class="de.iteratec.iteraplan.elasticmi.permission.impl.StakeholderManagerImpl" />
+		</property>
+	</bean>
+	
+	<bean id="baseM3CRepository" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.elasticmi.M3CRepository" />
+		<property name="target">
+			<bean class="de.iteratec.iteraplan.elasticmi.ElasticMiExecution" destroy-method="shutdownExecution">
+				<constructor-arg ref="stakeholderManager" />
+				<constructor-arg ref="elasticMiLoadTaskFactory" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="springM3CRepository" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.elasticmi.M3CRepository" />
+		<property name="target">
+			<bean class="de.iteratec.iteraplan.businesslogic.exchange.elasticmi.SpringM3CRepositoryTransientProxy">
+				<constructor-arg value="baseM3CRepository" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="elasticMiService" parent="serviceProxyTemplate" >
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.ElasticMiService" />
+		<property name="target">
+			<bean class="de.iteratec.iteraplan.businesslogic.service.ElasticMiServiceImpl">
+				<property name="m3CRepository" ref="springM3CRepository" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="miCtxAndStakeholderMgrInitService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.service.ElasticMiContextAndStakeholderManagerInitializationService" />
+		<property name="target">
+			<bean class="de.iteratec.iteraplan.businesslogic.service.ElasticMiContextAndStakeholderManagerInitializationServiceImpl">
+				<constructor-arg ref="attributeTypeGroupService" />
+				<constructor-arg ref="userService" />
+				<constructor-arg ref="roleService" />
+				<constructor-arg ref="springM3CRepository" />
+				<constructor-arg ref="stakeholderManager" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- elasticMI Spring Beans: END -->
+	
+	<bean id="importProcessRegistryCleanupTimer" class="de.iteratec.iteraplan.businesslogic.exchange.elasticExcel.excelimport.ImportProcessRegistryCleanupTimer">
+		<property name="importProcessRegistry" ref="importProcessRegistry" />
+	</bean>
+
+	<bean id="elasticExcelExportService"
+		class="de.iteratec.iteraplan.businesslogic.exchange.elasticExcel.export.ExcelExportServiceImpl">
+		<constructor-arg ref="excelTemplateGeneratorService" />
+	</bean>
+	<bean id="excelTemplateGeneratorService"
+		class="de.iteratec.iteraplan.businesslogic.exchange.elasticExcel.export.template.ExcelTemplateGeneratorServiceImpl">
+		<constructor-arg index="0"
+			value="classpath:templates/elasticExcel/ExcelWorkbook.xls" />
+		<constructor-arg index="1"
+			value="classpath:templates/elasticExcel/ExcelWorkbook.xlsx" />
+		<constructor-arg index="2"
+			value="classpath:templates/elasticExcel/iteraplanLogo670x100.PNG" />
+	</bean>
+
+	<bean id="importService" parent="serviceProxyTemplate">
+		<property name="proxyInterfaces"
+			value="de.iteratec.iteraplan.businesslogic.exchange.elasticExcel.excelimport.ImportService" />
+		<property name="target">
+			<bean
+				class="de.iteratec.iteraplan.businesslogic.exchange.elasticExcel.excelimport.ImportServiceImpl">
+				<property name="importProcessRegistry" ref="importProcessRegistry" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="importProcessRegistry"
+		class="de.iteratec.iteraplan.businesslogic.exchange.elasticExcel.excelimport.ImportProcessRegistry">
+		<property name="importProcessFactory" ref="importProcessFactory" />
+	</bean>
+
+	<bean name="importProcessFactory"
+		class="de.iteratec.iteraplan.businesslogic.exchange.elasticmi.read.IteraplanImportProcessFactory">
+		<property name="bbServiceLocator" ref="bbServiceLocator" />
+		<property name="bbtService" ref="buildingBlockTypeService" />
+		<property name="atgService" ref="attributeTypeGroupService" />
+		<property name="atService" ref="attributeTypeService" />
+		<property name="avService" ref="attributeValueService" />
+		<property name="loadTaskFactory" ref="elasticMiLoadTaskFactory" />
+	</bean>
+
+	<!-- for file uploads -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="10000000" />
+	</bean>
+
+</beans>

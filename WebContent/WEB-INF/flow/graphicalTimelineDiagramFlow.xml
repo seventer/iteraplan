@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd" start-state="start" parent="baseGraphicFlow">
+	<decision-state id="start">
+		<if test="requestParameters['_eventId']=='init'" then="init" />
+		<if test="requestParameters['_eventId']=='loadSavedQuery'" then="pre-load" />
+		<if test="requestParameters['_eventId']=='closeAll'" then="closeAll" />
+		<if test="requestParameters['_eventId']==null" then="init" />		
+	</decision-state>
+	
+	<action-state id="init">
+		<evaluate expression="timelineGraphicFrontendService.getInitialMemBean()" result="flowScope.memBean" />
+		<transition on="#{true}" to="configuration" />
+	</action-state>
+	
+	<action-state id="pre-load">
+		<evaluate expression="timelineGraphicFrontendService.getInitialMemBean()"
+			result="flowScope.memBean" />
+		<transition on="success" to="loadSavedQuery">
+			<set name="flowScope.FLOW_LABEL"
+				value="timelineGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+			<set name="memBean.savedQueryId"
+				value="requestParameters.savedQueryId"
+				type="java.lang.Integer" />
+		</transition>			
+	</action-state>
+	
+	<action-state id="loadSavedQuery">
+		<evaluate expression="timelineGraphicFrontendService.loadSavedQuery(flowScope.memBean)" 
+				result="flowScope.memBean"/>
+		<transition on="success" to="configuration" />			
+	</action-state>
+	
+	<view-state id="configuration" model="memBean" view="graphicalreporting/timelinegraphic">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL" value="timelineGraphicFrontendService.getFlowLabel(null)" type="java.lang.String" />
+		</on-entry>
+		<transition on="saveQuery" to="configuration">
+			<evaluate expression="timelineGraphicFrontendService.saveQuery(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		<transition on="saveQueryAs" to="configuration">
+			<evaluate expression="timelineGraphicFrontendService.saveQueryAs(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		<transition on="loadSavedQuery" to="configuration">
+			<evaluate expression="timelineGraphicFrontendService.loadSavedQuery(flowScope.memBean)" result="flowScope.memBean" />
+		</transition>
+		<transition on="deleteSavedQuery" to="configuration">
+			<evaluate expression="timelineGraphicFrontendService.deleteSavedQuery(flowScope.memBean)" />
+		</transition>	
+		<transition on="generateExport" to="configuration">
+			<evaluate expression="timelineGraphicFrontendService.generateGraphicFileResponse(flowScope.memBean, flowRequestContext, flowExecutionContext)"/>
+		</transition>
+		
+		<transition on="triggerDownloadEvent" to="configuration">
+			<evaluate expression="timelineGraphicFrontendService.triggerDownloadEvent(flowRequestContext, 'generateExport')" />
+		</transition>
+		
+	</view-state>
+	
+	<end-state id="close" view="externalRedirect:contextRelative:/graphicalreporting/init.do" />
+	
+	<end-state id="closeAll" view="externalRedirect:contextRelative:/graphicalreporting/init.do">
+		<on-entry>
+			<evaluate expression="timelineGraphicFrontendService.closeAllFlows(flowRequestContext)" />
+		</on-entry>
+	</end-state>
+</flow>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.iteratec.iteraplan.model.user">
+
+  <class name="Role" table="ROLE" lazy="false">
+    <id name="id" column="ID" type="java.lang.Integer">
+      <generator class="org.hibernate.id.enhanced.TableGenerator">
+        <param name="segment_value">role</param>
+      </generator>
+    </id>
+    <version name="olVersion" column="VERSION" type="integer" unsaved-value="negative" />
+    <property name="roleName" column="NAME" length="255" not-null="true" unique="true" />
+    <property name="description" column="DESCRIPTION" length="4000" />
+
+    <set name="consistsOfRoles" table="ROLE_ROLE" lazy="true" cascade="lock">
+      <key column="ID_SUPER"></key>
+      <many-to-many class="Role" column="ID_SUB" fetch="join" foreign-key="FK_ROLE_SUB"/>
+    </set>
+
+    <set name="elementOfRoles" table="ROLE_ROLE" lazy="true" inverse="true" cascade="lock">
+      <key column="ID_SUB" />
+      <many-to-many class="Role" column="ID_SUPER" fetch="join" foreign-key="FK_ROLE_SUPER"/>
+    </set>
+
+    <set name="permissionsAttrTypeGroup" lazy="true" fetch="join" cascade="all,delete-orphan">
+      <key column="ID_ROLE" />
+      <one-to-many class="PermissionAttrTypeGroup" />
+    </set>
+
+    <set name="permissionsBbt" inverse="true" lazy="true" cascade="all,delete-orphan">
+      <key column="ID_ROLE" />
+      <one-to-many class="Role2BbtPermission"/>
+    </set>
+
+    <set name="permissionsFunctional" table="ROLE_FUNCTIONAL" lazy="true" cascade="lock">
+      <key column="ID_ROLE" />
+      <many-to-many class="PermissionFunctional" column="ID_FP" fetch="join" foreign-key="FK_ROLE_FP"/>
+    </set>
+
+    <set name="users" table="UE_RO" inverse="true" lazy="true" cascade="all">
+		<key column="ID_RO" />
+	    <many-to-many class="User" column="ID_UE" fetch="select" foreign-key="FK_RO_UE"/>
+	</set>
+
+    <property name="lastModificationUser" column="LAST_MOD_USER" length="255" />
+    <property name="lastModificationTime" column="LAST_MOD_TIME" />
+  </class>
+
+  <query name="getRolesByName">
+    <![CDATA[select role from Role role where role.roleName like :roleName escape '|' order by role.roleName]]>
+  </query>
+
+</hibernate-mapping>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<report xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" reportType="INFORMATIONFLOW"
+	xsi:schemaLocation="http://iteratec.iteraplan.com/ http://iteratec.iteraplan.com//QueryXML.xsd">
+    <informationFlowOptions dialogStep="2">
+        <colorAttributeId>0</colorAttributeId>
+        <colorAttributeValues>
+            <value>Ist</value>
+            <value>Plan</value>
+            <value>Soll</value>
+            <value>Außer Betrieb</value>
+        </colorAttributeValues>
+        <selectedColors>
+            <color>AFCEA8</color>
+            <color>F6DF95</color>
+            <color>D79DAD</color>
+            <color>88AED9</color>
+        </selectedColors>
+        <lineTypeAttributeId>1</lineTypeAttributeId>
+        <lineAttributeValues>
+            <value>Gut</value>
+            <value>Mittel</value>
+            <value>Schlecht</value>
+            <value>unspezifiziert</value>
+        </lineAttributeValues>
+        <selectedLineTypes>
+            <lineType>1</lineType>
+            <lineType>2</lineType>
+            <lineType>3</lineType>
+            <lineType>0</lineType>
+        </selectedLineTypes>
+    </informationFlowOptions>
+    <queryForms>
+		<queryForm typeXML="INFORMATIONSYSTEMRELEASE">
+			<queryUserInput>
+				<noAssignements>false</noAssignements>
+				<queryFirstLevels>
+					<queryFirstLevel>
+						<querySecondLevels>
+							<querySecondLevel>
+								<chosenAttributeStringId>blank_null_-1</chosenAttributeStringId>
+								<dateATSelected>false</dateATSelected>
+								<freeTextCriteriaSelected>true</freeTextCriteriaSelected>
+							</querySecondLevel>
+							<querySecondLevel>
+                  				<chosenAttributeStringId>userdefEnum_null_4</chosenAttributeStringId>
+                 		 		<chosenOperationId>7</chosenOperationId>
+		                 		<dateATSelected>false</dateATSelected>
+		                  		<freeTextCriteriaSelected>true</freeTextCriteriaSelected>
+                			</querySecondLevel>
+						</querySecondLevels>
+					</queryFirstLevel>
+				</queryFirstLevels>
+				<statusQueryData typeOfStatus="INFORMATIONSYSTEMRELEASE">
+					<values>
+						<value value="true" key="typeOfStatus_current" />
+						<value value="false" key="typeOfStatus_planned" />
+						<value value="false" key="typeOfStatus_target" />
+						<value value="false" key="typeOfStatus_inactive" />
+					</values>
+				</statusQueryData>
+				<timeSpanQueryData>
+					<endDate>1246289165150</endDate>
+					<endTimeFunction>ABSOLUTE</endTimeFunction>
+					<startDate>1245289165160</startDate>
+					<startTimeFunction>ABSOLUTE</startTimeFunction>
+				</timeSpanQueryData>
+			</queryUserInput>
+		</queryForm>
+	</queryForms>
+	<selectedResultIds />
+	<version>@build.version@</version>
+</report>

@@ -1,0 +1,231 @@
+<project name="iteraplan-quality" basedir=".">
+
+	<description>	
+		Build file containing targets related to quality management and documentation generation.
+	</description>
+
+	<import file="build-db-misc.xml"/>
+
+
+	<!--	
+	##########################################################################
+		 DOCUMENTATION targets
+	##########################################################################	
+	-->
+
+
+	<!--To generate images for ANT GraphViz must also be installed-->
+	<target name="doc.antbuild" description="Generate schema for build.xml">
+		<mkdir dir="${build}/generated/doc/antbuild" />
+		<property name="file.type" value="pdf" />
+		<typedef resource="net/ggtools/grand/antlib.xml" classpath="${lib.tools}/grand/grand-1.8.jar" />
+		<grand output="${build}/generated/doc/antbuild/antdiagram.dot" buildfile="${basedir}/build.xml" />
+		<exec executable="dot">
+			<arg line="-Tpdf -Gsize=11.69,8.27 -Grotate=180 -o ${build}/generated/doc/antbuild/antdiagram.pdf 
+		      	${build}/generated/doc/antbuild/antdiagram.dot" />
+		</exec>
+	</target>
+
+	<target name="doc.javadoc" depends="build.prepare" description="Generate javadoc documentation for the project">
+		<echo message="Generate JavaDoc" />
+		<!-- Store Javadoc output to scan it for warnings afterwards -->
+		<record name="javadoc-complaints.log" action="start" emacsmode="true" loglevel="warn" />
+
+		<javadoc source="${javac.source.compliance}" encoding="${source.encoding}" destdir="${javadoc.dir}" author="true" version="true" use="true" windowtitle="${javadoc.windowtitle} ${version.info}" doctitle="${javadoc.doctitle}" bottom="${javadoc.bottom}" access="protected" failonerror="true" useexternalfile="true">
+
+			<classpath refid="classpath.project" />
+			<classpath refid="mvn.classpath.test" />
+
+			<packageset dir="${src.java.main}" defaultexcludes="yes">
+				<include name="**" />
+			</packageset>
+
+			<packageset dir="${src.java.base}" defaultexcludes="yes">
+				<include name="**" />
+			</packageset>
+
+			<!--<packageset dir="${src.java.test}" defaultexcludes="yes">
+				<include name="**" />
+			</packageset> -->
+
+			<packageset dir="${src.java.hibernatepatch}" defaultexcludes="yes">
+				<include name="**" />
+			</packageset>
+
+			<packageset dir="${src.java.tools}" defaultexcludes="yes">
+				<include name="**" />
+			</packageset>
+
+			<packageset dir="${src.java.graphics}/svg" defaultexcludes="yes">
+				<include name="**" />
+			</packageset>
+			<packageset dir="${src.java.graphics}/common" defaultexcludes="yes">
+				<include name="**" />
+			</packageset>
+			<packageset dir="${src.java.elasticeam}" defaultexcludes="yes">
+				<include name="**" />
+			</packageset>
+		</javadoc>
+
+		<record name="javadoc-complaints.log" action="stop" />
+		<loadfile srcFile="javadoc-complaints.log" property="javadoc.complaints">
+			<!-- Filter out harm-less error messages -->
+			<filterchain>
+				<filterreader classname="org.apache.tools.ant.filters.LineContains">
+					<param type="negate" value="true" />
+					<param type="contains" value="Error fetching URL" />
+				</filterreader>
+				<filterreader classname="org.apache.tools.ant.filters.LineContains">
+					<param type="negate" value="true" />
+					<param type="contains" value="bootstrap class path not set in conjunction with" />
+				</filterreader>
+				<striplinebreaks />
+			</filterchain>
+		</loadfile>
+		<fail if="javadoc.complaints" message="Javadoc reported warnings or errors; see javadoc-complaints.log for details" />
+		<delete file="javadoc-complaints.log" />
+		<zip destfile="${javadoc.dir}/../${appname}-${version.info}-javadoc.zip">
+			<zipfileset dir="${javadoc.dir}" />
+		</zip>
+	</target>
+
+	<!--To generate images for the UML diagrams GraphViz must also be installed-->
+	<target name="doc.uml" depends="build.prepare" description="Generate UML diagrams for javadoc">
+		<mkdir dir="${build}/generated/doc/uml" />
+		<echo message="Generate UML diagrams for javadoc" />
+		<javadoc source="${javac.source.compliance}" encoding="${source.encoding}" destdir="${build}/generated/doc/uml" author="true" version="true" use="true" windowtitle="${javadoc.windowtitle} ${version.info}" doctitle="${javadoc.doctitle}" bottom="${javadoc.bottom}" access="protected" useexternalfile="true">
+			<classpath refid="classpath.project" />
+			<classpath refid="mvn.classpath.test" />
+
+			<packageset dir="${src.java.main}" defaultexcludes="yes">
+				<include name="**" />
+			</packageset>
+			<packageset dir="${src.java.base}" defaultexcludes="yes">
+				<include name="**" />
+			</packageset>
+			<packageset dir="${src.java.hibernatepatch}" defaultexcludes="yes">
+				<include name="**" />
+			</packageset>
+
+			<packageset dir="${src.java.tools}" defaultexcludes="yes">
+				<include name="**" />
+			</packageset>
+
+			<packageset dir="${src.java.graphics}/svg" defaultexcludes="yes">
+				<include name="**" />
+			</packageset>
+			<packageset dir="${src.java.graphics}/common" defaultexcludes="yes">
+				<include name="**" />
+			</packageset>
+			<packageset dir="${src.java.elasticeam}" defaultexcludes="yes">
+				<include name="**" />
+			</packageset>
+
+			<doclet name="org.umlgraph.doclet.UmlGraphDoc" path="${lib.tools}/umlgraph/umlgraph-5.4.jar">
+				<param name="-attributes" />
+				<param name="-enumerations" />
+				<param name="-enumconstants" />
+				<param name="-operations" />
+				<param name="-qualify" />
+				<param name="-types" />
+				<param name="-visibility" />
+			</doclet>
+		</javadoc>
+		<apply executable="dot" dest="${build}/generated/doc/uml" parallel="false">
+			<arg value="-Tpng" />
+			<arg value="-o ${build}/generated/doc/uml" />
+			<targetfile />
+			<srcfile />
+			<fileset dir="${build}/generated/doc/uml" includes="*.dot" />
+			<mapper type="glob" from="*.dot" to="*.png" />
+		</apply>
+		<zip destfile="${build}/generated/doc/${appname}-${version.info}-javadoc_uml.zip">
+			<zipfileset dir="${build}/generated/doc/uml" />
+		</zip>
+	</target>
+
+	<!--To generate images for DB schema GraphViz must also be installed
+		The attribut -s PUBLIC is needed for hsqldb-->
+	<target name="doc.dbschema" description="Generate database schema for the project">
+		<mkdir dir="${build}/generated/doc/dbschema" />
+		<java jar="${lib.tools}/schemaspy/schemaSpy_5.0.0.jar" output="${build}/generated/doc/dbschema/output.log" error="${build}/generated/doc/dbschema/error.log" fork="true">
+			<arg line="-t ${schemaspy.database}" />
+			<arg line="-host ${database.address}" />
+			<arg line="-port ${database.port}" />
+			<arg line="-db ${database.name}" />
+			<arg line="-u ${database.login}" />
+			<arg line="-s PUBLIC" />
+			<arg line="-p ${database.password}" />
+			<arg line='-cp "${schemaspy.driverJar}"' />
+			<arg line='-o "${build}/generated/doc/dbschema"' />
+		</java>
+		<zip destfile="${build}/generated/doc/${appname}-${version.info}-dbschema.zip">
+			<zipfileset dir="${build}/generated/doc/dbschema" />
+		</zip>
+	</target>
+
+
+
+	<!--	
+	##########################################################################
+		 QUALITY targets
+	##########################################################################	
+	-->
+
+
+	<target name="quality.sonar" depends="init.taskdefinitions">
+		<!-- Add the Sonar task -->
+		<taskdef uri="antlib:org.sonar.ant" resource="org/sonar/ant/antlib.xml" classpathref="mvn.classpath.sonar" />
+
+		<!-- list of mandatories Sonar properties -->
+		<property name="sonar.sources" value="${src.java}/main,${src.java}/base,${src.java}/tools,${src.java}/graphics/common,${src.java}/graphics/svg,${src.java}/elasticeam,${src.java}/hibernatepatch" />
+
+		<!-- list of optional Sonar properties -->
+		<property name="sonar.projectKey" value="de.iteratec:iteraplan" />
+		<property name="sonar.projectName" value="iteraplan" />
+		<property name="sonar.projectVersion" value="${version.major}.${version.feature}-${version.repair}" />
+		<property name="sonar.binaries" value="${build.classes}/main,${build.classes}/base,${build.classes}/tools,${build.classes}/graphics,${build.classes}/elasticeam,${build.classes}/test" />
+		<property name="sonar.tests" value="${src.java}/test" />
+		<!-- <property name="sonar.libraries" refid="mvn.classpath.compile" /> -->
+		<pathconvert property="sonar.libraries" pathsep=",">
+			<path refid="mvn.classpath.compile"/>
+		</pathconvert>
+
+		<!-- Report properties -->
+		<property name="sonar.dynamicAnalysis" value="reuseReports" />
+		<property name="sonar.surefire.reportsPath" value="${build.generated.junitreport}" />
+		<property name="sonar.cobertura.reportPath" value="${build.generated.cobertura}/coverage.xml" />
+
+		<!-- JAVA version properties -->
+		<property name="sonar.language" value="java" />
+		<property name="sonar.java.source" value="${javac.source.compliance}" />
+		<property name="sonar.sourceEncoding" value="${source.encoding}" />
+		<property name="sonar.java.target" value="${javac.target.compliance}" />
+
+		
+		<sonar:sonar xmlns:sonar="antlib:org.sonar.ant" />
+
+		</target>
+
+	<target name="quality.pmd" depends="init.mvn" description="call mvn pmd:check">
+		<artifact:mvn mavenhome="${maven.home}" fork="true" failonerror="true" xmlns:artifact="urn:maven-artifact-ant">
+			<arg value="generate-sources" />
+			<arg value="pmd:check" />
+		</artifact:mvn>
+	</target>
+
+	<target name="quality.checkstyle" depends="init.mvn" description="call mvn checkstyle:check">
+		<!-- This checks is not yet "hard", so do not add failonerror="true" -->
+		<artifact:mvn mavenhome="${maven.home}" fork="true" xmlns:artifact="urn:maven-artifact-ant">
+			<arg value="checkstyle:check" />
+		</artifact:mvn>
+	</target>
+
+	<target name="quality.findbugs" depends="init.mvn" description="call mvn findbugs:check">
+		<artifact:mvn mavenhome="${maven.home}" fork="true" failonerror="true" xmlns:artifact="urn:maven-artifact-ant" >
+			<arg value="findbugs:check" />
+		</artifact:mvn>
+	</target>
+
+
+</project>

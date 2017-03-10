@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+      http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+	  start-state="start" parent="baseFlow">
+
+  <decision-state id="start">
+    <on-entry>
+      <evaluate expression="importFrontendService.getInitialMemBean()"
+        result="flowScope.memBean" />
+      <set name="flowScope.FLOW_LABEL"
+        value="importFrontendService.getFlowLabel(null)"
+        type="java.lang.String" />
+    </on-entry>
+		<if test="true" then="upload" />
+  </decision-state>
+  
+
+  <view-state id="upload" model="memBean" view="import/upload">
+    <transition on="upload" to="upload.process" />
+    
+	<!--  Excel 2003 Template -->
+    <transition on="requestTemplateExcel2003" to="triggerTemplateExcel2003" />
+    <transition on="downloadTemplateExcel2003">
+      <evaluate expression="exportFrontendService.downloadTemplateExcel2003(flowRequestContext, flowScope.memBean)" result="flowScope.memBean"/>
+    </transition>
+    
+    <!--  Excel 2003 Full -->  
+    <transition on="requestFullModelExcel2003" to="triggerFullModelExcel2003" />
+    <transition on="downloadFullModelExcel2003">
+  		<evaluate expression="exportFrontendService.downloadFullModelExcel2003(flowRequestContext, flowScope.memBean)" result="flowScope.memBean"/>
+    </transition>
+    
+    
+    <!-- Excel 2007 Template -->
+    <transition on="requestTemplateExcel2007" to="triggerTemplateExcel2007" />
+    <transition on="downloadTemplateExcel2007">
+      <evaluate expression="exportFrontendService.downloadTemplateExcel2007(flowRequestContext, flowScope.memBean)" result="flowScope.memBean"/>
+    </transition>
+    
+	<!-- Excel 2007 Full -->
+    <transition on="requestFullModelExcel2007" to="checkFullModelExcel2007" />
+    <transition on="downloadFullModelExcel2007">
+      <evaluate expression="exportFrontendService.downloadFullModelExcel2007(flowRequestContext, flowScope.memBean, messageContext)" />     
+    </transition>    
+
+    <!-- Ecore -->
+    <transition on="requestEcore" to="triggerEcore" />
+    <transition on="downloadEcore">
+  		<evaluate expression="exportFrontendService.downloadEcore(flowRequestContext)" />
+    </transition>
+
+    <!-- Bundle -->
+    <transition on="requestBundle" to="triggerBundle" />
+    <transition on="downloadBundle">
+  		<evaluate expression="exportFrontendService.downloadBundle(flowRequestContext)" />
+    </transition>
+
+
+	<!--  Excel 2003 Timeseries Template -->
+    <transition on="requestTimeseriesTemplateExcel2003" to="triggerTimeseriesTemplateExcel2003" />
+    <transition on="downloadTimeseriesTemplateExcel2003">
+      <evaluate expression="exportFrontendService.downloadTimeseriesTemplateExcel2003(flowRequestContext)"/>
+    </transition>
+
+	<!--  Excel 2003 Timeseries Data -->
+    <transition on="requestTimeseriesDataExcel2003" to="triggerTimeseriesDataExcel2003" />
+    <transition on="downloadTimeseriesDataExcel2003">
+      <evaluate expression="exportFrontendService.downloadTimeseriesDataExcel2003(flowRequestContext)" />
+    </transition>
+
+	<!--  Excel 2007 Timeseries Template -->
+    <transition on="requestTimeseriesTemplateExcel2007" to="triggerTimeseriesTemplateExcel2007" />
+    <transition on="downloadTimeseriesTemplateExcel2007">
+      <evaluate expression="exportFrontendService.downloadTimeseriesTemplateExcel2007(flowRequestContext)" />
+    </transition>
+
+	<!--  Excel 2007 Timeseries Data -->
+    <transition on="requestTimeseriesDataExcel2007" to="triggerTimeseriesDataExcel2007" />
+    <transition on="downloadTimeseriesDataExcel2007">
+      <evaluate expression="exportFrontendService.downloadTimeseriesDataExcel2007(flowRequestContext)"/>
+    </transition>
+
+    
+    <transition on="uploadTimeseries" to="uploadTimeseries.process" />
+  </view-state>
+
+
+
+<!-- Excel 2003 Template Trigger-->
+  <action-state id="triggerTemplateExcel2003">
+    <evaluate expression="exportFrontendService.triggerDownloadEvent(flowRequestContext, 'downloadTemplateExcel2003')" />    
+    <transition to="upload" />
+  </action-state>
+
+<!--  Excel 2003 Full Trigger -->
+  <action-state id="triggerFullModelExcel2003">
+    <evaluate expression="exportFrontendService.triggerDownloadEvent(flowRequestContext, 'downloadFullModelExcel2003')" />    
+    <transition to="upload" />
+  </action-state>
+
+<!-- Excel 2003 Template Trigger-->
+  <action-state id="triggerTemplateExcel2007">
+    <evaluate expression="exportFrontendService.triggerDownloadEvent(flowRequestContext, 'downloadTemplateExcel2007')" />    
+    <transition to="upload" />
+  </action-state>
+
+<!--  Excel 2007 Full Check and Trigger -->
+  <action-state id="checkFullModelExcel2007">
+    <evaluate expression="exportFrontendService.checkFullModelExcel2007(flowRequestContext, flowScope.memBean, messageContext)" />    
+    <transition to="upload" />
+  </action-state>
+  
+  <!-- Ecore Trigger-->
+  <action-state id="triggerEcore">
+    <evaluate expression="exportFrontendService.triggerDownloadEvent(flowRequestContext, 'downloadEcore')" />    
+    <transition to="upload" />
+  </action-state>
+  
+  
+   <!-- Bundle Trigger-->
+  <action-state id="triggerBundle">
+    <evaluate expression="exportFrontendService.triggerDownloadEvent(flowRequestContext, 'downloadBundle')" />    
+    <transition to="upload" />
+  </action-state>
+  
+  
+  <!-- Excel 2003 Timeseries Template Trigger-->
+  <action-state id="triggerTimeseriesTemplateExcel2003">
+    <evaluate expression="exportFrontendService.triggerDownloadEvent(flowRequestContext, 'downloadTimeseriesTemplateExcel2003')" />    
+    <transition to="upload" />
+  </action-state>
+  
+  
+    <!-- Excel 2003 Timeseries Data Trigger-->
+  <action-state id="triggerTimeseriesDataExcel2003">
+    <evaluate expression="exportFrontendService.triggerDownloadEvent(flowRequestContext, 'downloadTimeseriesDataExcel2003')" />    
+    <transition to="upload" />
+  </action-state>
+  
+
+
+  <!-- Excel 2007 Timeseries Template Trigger-->
+  <action-state id="triggerTimeseriesTemplateExcel2007">
+    <evaluate expression="exportFrontendService.triggerDownloadEvent(flowRequestContext, 'downloadTimeseriesTemplateExcel2007')" />    
+    <transition to="upload" />
+  </action-state>
+  
+  
+    <!-- Excel 2007 Timeseries Data Trigger-->
+  <action-state id="triggerTimeseriesDataExcel2007">
+    <evaluate expression="exportFrontendService.triggerDownloadEvent(flowRequestContext, 'downloadTimeseriesDataExcel2007')" />    
+    <transition to="upload" />
+  </action-state>
+
+
+
+  <action-state id="upload.process">
+  	<evaluate expression="importFrontendService.upload(flowScope.memBean)" />
+  	<transition to="process" />
+  </action-state>
+
+  <view-state id="process" model="memBean" view="import/process">
+  	<transition on="compareMetamodels" to="metamodelMerge.check" />
+  	<transition on="mergeMetamodels" to="metamodelMerge.approved" />
+  	<transition on="compareModels" to="modelMerge.check" />
+  	<transition on="writeModel" to="modelMerge.apply" />
+  	<transition on="new" to="upload" />
+    <transition on="cancel" to="removeCurrentImport" />
+  </view-state>
+  
+  <action-state id="metamodelMerge.check">
+  	<evaluate expression="importFrontendService.compareMetamodel(flowScope.memBean)" />
+  	<transition to="process" />
+  </action-state>
+
+  <action-state id="metamodelMerge.approved">
+  	<evaluate expression="importFrontendService.mergeMetamodel(flowScope.memBean)" />
+  	<transition to="process" />
+  </action-state>
+
+  <action-state id="modelMerge.check">
+  	<evaluate expression="importFrontendService.modelDryrun(flowScope.memBean)" />
+  	<transition to="process" />
+  </action-state>
+
+  <action-state id="modelMerge.apply">
+  	<evaluate expression="importFrontendService.writeToDb(flowScope.memBean)" />
+  	<transition to="process" />
+  </action-state>
+  
+  <action-state id="removeCurrentImport">
+  	<evaluate expression="importFrontendService.removeCurrentImport(flowScope.memBean)" />
+  	<transition to="start" />
+  </action-state>
+  
+  <action-state id="uploadTimeseries.process">
+  	<evaluate expression="importFrontendService.uploadTimeseries(flowScope.memBean)" />
+  	<transition to="uploadTimeseries.result" />
+  </action-state>
+  
+  <view-state id="uploadTimeseries.result" view="import/timeseries">
+  	<transition on="done" to="start" />
+  </view-state>
+
+</flow>

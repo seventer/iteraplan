@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<report xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" reportType="PORTFOLIO"
+	xsi:schemaLocation="http://iteratec.iteraplan.com/ http://iteratec.iteraplan.com//QueryXML.xsd">
+	<portfolioOptions dialogStep="2">
+		<colorAttributeId>5</colorAttributeId>
+		<colorAttributeValues>
+			<value>Hoch</value>
+			<value>Mittel</value>
+			<value>Gering</value>
+		</colorAttributeValues>
+		<quadrantValues>
+			<value>Label 1</value>
+			<value>Label 2</value>
+			<value>Label 3</value>
+			<value>Label 4</value>
+		</quadrantValues>
+		<scalingEnabled>false</scalingEnabled>
+		<selectedBbType>informationSystemRelease.plural</selectedBbType>
+		<selectedColors>
+			<color>AFCEA8</color>
+			<color>F6DF95</color>
+			<color>D79DAD</color>
+		</selectedColors>
+		<sizeAttributeId>2</sizeAttributeId>
+		<XAxisAttributeId>3</XAxisAttributeId>
+		<YAxisAttributeId>4</YAxisAttributeId>
+	</portfolioOptions>
+	<queryForms>
+		<queryForm typeXML="INFORMATIONSYSTEMRELEASE">
+			<queryUserInput>
+				<noAssignements>false</noAssignements>
+				<queryFirstLevels>
+					<queryFirstLevel>
+						<querySecondLevels>
+							<querySecondLevel>
+								<chosenAttributeStringId>blank_null_-1</chosenAttributeStringId>
+								<dateATSelected>false</dateATSelected>
+								<freeTextCriteriaSelected>true</freeTextCriteriaSelected>
+							</querySecondLevel>
+						</querySecondLevels>
+					</queryFirstLevel>
+				</queryFirstLevels>
+				<statusQueryData typeOfStatus="INFORMATIONSYSTEMRELEASE">
+					<values>
+						<value value="true" key="typeOfStatus_current" />
+						<value value="false" key="typeOfStatus_planned" />
+						<value value="false" key="typeOfStatus_target" />
+						<value value="false" key="typeOfStatus_inactive" />
+					</values>
+				</statusQueryData>
+				<timeSpanQueryData>
+					<endDate>1</endDate>
+					<endTimeFunction>ABSOLUTE</endTimeFunction>
+					<startDate>0</startDate>
+					<startTimeFunction>ABSOLUTE</startTimeFunction>
+				</timeSpanQueryData>
+			</queryUserInput>
+		</queryForm>
+	</queryForms>
+	<selectedResultIds />
+	<version>@build.version@</version>
+</report>

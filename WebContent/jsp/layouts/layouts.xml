@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+
+	<definition name="standardLayout" template="/jsp/layouts/standard.jsp">
+		<put-attribute name="footer" value="/jsp/layouts/footer.jsp" />
+	</definition>
+
+	<definition name="defaultHeaderAndFooterLayout" extends="standardLayout">
+		<put-attribute name="navigation" value="/jsp/Navigation.jsp" />
+		<put-attribute name="menu" value="/jsp/Menu.jsp" />
+		<put-attribute name="breadcrumb" value="/jsp/MainBreadcrumb.jsp" />
+		<put-attribute name="header" value="/jsp/Header.jsp" />
+		<put-attribute name="footer" value="/jsp/Footer.jsp" />
+	</definition>
+	
+	<definition name="jspLayout" template="/jsp/layouts/empty.jsp">
+	</definition>
+
+	<definition name="jsLayout" template="/jsp/layouts/javascript.jsp">
+	</definition>
+
+	<definition name="blankLayout" template="/jsp/layouts/blank.jsp">
+	</definition>
+</tiles-definitions>

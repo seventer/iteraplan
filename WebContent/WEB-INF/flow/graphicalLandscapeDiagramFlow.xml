@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+	    http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd "
+	start-state="start" parent="baseGraphicFlow">
+	
+	<decision-state id="start">
+		<if test="requestParameters['_eventId']=='init'" then="init" />
+		<if test="requestParameters['_eventId']=='fromInterchange'" then="fromInterchange" />
+		<if test="requestParameters.bbType!=null" then="initFromId" />
+		<if test="requestParameters['_eventId']=='loadSavedQuery'" then="pre-load" />
+		<if test="requestParameters['_eventId']=='closeAll'" then="closeAll" />
+		<if test="requestParameters['_eventId']==null" then="init" />		
+	</decision-state>
+
+	<action-state id="init">
+		<evaluate expression="landscapeDiagramFrontendService.getInitialMemBean()"
+			result="flowScope.memBean" />
+		<transition on="#{true}" to="selectcontent" />			
+	</action-state>
+	
+	<action-state id="initFromId">
+			<evaluate result="flowScope.memBean" 
+				expression="landscapeDiagramFrontendService.directlyToStepTwo(requestParameters.id, requestParameters.bbType, requestParameters.diagramVariant)" />
+				
+			<transition on="#{true}" to="selectcontent">
+			</transition>
+	</action-state>
+	
+	<action-state id="fromInterchange">
+			<evaluate expression="landscapeDiagramFrontendService.fromInterchange(requestParameters['bbType'],requestParameters['idList'],requestParameters['diagramType'])"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="selectcontent" />
+	</action-state>
+	
+	<action-state id="pre-load">
+		<evaluate expression="landscapeDiagramFrontendService.getInitialMemBean()"
+			result="flowScope.memBean" />
+		<transition on="success" to="loadSavedQuery">
+			<set name="flowScope.FLOW_LABEL"
+				value="landscapeDiagramFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+			<set name="memBean.savedQueryId"
+				value="requestParameters.savedQueryId"
+				type="java.lang.Integer" />
+		</transition>			
+	</action-state>
+	
+	<action-state id="loadSavedQuery">
+		<evaluate expression="landscapeDiagramFrontendService.loadSavedQuery(flowScope.memBean)" 
+				result="flowScope.memBean"/>
+		<transition on="success" to="selectcontent" />			
+	</action-state>
+	
+	<view-state id="selectcontent" model="memBean" view="graphicalreporting/landscapediagram">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL"
+				value="landscapeDiagramFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+		</on-entry>
+		 <transition on="selectContentType" to="selectcontent">
+			<evaluate expression="landscapeDiagramFrontendService.selectContentType(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+				result="flowScope.memBean"/>
+
+		</transition>
+		<transition on="changeContentType" to="selectcontent">
+			<evaluate expression="landscapeDiagramFrontendService.changeContentType(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+				result="flowScope.memBean"/>
+		</transition>
+		<transition on="selectColumnType" to="selectcontent">
+			<evaluate expression="landscapeDiagramFrontendService.selectColumnType(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+				result="flowScope.memBean"/>	
+		</transition>
+		<transition on="selectRowType" to="selectcontent">
+			<evaluate expression="landscapeDiagramFrontendService.selectRowType(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+				result="flowScope.memBean"/>
+		</transition>
+		<transition on="updateColorAttribute" to="selectcontent">
+			<evaluate expression="landscapeDiagramFrontendService.updateColorAttribute(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+				result="flowScope.memBean"/>
+		</transition>
+		<transition on="updateLineTypeAttribute" to="selectcontent">
+			<evaluate expression="landscapeDiagramFrontendService.updateLineTypeAttribute(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+				result="flowScope.memBean"/>
+		</transition>
+		<transition on="changeColumnType" to="selectcontent">
+			<evaluate expression="landscapeDiagramFrontendService.changeColumnType(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+				result="flowScope.memBean"/>
+		</transition>
+		<transition on="changeRowType" to="selectcontent">
+			<evaluate expression="landscapeDiagramFrontendService.changeRowType(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+				result="flowScope.memBean"/>
+		</transition>
+		
+		<transition on="loadSavedQuery" to="selectcontent">
+			<evaluate expression="landscapeDiagramFrontendService.loadSavedQuery(flowScope.memBean)" 
+				result="flowScope.memBean"/>
+		</transition>
+		
+		<transition on="saveQuery" to="selectcontent">
+			<evaluate expression="landscapeDiagramFrontendService.saveQuery(flowScope.memBean, flowRequestContext)" 
+				result="flowScope.memBean"/>
+		</transition>
+		
+		<transition on="saveQueryAs" to="selectcontent">
+			<evaluate expression="landscapeDiagramFrontendService.saveQueryAs(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		
+		<transition on="deleteSavedQuery" to="selectcontent">
+			<evaluate expression="landscapeDiagramFrontendService.deleteSavedQuery(flowScope.memBean)" 
+				result="flowScope.memBean"/>
+		</transition>
+		
+		<transition on="filterContentResults" to="filterresults">
+			<set name="flowScope.cachedReportMemBean" value="flowScope.memBean" />
+			<evaluate expression="landscapeDiagramFrontendService.filterContentResults(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+			result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="filterRowResults" to="filterresults">
+			<set name="flowScope.cachedReportMemBean" value="flowScope.memBean" />
+			<evaluate expression="landscapeDiagramFrontendService.filterRowResults(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+			result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="filterColumnResults" to="filterresults">
+			<set name="flowScope.cachedReportMemBean" value="flowScope.memBean" />
+			<evaluate expression="landscapeDiagramFrontendService.filterColumnResults(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+			result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="generateExport" to="selectcontent" >
+			<evaluate expression="landscapeDiagramFrontendService.generateGraphicFileResponse(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+
+		<transition on="triggerDownloadEvent" to="selectcontent">
+			<evaluate expression="landscapeDiagramFrontendService.triggerDownloadEvent(flowRequestContext, 'generateExport')" />
+		</transition>
+
+	</view-state>
+	
+	<view-state id="filterresults" model="memBean" view="graphicalreporting/filterLandscape">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL"
+				value="landscapeDiagramFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+		</on-entry>
+		
+		<transition on="backFromFilter" to="selectcontent">
+			<set name="flowScope.memBean" value="flowScope.cachedReportMemBean" />			
+		</transition>
+		
+		<transition on="resumeFromFilter" to="selectcontent" >
+			<set name="flowScope.landscapeMemBean" value="flowScope.cachedReportMemBean" />
+			<evaluate expression="landscapeDiagramFrontendService.resumeFromFilter(flowScope.memBean, flowScope.landscapeMemBean,flowRequestContext, flowExecutionContext)" 
+			result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="refreshReport" to="filterresults">
+			<evaluate result="flowScope.memBean"
+				expression="landscapeDiagramFrontendService.refreshReport(flowScope.memBean, flowRequestContext, flowExecutionContext, true)" />
+		</transition>
+		
+		<transition on="requestReport" to="filterresults">
+			<evaluate expression="landscapeDiagramFrontendService.requestEntityList(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="requestAndConfirmReport" to="selectcontent" >
+			<evaluate expression="landscapeDiagramFrontendService.requestEntityList(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+			<set name="flowScope.landscapeMemBean" value="flowScope.cachedReportMemBean" />
+			<evaluate expression="landscapeDiagramFrontendService.resumeFromFilter(flowScope.memBean, flowScope.landscapeMemBean,flowRequestContext, flowExecutionContext)" 
+				result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="resetReport" to="filterresults">
+			<evaluate expression="landscapeDiagramFrontendService.resetReport(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="addReportExtension" to="filterresults">
+			<evaluate expression="landscapeDiagramFrontendService.addReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="removeReportExtension" to="filterresults">
+			<evaluate expression="landscapeDiagramFrontendService.removeReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="expandFirstLevel" to="filterresults">
+			<evaluate expression="landscapeDiagramFrontendService.expandFirstLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="expandSecondLevel" to="filterresults">
+			<evaluate expression="landscapeDiagramFrontendService.expandSecondLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />		
+		</transition>
+		<transition on="shrinkLevel" to="filterresults">
+			<evaluate expression="landscapeDiagramFrontendService.shrinkLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+	</view-state>
+	
+	<end-state id="close" view="externalRedirect:contextRelative:/show/graphicalreporting/landscapediagram" />
+		
+	<end-state id="closeAll" view="externalRedirect:contextRelative:/graphicalreporting/init.do">
+		<on-entry>
+			<evaluate expression="landscapeDiagramFrontendService.closeAllFlows(flowRequestContext)"></evaluate>
+		</on-entry>
+	</end-state>
+
+</flow>

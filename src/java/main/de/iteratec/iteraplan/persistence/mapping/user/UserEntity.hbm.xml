@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.iteratec.iteraplan.model.user">
+
+  <class name="UserEntity" table="UE" lazy="false">
+    <id name="id" column="ID" type="java.lang.Integer">
+      <generator class="org.hibernate.id.enhanced.TableGenerator">
+        <param name="segment_value">ue</param>
+      </generator>
+    </id>
+    <version name="olVersion" column="VERSION" type="integer" unsaved-value="negative" />
+
+    <set name="parentUserGroups" table="UG_UE" lazy="true" inverse="true" cascade="lock">
+      <key column="ID_UE" />
+      <many-to-many class="UserGroup" column="ID_UG" fetch="join" foreign-key="FK_UE_UG"/>
+    </set>
+
+    <set name="ownedBuildingBlocks" table="BB_UE" lazy="true" inverse="true" cascade="lock">
+      <key column="ID_UE" />
+      <many-to-many class="de.iteratec.iteraplan.model.BuildingBlock" column="ID_BB" fetch="select" foreign-key="FK_UE_BB"/>
+    </set>
+
+    <property name="lastModificationUser" column="LAST_MOD_USER" length="255" />
+    <property name="lastModificationTime" column="LAST_MOD_TIME" />
+
+    <joined-subclass name="User" table="USERS" lazy="false">
+      <key column="ID_UE" foreign-key="FK_USERS_UE"/>
+      <property name="loginName" column="LOGIN_NAME" length="255" unique="true" />
+      <property name="firstName" column="FIRST_NAME" length="255" not-null="true" />
+      <property name="lastName" column="LAST_NAME" length="255" not-null="true" />
+      <property name="dataSource" column="DATASOURCE" length="100" not-null="true" />
+      <property name="email" column="EMAIL" length="255" not-null="false" />
+
+	    <set name="subscribedBuildingBlocks" table="BB_SU" lazy="true" inverse="true" cascade="lock">
+	      <key column="ID_UE" />
+	      <many-to-many class="de.iteratec.iteraplan.model.BuildingBlock" column="ID_BB" fetch="select" foreign-key="FK_SU_BB"/>
+	    </set>
+
+	    <set name="subscribedBuildingBlockTypes" table="BBT_SU" lazy="true" inverse="true" cascade="lock">
+	      <key column="ID_UE" />
+	      <many-to-many class="de.iteratec.iteraplan.model.BuildingBlockType" column="ID_BBT" fetch="select" foreign-key="FK_SU_BBT"/>
+	    </set>
+	    
+	    <set name="roles" table="UE_RO" lazy="true" cascade="all">
+	      <key column="ID_UE" />
+	      <many-to-many class="Role" column="ID_RO" fetch="select" foreign-key="FK_UE_RO"/>
+	    </set>
+
+    </joined-subclass>
+
+    <joined-subclass name="UserGroup" table="UG" lazy="false">
+      <key column="ID_UE" foreign-key="FK_UG_UE"/>
+      <property name="name" column="NAME" length="255" not-null="true" unique="true" />
+      <property name="description" column="DESCRIPTION" length="4000" />
+      <set name="members" table="UG_UE" lazy="true" batch-size="1" cascade="lock">
+        <key column="ID_UG" />
+        <many-to-many class="UserEntity" column="ID_UE" fetch="join" foreign-key="FK_UG_UE2"/>
+      </set>
+    </joined-subclass>
+
+  </class>
+
+</hibernate-mapping>

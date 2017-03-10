@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.iteratec.iteraplan.model.attribute">
+
+  <class name="AttributeValue" table="AV" lazy="false">
+  	<cache usage="read-write"/>
+    <id name="id" column="ID" type="java.lang.Integer">
+      <generator class="org.hibernate.id.enhanced.TableGenerator">
+        <param name="segment_value">av</param>
+      </generator>
+    </id>
+    <version name="olVersion" column="VERSION" type="integer" unsaved-value="negative" />
+    <set name="attributeValueAssignments" lazy="true" inverse="true" cascade="all">
+      <key column="ID_AV" />
+      <one-to-many class="AttributeValueAssignment" />
+    </set>
+
+    <joined-subclass name="DateAV" table="AV_DATE" lazy="false">
+      <key column="ID_AV" foreign-key="FK_DATEAV_AV"/>
+      <property name="value" column="VALUE" type="date" />
+      <many-to-one name="attributeType" column="ID_AT" not-null="true" foreign-key="FK_DATEAV_AT"/>
+    </joined-subclass>
+
+    <joined-subclass name="TextAV" table="AV_TEXT" lazy="false">
+      <key column="ID_AV" foreign-key="FK_TEXTAV_AV"/>
+      <property name="value" column="VALUE" length="4000" />
+      <many-to-one name="attributeType" column="ID_AT" not-null="true" foreign-key="FK_TEXTAV_AT"/>
+    </joined-subclass>
+
+    <joined-subclass name="NumberAV" table="AV_NUM" lazy="false">
+      <key column="ID_AV" foreign-key="FK_NUMBERAV_AV"/>
+      <property name="value" type="big_decimal" column="VALUE" />
+      <many-to-one name="attributeType" column="ID_AT" not-null="true" foreign-key="FK_NUMBERAV_AT"/>
+    </joined-subclass>
+
+    <joined-subclass name="EnumAV" table="AV_ENUM" lazy="false">
+      <key column="ID_AV" foreign-key="FK_ENUMAV_AV"/>
+      <property name="name" column="NAME" length="255" not-null="true" />
+      <property name="defaultColorHex" column="DEF_COLOR" length="7" not-null="false" />
+      <property name="description" column="DESCRIPTION" length="4000" />
+      <property name="position" column="POS" not-null="true" />
+      <many-to-one name="attributeType" column="ID_AT" not-null="true" foreign-key="FK_ENUMAV_AT" />
+    </joined-subclass>
+
+    <joined-subclass name="ResponsibilityAV" table="AV_RESP" lazy="false">
+      <key column="ID_AV" foreign-key="FK_RESPONSIBILITYAV_AV"/>
+      <property name="defaultColorHex" column="DEF_COLOR" length="7" not-null="false" />
+      <many-to-one name="userEntity" column="ID_UE" not-null="false" update="false" foreign-key="FK_RESPONSIBILITYAV_UE"/>
+      <many-to-one name="attributeType" column="ID_AT" not-null="true" foreign-key="FK_RESPONSIBILITYAV_AT"/>
+    </joined-subclass>
+
+  </class>
+
+  <query name="getUnconnectedEnumAVsForBuildingBlockAndAttributeType">
+    <![CDATA[select availableAv from EnumAV availableAv where availableAv not in ( select connectedAv from EnumAV connectedAv join connectedAv.attributeValueAssignments ava where ava.buildingBlock.id = :buildingBlockId and connectedAv.attributeType.id = :attributeTypeId ) and availableAv.attributeType.id = :attributeTypeId order by availableAv.name]]>
+  </query>
+
+  <query name="getUnconnectedResponsibilityAVsForBuildingBlockAndAttributeType">
+    <![CDATA[select availableAv from ResponsibilityAV availableAv where availableAv not in ( select connectedAv from ResponsibilityAV connectedAv join connectedAv.attributeValueAssignments ava where ava.buildingBlock.id = :buildingBlockId and connectedAv.attributeType.id = :attributeTypeId ) and availableAv.attributeType.id = :attributeTypeId]]>
+  </query>
+
+</hibernate-mapping>

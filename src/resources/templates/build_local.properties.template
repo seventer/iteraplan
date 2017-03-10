@@ -1,0 +1,101 @@
+############################################################################################
+# The properties in this file overwrite the properties set in the file 'build.properties'. #
+# See this file for more properties that can be overridden and for explanations of these.  #
+#                                                                                          #
+# These settings have to be adjusted to your personal environment.                         #
+############################################################################################
+
+iteraplan.version=oss
+
+deploy.appname=iteraplan
+deploy.type=development
+
+# Additional properties for the production environment.
+log.path=d:/logs
+log.filename=iteraplan-3.x-production.log
+auditLog.path=d:/logs
+auditLogging.filename=iteraplan-3.x-production-audit.log
+
+#iteraplan.customizations=default,ldap
+
+# -------------------
+# DEPLOYMENT SETTINGS
+# -------------------
+
+database.rdbmsName=mysql5
+database.name=iteraplan
+database.address=localhost
+database.port=3306
+database.login=iteraplanDbAdmin
+database.password=myPassword
+
+#database.rdbmsName=oracle
+#database.name=xe
+#database.address=localhost
+#database.port=1521
+#database.login=iteraplan
+#database.password=ichBinDerMeister
+
+#database.rdbmsName=sqlserver
+#database.name=iteraplan
+#database.address=localhost
+#database.port=1433
+#database.login=iteraplanDbAdmin
+#database.password=myPassword
+
+#database.rdbmsName=hsqldb-server
+#database.name=iteraplan
+#database.address=localhost
+#database.port=9002
+#database.login=sa
+#database.password=
+#database.validationquery =
+
+# -------------
+# TEST SETTINGS
+# -------------
+test.database.validationquery =
+
+# to enable hsql-db, enable the following settings
+test.hibernate.dialect = org.hibernate.dialect.HSQLDialect
+test.driver = org.hsqldb.jdbcDriver
+test.jdbcUrl = jdbc:hsqldb:mem:aname
+test.userName = sa
+test.password =
+test.driverJar = ${lib.jdbc}/hsqldb-file/hsqldb-1.8.0.10.jar
+
+# -------------------
+# SCHEMASPY SETTINGS
+# -------------------
+# Local settings for the ant target doc-dbschema; uncomment to override
+
+#schemaspy.database=mysql
+#schemaspy.driverJar=${basedir}/lib/jdbc/mysql5/mysql-connector-java-5.1.18-bin.jar
+
+# -------------------
+# DWR SETTINGS
+# -------------------
+dwr.debug=true
+
+#Hide internal server Errors by showing own error page
+#http.errorcode.filtered=500
+#When enabling this line, http 500 errors will be shown again
+http.errorcode.filtered=201
+
+# -------------------
+# Last Modification SETTINGS
+# -------------------
+lastmodificationLoggingEnabled=true
+
+#################################################################
+# Audit log configuration                                       #
+#################################################################
+#If you set audit.logging.enabled to true (e.g. in your build_local.properties), please specify the auditLog.path
+#audit.logging.enabled = true
+#For the following entry, use "/" as a path separator.
+#auditLog.path = C:/
+
+###############################################################################
+# Hibernate Search's index location (typically a relative path)
+###############################################################################
+hibernate.search.index=indexes

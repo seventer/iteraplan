@@ -1,0 +1,19 @@
+<Context path="@WEBAPP_PATH@">
+
+    <Resource 
+      name="@DB.JNDI.DATASOURCE@" 
+	  type="javax.sql.DataSource"
+	  auth="Container"
+	  maxActive="100"
+	  maxIdle="30"
+	  maxWait="10000"
+	  username="@DB.USER.NAME@"
+	  password="@DB.USER.PASSWORD@"
+	  driverClassName="@DB.DRIVER.CLASS@"
+	  url="@DB.CONNECT.URL@"
+	  validationQuery="@DB.VALIDATIONQUERY@"/>           
+
+    <!-- Uncomment the following line to disable session persistence across Tomcat restarts. 
+    <Manager pathname="" /> -->
+      
+</Context>

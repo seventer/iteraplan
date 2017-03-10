@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+    version="2.1">
+
+  <description>iteratec custom tags</description>
+  
+  <tlib-version>1.0</tlib-version>
+  <short-name>itera</short-name>
+  <uri>http://tags.iteratec.de/iteratec-tags</uri>
+  
+  <tag>
+    <description>
+	    This tag provides basically the same functionality as the JSTL c:out tag, but performs an
+		additional evaluation round. Values in the name and property attributes are treated as EL
+		expressions, even if standard EL expansion was performed already. Expression in the property
+		attribute may use a few more constructs than pure EL, as they are evaluated by Apache Commons
+		BeanUtils. Most prominently, it is possible to invoke methods on a bean and pass parameters.
+		Furthermore, it can convert line breaks to HTML &amp;lt;br/&amp;gt; elements, spaces to &amp;amp;nbsp;
+		elements and links in wiki notation to HTML links.
+    </description>
+    <name>write</name>
+    <tag-class>de.iteratec.iteraplan.presentation.tags.IteratecWriteTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <description>If set to true, line breaks will be converted to &lt;br/&gt; and spaces will be converted to &amp;nbsp; elements. Defaults to false.</description>
+      <name>breaksAndSpaces</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>Filter the rendered output for characters that are sensitive in HTML? Defaults to true.</description>
+      <name>escapeXml</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>Should we ignore missing beans and simply output nothing? Defaults to false.</description>
+      <name>ignore</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>Name of the bean that contains the data we will be rendering.</description>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>Name of the property to be accessed on the specified bean.</description>
+      <name>property</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The scope to be searched to retrieve the specified bean.</description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>If set to true, links in wiki notation will be converted to HTML. The notation is
+				   [&lt;link&gt; &lt;title&gt;]. For example, [http://www.example.com/ Example Webpage] will
+				   render as a link with title "Example Webpage".
+   				   Defaults to false.</description>
+      <name>wikiText</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>dashboardText</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>userAgent</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>If set to true, links in wiki notation will be converted to plaintext.
+   				   Defaults to false.</description>
+      <name>plainText</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>If set to true, the returned text will be truncated after 300 characters</description>
+      <name>truncateText</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+	<description>Provides basically a functionality similar to the JSTL c:set tag, but performs an additional
+		evaluation round. Values in the name and property attributes are treated as EL expressions, even
+		if standard EL expansion was performed already. Expression in the property attribute may use a
+		few more constructs than pure EL, as they are evaluated by Apache Commons BeanUtils. Most
+		prominently, it is possible to invoke methods on a bean and pass parameters.
+		
+		This tag borrows concepts (and code) from the Struts bean:define tag, but is slightly more
+		permissive: If the name (and optionally property) attribute is set and points to a location that
+		has the value null, no bean is set. The original DefineTag would throw an exception at this
+		point. 
+ 	</description>
+    <name>define</name>
+    <tag-class>de.iteratec.iteraplan.presentation.tags.IteratecDefineTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <name>id</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>name</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>property</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>toScope</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>value</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+  <tag>
+	<description>Creates a list of all entities in the hierarchy for this entity. The first element will be the root, and the last 
+		element will be the element itself. If the entity is a non hierarchical entity, the list will only contain itself.
+ 	</description>
+    <name>hierarchicalList</name>
+    <tag-class>de.iteratec.iteraplan.presentation.tags.IteratecHierarchicalListTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <name>id</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>property</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>toScope</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+  <tag>
+  	<description>Tag for checking write permissions for a building block instance.
+		
+		This tag expects the user context and the building block instance to check
+		and invokes the UserContext method 'userHasBbInstanceWritePermission' on the 
+		building block instance. The result is stored in the specified page-scoped 
+		bean and contains either true or false.
+	</description>
+    <name>checkBbInstancePermission2</name>
+    <tag-class>de.iteratec.iteraplan.presentation.tags.CheckBbInstancePermission2</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <name>result</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>userContext</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>property</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+  <tag>
+  	<description>Tag for checking read and write permissions for an attribute type group. 
+		
+		This tag is used by a JSP to determine whether an attribute type group is
+		visible and whether it can be edited. The tag expects the attribute type group,
+		the UserContext and the type of permission to check. The result is stored in 
+		the specified page-scoped bean and contains either true or false.
+  	</description>
+    <name>checkAttrTypeGroupPermission</name>
+    <tag-class>de.iteratec.iteraplan.presentation.tags.CheckAttrTypeGroupPermission</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <name>result</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>userContext</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>property</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>permissionType</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+  <tag>
+    <description>
+	    Creates a JavaScript method call or a Html link that, when activated, forwards 
+	    the user to the management page of a given instance of a building block. The 
+	    building block instance is passed to the tag via the 'name' and 'property' attribute 
+	    (analogous to the Struts bean:write tag).
+	   
+	    The 'isrOnLeftHandSide' attribute is optional. It is only relevant when linking to an
+	    InformationSystemInterface. For this purpose, the attribute contains the ID of the 
+	    InformationSystemRelease that is to be displayed on the left hand side in the dialog.
+    </description>
+    <name>linkToElement</name>   
+    <tag-class>de.iteratec.iteraplan.presentation.tags.LinkToElementTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>property</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>
+      	The 'isrOnLeftHandSide' attribute is optional. It is only relevant when linking to an
+	    InformationSystemInterface. For this purpose, the attribute contains the ID of the 
+	    InformationSystemRelease that is to be displayed on the left hand side in the dialog.
+      </description>
+      <name>isrOnLeftHandSide</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>
+      	Might be 'js' or 'html'. The type of the output of this tag is set by this attribute. 
+      	If its 'js' it will output an JS-Function that can be used in an onClick-handler. If 
+      	its 'html' it will return a simple url pointing to the linked
+      	element.
+      </description>
+      <name>type</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+  <tag>
+    <description>
+	    Creates an a-href tag that, when activated, forwards the user to 
+	    the management page of a given instance of a building block. This Tag has two use-cases.
+	    When you provide a link-parameter, this link will be be outputted and surround the contents.
+	    When you provide no link-parameter, you can provide all the parameters of the LinkToElementTag and a new
+	    link will be created for you.
+	    
+	    Please note, that either name, or link is required.
+    </description>
+    <name>htmlLinkToElement</name>   
+    <tag-class>de.iteratec.iteraplan.presentation.tags.HtmlLinkToElementTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <name>name</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>property</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>
+      	The 'isrOnLeftHandSide' attribute is optional. It is only relevant when linking to an
+	    InformationSystemInterface. For this purpose, the attribute contains the ID of the 
+	    InformationSystemRelease that is to be displayed on the left hand side in the dialog.
+      </description>
+      <name>isrOnLeftHandSide</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>
+      	true, if the element should be surrounded with a link, false otherwise. 
+      	Might also be an EL-Expression that evaluates to true or false.
+      </description>
+      <name>isLinked</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>
+      	If this attribute is provided, this link will be used in the output 
+      	and no internal link-processing is done.
+      </description>
+      <name>link</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>  
+  
+  
+   <tag>
+    <description>
+	    Creates a html link that can be used as bookmark Link 
+    </description>
+    <name>linkToBookmark</name>   
+    <tag-class>de.iteratec.iteraplan.presentation.tags.LinkToBookmarkTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <description>
+      	This attribute defines, if the bookmark link or the Webpage Title should be rendered.
+      	The parameter can be one of: url, title, id. 
+      	For url an absolute url to the active dialog will be returned (e.g. "http...").
+      	For title the title of the dialog will be returned (e.g. "iteraplan - Abrechnung").
+      	For id the id of the current buildingblock will be returned (e.g. "4711").
+      </description>
+      <name>parameter</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+  
+  <tag>
+    <name>tabgroup</name>
+    <tag-class>de.iteratec.iteraplan.presentation.tags.tab.TabgroupTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <name>id</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>  
+    <attribute>
+      <name>maxTabCountPerLine</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>  
+  </tag>
+
+  <tag>
+    <name>tab</name>
+    <tag-class>de.iteratec.iteraplan.presentation.tags.tab.TabTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <name>id</name>
+      <required>true</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+
+    <attribute>
+      <name>text</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+
+    <attribute>
+      <name>textKey</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    
+    <attribute>
+      <name>page</name>
+      <required>true</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+  
+    <attribute>
+      <name>showTab</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    
+    <attribute>
+      <name>clickable</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    
+     <attribute>
+      <name>inactive</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    
+  </tag>
+  
+   <tag>
+    <description>
+	    Logs a message or an exception to the iteraplan logger
+    </description>
+    <name>log</name>   
+    <tag-class>de.iteratec.iteraplan.presentation.tags.IteratecLogTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <description>
+      The category that should be used for logging
+      Might be one of: debug, info, warn, error, fatal.
+      If none is supplied, error is used by default.
+      </description>
+      <name>category</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The message that should be logged.</description>
+      <name>message</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The exception that should be logged.</description>
+      <name>exception</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>Whether the Stacktrace of the exception should be logged.</description>
+      <name>logStacktrace</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>Whether the Root exception should be logged.</description>
+      <name>logRootException</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>    
+  </tag>
+
+	<tag>
+		<name>dashboard</name>
+		<tag-class>de.iteratec.iteraplan.presentation.tags.IteratecDashboardTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description>If set to true, line breaks will be converted to &lt;br/&gt; and spaces will be converted to &amp;nbsp; elements. Defaults to false.</description>
+			<name>breaksAndSpaces</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>Name of the bean that contains the data we will be rendering.</description>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>Name of the property to be accessed on the specified bean.</description>
+			<name>property</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>The http user-agent as String.</description>
+			<name>userAgent</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>Reference ID to a  tabular reporting.
+If there is specified a reference ID (refId), the saved Queries (diagram) are loaded with the result from the referenced saved Query (from a tabular reporting).</description>
+			<name>refIdProperty</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>The scope to be searched to retrieve the specified bean.</description>
+			<name>scope</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+   
+  <function>
+  	<name>escapeJavaScript</name>
+  	<function-class>de.iteratec.iteraplan.presentation.tags.StringEscapeUtilsFunction</function-class>
+  	<function-signature>
+   	 java.lang.String escapeJavaScript( java.lang.String )
+    </function-signature>
+  </function>
+  
+  <function>
+  	<name>encodeUrlPart</name>
+  	<function-class>de.iteratec.iteraplan.presentation.tags.IteratecUrlEncodeFunction</function-class>
+  	<function-signature>
+   	 java.lang.String encodeUrlPart( java.lang.String, java.lang.String )
+    </function-signature>
+  </function>
+  
+  <function>
+  	<name>replaceNoIdChars</name>
+  	<function-class>de.iteratec.iteraplan.presentation.tags.ReplaceNoIdCharsFunction</function-class>
+  	<function-signature>
+   	 java.lang.String replaceNoIdChars( java.lang.String )
+    </function-signature>
+  </function>
+  
+</taglib>

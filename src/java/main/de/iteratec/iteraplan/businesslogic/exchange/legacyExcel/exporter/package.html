@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<!--
+
+  @(#)package.html
+
+  Copyright 2008 iteratec GmbH
+  Germany, 82008 Unterhaching.  All Rights Reserved.
+
+-->
+</head>
+<body>
+<p>Excel export classes for all BuildingBlocks.</p>
+<p>Each XXXExcelReport-class produces a complete excel report for
+the corresponding BuildingBlock. Single sheets integrated into such a
+report a represented by XXXExcelSheet classes. The {@link
+de.iteratec.iteraplan.businesslogic.service.legacyExcel.ExcelExportService} interface
+can be used as a service for generation of excel reports. </p>
+
+<p>The {@link
+de.iteratec.iteraplan.businesslogic.exchange.legacyExcel.exporter.ExportWorkbook} class
+contains the styles for the different cell types as well as the complete
+excel export. A template is loaded by this class (ExcelWorkbook.xls) in order to include macros</p>
+
+<p>The Excel export itself is realized with the Apache POI-HSSF
+framework.</p>
+</body>
+</html>

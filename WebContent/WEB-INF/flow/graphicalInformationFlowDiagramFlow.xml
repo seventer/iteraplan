@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+      http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+	start-state="start" parent="baseGraphicFlow">
+		
+	<decision-state id="start">
+		
+		<if test="requestParameters['_eventId']=='init'" then="init" />
+		<if test="requestParameters.bbType!=null" then="initFromId" />
+		<if test="requestParameters['_eventId']=='fromInterchange'" then="fromInterchange" />
+		<if test="requestParameters['_eventId']=='loadSavedQuery'" then="pre-load" />
+		<if test="requestParameters['_eventId']=='closeAll'" then="closeAll" />
+		<if test="requestParameters['_eventId']==null" then="init" />
+		
+	</decision-state>
+	
+	<action-state id="init">
+			<evaluate expression="informationFlowGraphicFrontendService.getInitialMemBean()"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="firststep" />
+	</action-state>
+	
+	<action-state id="initFromId">
+			<evaluate result="flowScope.memBean" 
+				expression="informationFlowGraphicFrontendService.directlyToStepTwo(requestParameters.id, requestParameters.bbType)" />
+				
+			<transition on="#{true}" to="secondstep">
+			</transition>
+	</action-state>
+	
+	<action-state id="fromInterchange">
+			<evaluate expression="informationFlowGraphicFrontendService.fromInterchange(requestParameters['idList'])"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="secondstep" />
+	</action-state>
+	
+	<action-state id="pre-load">
+		<evaluate expression="informationFlowGraphicFrontendService.getInitialMemBean()"
+			result="flowScope.memBean" />
+		<transition on="success" to="loadSavedQuery">
+			<set name="flowScope.FLOW_LABEL"
+				value="informationFlowGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+			<set name="memBean.savedQueryId"
+				value="requestParameters.savedQueryId"
+				type="java.lang.Integer" />
+		</transition>			
+	</action-state>
+	
+	<action-state id="loadSavedQuery">
+		<evaluate expression="informationFlowGraphicFrontendService.loadSavedQuery(flowScope.memBean)" 
+				result="flowScope.memBean"/>
+		<transition on="success" to="secondstep">
+			<evaluate expression="informationFlowGraphicFrontendService.updateCheckAllBox(flowScope.memBean)" />
+		</transition>			
+	</action-state>
+	
+	<view-state id="firststep" model="memBean" view="graphicalreporting/informationflowgraphic">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL"
+				value="informationFlowGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+		</on-entry>
+		
+		<transition on="expandFirstLevel" to="firststep">
+			<evaluate expression="informationFlowGraphicFrontendService.expandFirstLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="expandSecondLevel" to="firststep">
+			<evaluate expression="informationFlowGraphicFrontendService.expandSecondLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />		
+		</transition>
+		<transition on="shrinkLevel" to="firststep">
+			<evaluate expression="informationFlowGraphicFrontendService.shrinkLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="addReportExtension" to="firststep">
+			<evaluate expression="informationFlowGraphicFrontendService.addReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="removeReportExtension" to="firststep">
+			<evaluate expression="informationFlowGraphicFrontendService.removeReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+
+		<transition on="requestReport" to="firststep">
+			<evaluate expression="informationFlowGraphicFrontendService.requestEntityList(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="requestAndConfirmReport" to="secondstep">
+			<evaluate expression="informationFlowGraphicFrontendService.requestEntityList(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+			<evaluate expression="informationFlowGraphicFrontendService.stepOneToStepTwo(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="refreshReport" to="firststep">
+			<evaluate result="flowScope.memBean"
+				expression="informationFlowGraphicFrontendService.refreshReport(flowScope.memBean, flowRequestContext, flowExecutionContext, true)" />
+		</transition>
+		<transition on="saveQuery" to="firststep">
+			<evaluate expression="informationFlowGraphicFrontendService.saveQuery(flowScope.memBean)" />
+		</transition>
+		<transition on="loadSavedQuery" to="secondstep">
+			<evaluate expression="informationFlowGraphicFrontendService.loadSavedQuery(flowScope.memBean)"
+				result="flowScope.memBean" />
+			<evaluate expression="informationFlowGraphicFrontendService.updateCheckAllBox(flowScope.memBean)" />
+		</transition>		
+		<transition on="deleteSavedQuery" to="firststep">
+			<evaluate expression="informationFlowGraphicFrontendService.deleteSavedQuery(flowScope.memBean)" />
+		</transition>
+		
+
+		<transition on="goToInformationFlowGraphicExportStep2" to="secondstep">
+			<evaluate result="flowScope.memBean" 
+				expression="informationFlowGraphicFrontendService.stepOneToStepTwo(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+	
+	</view-state>
+	
+	<view-state id="secondstep" model="memBean" view="graphicalreporting/informationflowgraphic">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL"
+				value="informationFlowGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+			<evaluate expression="informationFlowGraphicFrontendService.refreshRelevantInterfaces(flowScope.memBean)" />
+			<evaluate expression="informationFlowGraphicFrontendService.refreshRelevantBusinessObjects(flowScope.memBean)"/>
+		</on-entry>
+		
+		<transition on="refreshReport" to="secondstep">
+			<evaluate result="flowScope.memBean"
+				expression="informationFlowGraphicFrontendService.refreshReport(flowScope.memBean, flowRequestContext, flowExecutionContext, false)" />
+		</transition>
+		<transition on="generateExport" to="secondstep">
+			<evaluate expression="informationFlowGraphicFrontendService.generateGraphicFileResponse(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="triggerDownloadEvent" to="secondstep">
+			<evaluate expression="informationFlowGraphicFrontendService.triggerDownloadEvent(flowRequestContext, 'generateExport')" />
+		</transition>
+		
+		<transition on="saveQuery" to="secondstep">
+			<evaluate expression="informationFlowGraphicFrontendService.saveQuery(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		<transition on="saveQueryAs" to="secondstep">
+			<evaluate expression="informationFlowGraphicFrontendService.saveQueryAs(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		<transition on="goToInformationFlowGraphicExportStep1" to="firststep">
+			<evaluate expression="informationFlowGraphicFrontendService.stepTwoToStepOne(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="filterInterfaces" to="filterresults">
+			<evaluate expression="informationFlowGraphicFrontendService.filterInterfaces(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+			result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="filterBusinessObjects" to="filterresults">
+			<evaluate expression="informationFlowGraphicFrontendService.filterBusinessObjects(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+			result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="resetInterfacesFilter" to="secondstep">
+			<evaluate expression="informationFlowGraphicFrontendService.resetInterfacesFilter(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+			result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="resetBusinessObjectsFilter" to="secondstep">
+			<evaluate expression="informationFlowGraphicFrontendService.resetBusinessObjectsFilter(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+			result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="loadSavedQuery" to="pre-load" />
+	</view-state>
+	
+	<view-state id="filterresults" model="memBean" view="graphicalreporting/filter">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL"
+				value="informationFlowGraphicFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+		</on-entry>
+		
+		<transition on="backFromFilter" to="secondstep">
+			<evaluate expression="informationFlowGraphicFrontendService.resumeFromFilter(flowScope.memBean)" result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="resumeFromFilter" to="secondstep" >
+			<evaluate expression="informationFlowGraphicFrontendService.resumeFromFilter(flowScope.memBean)" result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="refreshReport" to="filterresults">
+			<evaluate result="flowScope.memBean"
+				expression="informationFlowGraphicFrontendService.refreshReport(flowScope.memBean, flowRequestContext, flowExecutionContext, true)" />
+		</transition>
+		
+		<transition on="requestReport" to="filterresults">
+			<evaluate expression="informationFlowGraphicFrontendService.requestEntityList(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="requestAndConfirmReport" to="secondstep" >
+			<evaluate expression="informationFlowGraphicFrontendService.requestEntityList(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+			<evaluate expression="informationFlowGraphicFrontendService.resumeFromFilter(flowScope.memBean)" result="flowScope.memBean" />
+		</transition>
+		
+		<transition on="resetReport" to="filterresults">
+			<evaluate expression="informationFlowGraphicFrontendService.resetReport(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="addReportExtension" to="filterresults">
+			<evaluate expression="informationFlowGraphicFrontendService.addReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="removeReportExtension" to="filterresults">
+			<evaluate expression="informationFlowGraphicFrontendService.removeReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="expandFirstLevel" to="filterresults">
+			<evaluate expression="informationFlowGraphicFrontendService.expandFirstLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="expandSecondLevel" to="filterresults">
+			<evaluate expression="informationFlowGraphicFrontendService.expandSecondLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />		
+		</transition>
+		<transition on="shrinkLevel" to="filterresults">
+			<evaluate expression="informationFlowGraphicFrontendService.shrinkLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+	</view-state>
+	
+	<end-state id="close" view="externalRedirect:contextRelative:/show/graphicalreporting/informationflowdiagram" />
+		
+	<end-state id="closeAll" view="externalRedirect:contextRelative:/graphicalreporting/init.do">
+		<on-entry>
+			<evaluate expression="informationFlowGraphicFrontendService.closeAllFlows(flowRequestContext)"></evaluate>
+		</on-entry>
+	</end-state>
+	
+	
+</flow>

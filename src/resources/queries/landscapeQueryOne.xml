@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<landscapeDiagramXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" dialogStep="2" contentType="INFORMATIONSYSTEMRELEASE"
+  xsi:schemaLocation="http://iteratec.iteraplan.com/ http://iteratec.iteraplan.com//LandscapeDiagramXML.xsd">
+  <color attributeId="@gesundheitszustand.id@">
+    <attributeValues>
+      <value>@gut@</value>
+      <value>@mittel@</value>
+      <value>@schlecht@</value>
+    </attributeValues>
+    <selectedStyles>
+      <style>AFCEA8</style>
+      <style>F6DF95</style>
+      <style>D79DAD</style>
+    </selectedStyles>
+  </color>
+  <columnAxisScalesWithContent>false</columnAxisScalesWithContent>
+  <columnQuery>
+    <queryForms>
+      <queryForm typeXML="BUSINESSPROCESS">
+        <queryUserInput>
+          <noAssignements>false</noAssignements>
+          <queryFirstLevels>
+            <queryFirstLevel>
+              <querySecondLevels>
+                <querySecondLevel>
+                  <chosenAttributeStringId>blank_null_-1</chosenAttributeStringId>
+                  <dateATSelected>false</dateATSelected>
+                  <freeTextCriteriaSelected>true</freeTextCriteriaSelected>
+                </querySecondLevel>
+              </querySecondLevels>
+            </queryFirstLevel>
+          </queryFirstLevels>
+        </queryUserInput>
+      </queryForm>
+    </queryForms>
+  </columnQuery>
+  <contentQuery>
+    <queryForms>
+      <queryForm typeXML="INFORMATIONSYSTEMRELEASE">
+        <queryUserInput>
+          <noAssignements>false</noAssignements>
+          <queryFirstLevels>
+            <queryFirstLevel>
+              <querySecondLevels>
+                <querySecondLevel>
+                  <chosenAttributeStringId>blank_null_-1</chosenAttributeStringId>
+                  <dateATSelected>false</dateATSelected>
+                  <freeTextCriteriaSelected>true</freeTextCriteriaSelected>
+                </querySecondLevel>
+              </querySecondLevels>
+            </queryFirstLevel>
+          </queryFirstLevels>
+          <statusQueryData typeOfStatus="INFORMATIONSYSTEMRELEASE">
+            <values>
+              <value value="true" key="typeOfStatus_current" />
+              <value value="true" key="typeOfStatus_planned" />
+              <value value="true" key="typeOfStatus_target" />
+              <value value="false" key="typeOfStatus_inactive" />
+            </values>
+          </statusQueryData>
+          <timeSpanQueryData>
+            <endDate>-1</endDate>
+            <endTimeFunction>ABSOLUTE</endTimeFunction>
+            <startDate>-1</startDate>
+            <startTimeFunction>ABSOLUTE</startTimeFunction>
+          </timeSpanQueryData>
+        </queryUserInput>
+      </queryForm>
+    </queryForms>
+  </contentQuery>
+  <lineType attributeId="@komplexitt.id@">
+    <attributeValues>
+      <value>@hoch@</value>
+      <value>@mittel@</value>
+      <value>@gering@</value>
+    </attributeValues>
+    <selectedStyles>
+      <style>1</style>
+      <style>2</style>
+      <style>3</style>
+    </selectedStyles>
+  </lineType>
+  <rowQuery>
+    <queryForms>
+      <queryForm typeXML="BUSINESSUNIT">
+        <queryUserInput>
+          <noAssignements>false</noAssignements>
+          <queryFirstLevels>
+            <queryFirstLevel>
+              <querySecondLevels>
+                <querySecondLevel>
+                  <chosenAttributeStringId>blank_null_-1</chosenAttributeStringId>
+                  <dateATSelected>false</dateATSelected>
+                  <freeTextCriteriaSelected>true</freeTextCriteriaSelected>
+                </querySecondLevel>
+              </querySecondLevels>
+            </queryFirstLevel>
+          </queryFirstLevels>
+        </queryUserInput>
+      </queryForm>
+    </queryForms>
+  </rowQuery>
+  <selectedColumnAttributeId>-1</selectedColumnAttributeId>
+  <selectedColumnOption>BUILDING_BLOCK</selectedColumnOption>
+  <selectedColumnRelation>isrE16_businessProcess</selectedColumnRelation>
+  <selectedRowAttributeId>-1</selectedRowAttributeId>
+  <selectedGraphicsFormat>reports_export_SVG</selectedGraphicsFormat>
+  <selectedRowOption>BUILDING_BLOCK</selectedRowOption>
+  <selectedRowRelation>isrE16_businessUnit</selectedRowRelation>
+  <sideAxisBottomLevel>2</sideAxisBottomLevel>
+  <sideAxisTopLevel>1</sideAxisTopLevel>
+  <topAxisBottomLevel>3</topAxisBottomLevel>
+  <topAxisTopLevel>1</topAxisTopLevel>
+  <version>@build.version@</version>
+</landscapeDiagramXML>

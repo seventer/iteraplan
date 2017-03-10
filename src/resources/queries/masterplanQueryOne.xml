@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<report xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" reportType="MASTERPLAN"
+  xsi:schemaLocation="http://iteratec.iteraplan.com/ http://iteratec.iteraplan.com//QueryXML.xsd">
+  <masterplanOptions sortMethod="NON_HIERARCHICAL" dialogStep="2">
+    <colorAttributeId>@gesundheitszustand.id@</colorAttributeId>
+    <colorAttributeValues>
+      <value>@gut@</value>
+      <value>@mittel@</value>
+      <value>@schlecht@</value>
+      <value>@unspec@</value>
+    </colorAttributeValues>
+    <selectedBbType>informationSystemRelease.plural</selectedBbType>
+    <selectedColors>
+      <color>AFCEA8</color>
+      <color>F6DF95</color>
+      <color>D79DAD</color>
+      <color>D3CFD1</color>
+    </selectedColors>
+    <timeSpan>
+      <endDate>15811200000</endDate>
+      <endTimeFunction>RELATIVE_FUTURE</endTimeFunction>
+      <startDate>15811200000</startDate>
+      <startTimeFunction>RELATIVE_PAST</startTimeFunction>
+    </timeSpan>
+    <selectedGraphicFormat>reports_export_SVG</selectedGraphicFormat>
+  </masterplanOptions>
+  <queryForms>
+    <queryForm typeXML="INFORMATIONSYSTEMRELEASE">
+      <queryUserInput>
+        <noAssignements>false</noAssignements>
+        <queryFirstLevels>
+          <queryFirstLevel>
+            <querySecondLevels>
+              <querySecondLevel>
+                <chosenAttributeStringId>blank_null_-1</chosenAttributeStringId>
+                <dateATSelected>false</dateATSelected>
+                <freeTextCriteriaSelected>true</freeTextCriteriaSelected>
+              </querySecondLevel>
+            </querySecondLevels>
+          </queryFirstLevel>
+        </queryFirstLevels>
+        <statusQueryData typeOfStatus="INFORMATIONSYSTEMRELEASE">
+          <values>
+            <value value="true" key="typeOfStatus_current" />
+            <value value="true" key="typeOfStatus_planned" />
+            <value value="true" key="typeOfStatus_target" />
+            <value value="false" key="typeOfStatus_inactive" />
+          </values>
+        </statusQueryData>
+        <timeSpanQueryData>
+          <endDate>-1</endDate>
+          <endTimeFunction>ABSOLUTE</endTimeFunction>
+          <startDate>-1</startDate>
+          <startTimeFunction>ABSOLUTE</startTimeFunction>
+        </timeSpanQueryData>
+      </queryUserInput>
+    </queryForm>
+  </queryForms>
+  <selectedResultIds />
+  <version>@build.version@</version>
+</report>

@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<!--
+
+  @(#)package.html
+
+  Copyright 2008 iteratec GmbH
+  Germany, 82008 Unterhaching.  All Rights Reserved.
+
+-->
+</head>
+<body>
+<p>
+Post-processing strategies for query results.
+</p>
+<p>
+The results of a user defined query can be post-processed to extend
+or reduce the result set. This allows the user to create queries that
+cannot be expressed easily otherwise. The selected post-processing
+strategies are executed after the user-defined query has been 
+run. Since the strategies modify the result set, the order in which
+the strategies are run is very important. The order number for every
+post processing strategy is passed in the constructor.
+</p>
+@since iteraplan 1.x
+@see de.iteratec.iteraplan.businesslogic.reports.query.postprocessing.AbstractPostprocessingStrategy
+@see de.iteratec.iteraplan.businesslogic.reports.query.type.Type#initPostprocessingStrategies()
+</body>
+</html>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.iteratec.iteraplan.model.attribute">
+	<class name="DateInterval" table="DATE_INTERVAL" lazy="false">
+		<id name="id" column="ID" type="java.lang.Integer">
+			<generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="segment_value">date_interval</param>
+			</generator>
+		</id>
+		
+		<property name="name" column="NAME" length="255" not-null="true" unique="true" />
+		<property name="defaultColorHex" column="DEF_COLOR" length="7" not-null="false" />
+		
+		<many-to-one name="startDate" class="de.iteratec.iteraplan.model.attribute.DateAT" column="START_DATE_AT_ID" not-null="true" insert="true" update="true" foreign-key="FK_DATE_AT_START"/>
+ 		<many-to-one name="endDate" class="de.iteratec.iteraplan.model.attribute.DateAT" column="END_DATE_AT_ID" not-null="true" insert="true" update="true" foreign-key="FK_DATE_AT_END"/>
+		
+	</class>
+</hibernate-mapping>

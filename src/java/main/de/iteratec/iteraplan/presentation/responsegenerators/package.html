@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<!--
+
+  @(#)package.html
+
+  Copyright 2008 iteratec GmbH
+  Germany, 82008 Unterhaching.  All Rights Reserved.
+
+-->
+</head>
+<body bgcolor="white">
+
+<p>This package contains all iteraplan-specific ResponseGenerators that generate responses.</p>
+
+<p>Response generators come into play whenever a download file should be sent to the client. 
+A response generator packages the binary (or not) response byte stream into a properly formatted HTTP response. 
+For instance, an Excel response generator will write the Excel file into the ServletOutputStream and set the headers accordingly.
+</p>
+<p>Response generators are typically created by the report generation logic which produces the download file/report.
+</p>
+<p>Response generators can have a state and should always created anew when one is needed.
+</p>
+
+</body>
+</html>

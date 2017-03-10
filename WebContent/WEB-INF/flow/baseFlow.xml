@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+      http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+    abstract="true">
+
+	<decision-state id="start">
+		<if test="requestParameters['_eventId']=='closeAll'" then="closeAll" />
+	</decision-state>
+
+	<end-state id="onError" view="onError" />
+	<end-state id="refreshAfterSave" view="externalRedirect:/#{entityName}/#{id}?_eventId=show" />
+  
+  	<end-state id="closeWithoutRedirect" view="externalRedirect:contextRelative:/#{flowScope.returnUrl}" > 
+  		<on-entry>
+  			<set name="flowScope.returnUrl" value="requestParameters._currentUrl" type="java.lang.String" />
+  		</on-entry>
+  	</end-state>
+  	  	
+	<global-transitions>
+		<transition on="close" to="close" validate="false"/>
+		<transition on="closeWithoutRedirect" to="closeWithoutRedirect" validate="false"/>
+		<transition on="closeAll" to="closeAll" validate="false"/>
+		<transition on="onError" to="onError" />
+		<transition on="refresh" to="show" />
+	</global-transitions>
+
+	<exception-handler bean="iteraplanBusinessExceptionHandler" />
+	<exception-handler bean="iteraplanTechnicalExceptionHandler" />
+	<exception-handler bean="flowExceptionHandler" />
+
+</flow>

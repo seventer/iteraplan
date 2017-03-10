@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+	"-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+	"http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+	
+<tiles-definitions>
+
+	<definition name="dateinterval/init" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="global.dateintervals" /> 
+		<put-attribute name="title_style" value="global.overview" />
+		<put-attribute name="form_id" value="dateInterval_search" />
+		<put-attribute name="form_action" value="search.do" />
+		<put-attribute name="form_model" value="dialogMemory" />
+		<put-attribute name="form_method" value="get" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/DateInterval/List.jsp" />
+		</put-list-attribute>
+	</definition>
+
+<!-- 	<definition name="attributetype/search" extends="defaultHeaderAndFooterLayout"> -->
+<!-- 		<put-attribute name="title" value="global.attributes" /> -->
+<!-- 		<put-attribute name="title_style" value="global.overview" /> -->
+<!-- 		<put-attribute name="form_id" value="attributesType_search" /> -->
+<!-- 		<put-attribute name="form_action" value="search.do" /> -->
+<!-- 		<put-attribute name="form_model" value="dialogMemory" /> -->
+<!-- 		<put-attribute name="form_method" value="get" /> -->
+<!-- 		<put-list-attribute name="contents"> -->
+<!-- 			<add-attribute value="/jsp/AttributeType/Search.jsp" /> -->
+<!-- 		</put-list-attribute> -->
+<!-- 	</definition> -->
+	
+	<definition name="dateinterval/show" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="global.dateintervals" />
+		<put-attribute name="title_style" value="details" />
+  		<put-attribute name="form_id" value="dateInterval_show" />
+  		<put-attribute name="form_model" value="memBean" />
+  		<put-attribute name="form_method" value="post" />
+<!-- 	    <put-attribute name="sub_elements_affected_by_delete" value="true" /> -->
+	    <put-list-attribute name="contents" >
+  		  <add-attribute value="/jsp/DateInterval/Manage.jsp" />
+<!--   		  <add-attribute value="/jsp/common/LastModificationInfo.jsp" /> -->
+	    </put-list-attribute>
+	</definition>
+	
+	<definition name="dateinterval/edit" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="global.dateintervals" />
+		<put-attribute name="title_style" value="global.edit" />
+  		<put-attribute name="form_id" value="dateInterval_edit" />
+  		<put-attribute name="form_model" value="memBean" />
+  		<put-attribute name="form_method" value="post" />
+  		<put-list-attribute name="contents" >
+  		  <add-attribute value="/jsp/DateInterval/Manage.jsp" />
+<!--   		  <add-attribute value="/jsp/common/LastModificationInfo.jsp" /> -->
+	    </put-list-attribute>
+	</definition>
+
+	<definition name="dateinterval/create" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="global.dateintervals" />
+		<put-attribute name="title_style" value="global.new" />
+  		<put-attribute name="form_id" value="dateInterval_create" />
+  		<put-attribute name="form_model" value="memBean" />
+  		<put-attribute name="form_method" value="post" />
+  		<put-list-attribute name="contents" >
+  		  <add-attribute value="/jsp/DateInterval/Manage.jsp" />
+	    </put-list-attribute>
+	</definition>
+
+<!-- 	<definition name="attributetype/choosetypeofnew" extends="defaultHeaderAndFooterLayout"> -->
+<!-- 		<put-attribute name="title" value="global.attributes" /> -->
+<!-- 		<put-attribute name="title_style" value="global.new" /> -->
+<!--   		<put-attribute name="form_id" value="attributesType_chooseType" /> -->
+<!--   		<put-attribute name="form_model" value="memBean" /> -->
+<!--   		<put-attribute name="form_method" value="post" /> -->
+<!--   		<put-list-attribute name="contents" > -->
+<!--   		  <add-attribute value="/jsp/AttributeType/ChooseTypeOfNew.jsp" /> -->
+<!-- 	    </put-list-attribute> -->
+<!-- 	</definition> -->
+
+<!-- 	<definition name="attributetype/copy" extends="defaultHeaderAndFooterLayout"> -->
+<!-- 		<put-attribute name="title" value="global.attributes" /> -->
+<!-- 		<put-attribute name="title_style" value="global.new" /> -->
+<!--   		<put-attribute name="form_id" value="attributesType_copy" /> -->
+<!--   		<put-attribute name="form_model" value="memBean" /> -->
+<!--   		<put-attribute name="form_method" value="post" /> -->
+<!--   		<put-list-attribute name="contents" > -->
+<!--   		  <add-attribute value="/jsp/AttributeType/CopyAttribute.jsp" /> -->
+<!-- 	    </put-list-attribute> -->
+<!-- 	</definition> -->
+	
+</tiles-definitions>

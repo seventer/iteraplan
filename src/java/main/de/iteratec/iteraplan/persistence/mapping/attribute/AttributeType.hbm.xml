@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.iteratec.iteraplan.model.attribute">
+
+  <class name="AttributeType" table="AT" lazy="false">
+  	<cache usage="read-write"/>
+    <id name="id" column="ID" type="java.lang.Integer">
+      <generator class="org.hibernate.id.enhanced.TableGenerator">
+        <param name="segment_value">av</param>
+      </generator>
+    </id>
+    <version name="olVersion" column="VERSION" type="integer" unsaved-value="negative" />
+    <property name="name" column="NAME" length="255" not-null="true" unique="true" />
+    <property name="description" column="DESCRIPTION" length="4000" />
+    <property name="mandatory" column="MANDATORY" length="1" not-null="true" />
+    <property name="position" column="POS" insert="false" update="false" />
+
+
+    <set name="buildingBlockTypes" table="AT_BBT" lazy="true" cascade="save-update,lock">
+      <key column="ID_AT" />
+      <many-to-many class="de.iteratec.iteraplan.model.BuildingBlockType" column="ID_BBT" foreign-key="FK_AT_BBT"/>
+    </set>
+
+    <many-to-one name="attributeTypeGroup" column="ID_ATG" not-null="true" insert="false" update="false" foreign-key="FK_AT_ATG"/>
+
+    <property name="lastModificationUser" column="LAST_MOD_USER" length="255" />
+    <property name="lastModificationTime" column="LAST_MOD_TIME" />
+
+    <joined-subclass name="DateAT" table="AT_DATE" lazy="false">
+      <key column="ID_AT" foreign-key="FK_DATEAT_AT"/>
+      <set name="attributeValues" lazy="true" inverse="true" cascade="all">
+        <key column="ID_AT" />
+        <one-to-many class="DateAV" />
+      </set>
+    </joined-subclass>
+
+    <joined-subclass name="NumberAT" table="AT_NUM" lazy="false">
+      <key column="ID_AT" foreign-key="FK_NUMBERAT_AT"/>
+      <property name="maxValue" type="big_decimal" column="MAX_VALUE" />
+      <property name="minValue" type="big_decimal" column="MIN_VALUE" />
+      <property name="unit" column="UNIT" length="255" />
+      <property name="rangeUniformyDistributed" column="RANGE_UNIFORM" length="1" not-null="true" />
+      <set name="attributeValues" lazy="true" inverse="true" cascade="all">
+        <key column="ID_AT" />
+        <one-to-many class="NumberAV" />
+      </set>
+      <property name="timeseries" column="TIMESERIES" length="1" not-null="true" />
+
+      <set name="rangeValues" lazy="false" inverse="true" cascade="all,delete-orphan" >
+      	<cache usage="read-write"/>
+        <key column="ID_AT" />
+        <one-to-many class="RangeValue" />
+      </set>
+    </joined-subclass>
+
+    <joined-subclass name="TextAT" table="AT_TEXT" lazy="false">
+      <key column="ID_AT" foreign-key="FK_TEXTAT_AT"/>
+      <property name="multiline" column="MULTILINE" length="1" not-null="true" />
+      <set name="attributeValues" lazy="true" inverse="true" cascade="all">
+        <key column="ID_AT" />
+        <one-to-many class="TextAV" />
+      </set>
+    </joined-subclass>
+
+    <joined-subclass name="EnumAT" table="AT_ENUM" lazy="false">
+      <key column="ID_AT" foreign-key="FK_ENUMAT_AT"/>
+      <property name="multiassignmenttype" column="MULTIVALUE" length="1" not-null="true" />
+      <property name="timeseries" column="TIMESERIES" length="1" not-null="true" />
+      <set name="attributeValues" lazy="false" inverse="true" cascade="all">
+      	<cache usage="read-write"/>
+        <key column="ID_AT" not-null="true" />
+        <one-to-many class="EnumAV" />
+      </set>
+    </joined-subclass>
+
+    <joined-subclass name="ResponsibilityAT" table="AT_RESP" lazy="false">
+      <key column="ID_AT" foreign-key="FK_RESPONSIBILITYAT_AT"/>
+      <property name="multiassignmenttype" column="MULTIVALUE" length="1" not-null="true" />
+      <set name="attributeValues" lazy="true" inverse="true" cascade="all">
+        <cache usage="read-write"/>
+        <key column="ID_AT" not-null="true" />
+        <one-to-many class="ResponsibilityAV" />
+      </set>
+    </joined-subclass>
+  </class>
+
+  <query name="getAttributeTypesForBuildingBlockOrdered">
+    <![CDATA[select at from AttributeType at join at.buildingBlockTypes bbt where bbt.typeOfBuildingBlock = :typeOfBuildingBlock order by at.name asc]]>
+  </query>
+
+  <query name="getAvailableBuildingBlockTypesForAttributeType">
+    <![CDATA[select bbt from BuildingBlockType bbt, AttributeType at where at.id = :attributeTypeId and bbt not in elements(at.buildingBlockTypes) and bbt.availableForAttributes = true order by at.name]]>
+  </query>
+
+  <query name="getConnectedBuildingBlockTypesForAttributeType">
+    <![CDATA[select bbt from BuildingBlockType bbt, AttributeType at where at.id = :attributeTypeId and bbt in elements(at.buildingBlockTypes) order by at.name]]>
+  </query>
+
+  <query name="getBuildingBlocksWithMoreThanOneAVsForOneAT">
+    <![CDATA[select bb.id from BuildingBlock bb join bb.attributeValueAssignments ava join ava.attributeValue av where av.id in ( select enumAV.id from EnumAV enumAV where enumAV.attributeType.id = :attributeTypeId ) group by bb.id having count(ava)>1]]>
+  </query>
+
+  <query name="getResponsibilityAttributeTypesReferencingUserID">
+    <![CDATA[select at from ResponsibilityAV av inner join av.attributeType at where av.userEntity.id = :id]]>
+  </query>
+
+  <query name="getUnconnectedAttributeTypesForAttributeTypeGroup">
+    <![CDATA[select at from AttributeType at where at.attributeTypeGroup.id not like :atgId escape '|' order by at.name asc]]>
+  </query>
+
+</hibernate-mapping>
+

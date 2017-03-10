@@ -1,0 +1,3 @@
+#Tue Jul 12 11:01:03 CEST 2011
+commit.comment.template=${connector.task.prefix} ${task.key}\: ${task.description} 
+eclipse.preferences.version=1

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+	"-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+	"http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+	
+	
+<!-- TODO: shouldnt the first form_id be _init? -->
+<tiles-definitions>
+
+	<definition name="businessobject/init" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="businessObject.plural" />
+		<put-attribute name="title_style" value="global.overview" />
+		<put-attribute name="form_id" value="businessObject_search" />
+		<put-attribute name="form_action" value="search.do" />
+		<put-attribute name="form_model" value="dialogMemory" />
+		<put-attribute name="form_method" value="get" />
+		<put-list-attribute name="contents">
+		  <add-attribute value="/jsp/BusinessObject/Search.jsp" />
+		</put-list-attribute>
+	</definition>
+
+	<definition name="businessobject/search" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="businessObject.plural" />
+		<put-attribute name="title_style" value="global.overview" />
+		<put-attribute name="form_id" value="businessObject_search" />
+		<put-attribute name="form_action" value="search.do" />
+		<put-attribute name="form_model" value="dialogMemory" />
+		<put-attribute name="form_method" value="get" />
+		<put-list-attribute name="contents">
+		  <add-attribute value="/jsp/BusinessObject/Search.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+	<definition name="businessobject/show" extends="buildingBlockDetailViewWithTimeseriesLayout">
+		<put-attribute name="title" value="businessObject.plural" />
+		<put-attribute name="title_style" value="details" />
+  		<put-attribute name="form_id" value="businessObject_show" />
+  		<put-attribute name="form_model" value="memBean" />
+  		<put-attribute name="form_method" value="post" />
+	    <put-list-attribute name="contents" >
+  		  <add-attribute value="/jsp/BusinessObject/Manage.jsp" />
+  		  <add-attribute value="/jsp/common/LastModificationInfo.jsp" />
+	    </put-list-attribute>
+	</definition>
+	
+	<definition name="businessobject/edit" extends="buildingBlockDetailViewWithTimeseriesLayout">
+		<put-attribute name="title" value="businessObject.plural" />
+		<put-attribute name="title_style" value="global.edit" />
+  		<put-attribute name="form_id" value="businessObject_edit" />
+  		<put-attribute name="form_model" value="memBean" />
+  		<put-attribute name="form_method" value="post" />
+  		<put-list-attribute name="contents" >
+  		  <add-attribute value="/jsp/BusinessObject/Manage.jsp" />
+  		  <add-attribute value="/jsp/common/LastModificationInfo.jsp" />
+	    </put-list-attribute>
+	</definition>
+	
+	<definition name="businessobject/create" extends="buildingBlockDetailViewWithTimeseriesLayout">
+		<put-attribute name="title" value="businessObject.plural" />
+		<put-attribute name="title_style" value="global.new" />
+  		<put-attribute name="form_id" value="businessObject_create" />
+  		<put-attribute name="form_model" value="memBean" />
+  		<put-attribute name="form_method" value="post" />
+  		<put-list-attribute name="contents" >
+  		  <add-attribute value="/jsp/BusinessObject/Manage.jsp" />
+	    </put-list-attribute>
+	</definition>
+	
+</tiles-definitions>

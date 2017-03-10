@@ -1,0 +1,347 @@
+<?xml version="1.0"?>
+<ruleset name="iteraplan rules"
+    xmlns="http://pmd.sf.net/ruleset/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+    xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+  <!-- 
+    
+    README:
+  
+    This ruleset is intended to be run against the iteraplan sourcecode on 
+    a regular basis to check for violations of rules that are considered hard 
+    rules, i.e. any violation should cause some type of notification such as 
+    a failed build.
+    
+    Some rules are excluded. They belong to one of three categories:
+    
+    TODO:
+    These rules should be included in the tool. However, a lot of code has to 
+    be refactored so that they can run without producing warnings. Rules in 
+    this category should be included one by one over time. Each activated rule 
+    and the refactored code should be checked into the repository as one 
+    changeset.
+    
+    AUDIT: 
+    The rules identify a lot of false positives, but are still useful. These 
+    should be included from time to time and checked by hand.
+    
+    IGNORE:
+    The rules are excluded due to their nature. Every rule in this category 
+    should have a comment as to why the rule was excluded.    
+    
+    Note that we could use an escape marker such as //NOPMD or the annotation 
+    @SuppressWarnings("PMD") to avoid false positives, but the aim is to keep 
+    the code clear of such things.    
+  -->
+  <description>Rules used for the static analysis of iteraplan.</description>
+  
+  <!-- 
+   #########################################
+   # generic rules from PMD 3.9            #
+   #########################################
+   
+   This section contains all rulesets from a standard PMD 3.9 distribution unless otherwise
+   noted at the end.
+  -->
+  
+  <!--
+  ======================================
+  Rule Set: Basic
+  ======================================
+  -->
+  <rule ref="rulesets/basic.xml">
+    <!-- =========== IGNORE =========== -->
+    <!-- Included below in a parametrized fashion. -->
+    <exclude name="EmptyCatchBlock"/>
+    <!-- ClassCastExceptionWithToArray results in way too many false positives if
+         someone just expects an Object or Object[] -->
+    <exclude name="ClassCastExceptionWithToArray"/>
+    
+  </rule>
+  
+  <rule ref="rulesets/basic.xml/EmptyCatchBlock">
+    <properties>
+      <property name="allowCommentedBlocks" value="true"/>
+    </properties>
+  </rule>
+  
+  <!--
+  ======================================
+  Rule Set: Braces
+  ======================================
+  -->
+  <rule ref="rulesets/braces.xml">
+  </rule>
+  
+  <!--
+  ======================================
+  Rule Set: Clone
+  ======================================
+  -->
+  <rule ref="rulesets/clone.xml">
+  </rule>
+  
+  <!--
+  ======================================
+  Rule Set: Code size
+  ======================================
+  -->
+  	
+  
+ <rule ref="rulesets/codesize.xml">  
+    <exclude name="CyclomaticComplexity"/>
+    <exclude name="TooManyMethods"/>
+    
+    <!-- =========== TODO =========== -->
+    <exclude name="NPathComplexity"/>
+    <exclude name="NcssMethodCount"/>
+    <exclude name="ExcessivePublicCount"/>
+    <exclude name="ExcessiveClassLength"/> <!-- might be parameterized to be more lenient -->
+    <exclude name="ExcessiveParameterList"/>
+    <exclude name="TooManyFields"/> <!-- might be parameterized to be more lenient -->
+  </rule>
+  
+  <!-- for custom settings just change the property value -->
+  
+  <rule ref="rulesets/codesize.xml/CyclomaticComplexity">
+    	 <properties>
+        	<property name="reportLevel" value="30"/>
+        	<property name="showClassesComplexity" value="true"/>
+        	<property name="showMethodsComplexity" value="true"/> 
+    	</properties> 
+	</rule>
+  	
+  	<!-- for custom settings just change the property value -->
+  	<!-- the feature classes have to have less than 30 methods  -->
+    <rule ref="rulesets/codesize.xml/TooManyMethods">
+    	<properties>
+        	<property name="maxmethods" value="30"/>
+    	</properties>
+  	</rule>
+    
+  <!--
+  ======================================
+  Rule Set: Controversial
+  ======================================
+  -->
+  <rule ref="rulesets/controversial.xml">
+    <!-- =========== AUDIT =========== -->
+    <exclude name="NullAssignment"/>
+    <!-- =========== IGNORE =========== -->
+    <!-- since we don't have "friend"s, we sometimes need package private -->
+    <exclude name="DefaultPackage"/>
+    <!-- multiple exit points make some code shorter and more legible -->
+    <exclude name="OnlyOneReturn"/>
+    <!-- this one seems to hit many false positives -->
+    <exclude name="DataflowAnomalyAnalysis"/>
+    <!-- super() will be called implicitely anyway and people should know it -->
+    <exclude name="CallSuperInConstructor"/>
+    <!-- sometimes the super constructor is ok as it is -->
+    <exclude name="AtLeastOneConstructor"/>
+    <!-- does not hurt to have it -->
+    <exclude name="UnnecessaryConstructor"/>
+    <!-- reduced maintainability for probably little performance gain -->
+    <exclude name="BooleanInversion"/>
+    <exclude name="UnnecessaryParentheses" />
+    <exclude name="AvoidUsingShortType" />
+        
+  </rule>
+  
+  <!--
+  ======================================
+  Rule Set: Coupling
+  ======================================
+  -->
+  
+  <!-- for custom settings just change the property value -->
+  <rule ref="rulesets/coupling.xml/ExcessiveImports">
+    
+    <properties>
+        <property name="minimum" value="75"/>
+    </properties>
+  </rule>
+  
+  <!--
+  ======================================
+  Rule Set: Design
+  ======================================
+  -->
+  <rule ref="rulesets/design.xml">  
+    <!-- =========== IGNORE =========== -->
+  	<!-- classes can be abstract without having abstract methods; see e.g. the 
+  	     Adaptor classes from AWT/Swing -->
+  	<exclude name="AbstractClassWithoutAbstractMethod" />
+    <!-- this test hits the Connection model class, which has nothing to do with JDBC connections. -->
+    <exclude name="CloseResource"/>
+    <!-- Can be more readable this way in certain cases -->
+    <exclude name="ConfusingTernary"/>
+    <!-- static initializers can be very useful. -->
+    <exclude name="NonStaticInitializer"/> 
+    <!-- Included below in a parametrized fashion. -->
+    <exclude name="AvoidDeeplyNestedIfStmts"/>    
+    <!-- We don't have turkish Strings -->
+    <exclude name="UseLocaleWithCaseConversions"/>
+    <!-- Might introduce problems -->
+    <exclude name="FinalFieldCouldBeStatic"/>
+    <!-- "final" inflation -->
+    <exclude name="ImmutableField"/>
+    <!-- In combination with "SimplifyBooleanExpressions" this enforces -->
+    <!-- expressions like !list.isEmpty() which is not as _readable_ as   -->
+    <!-- list.size() > 0 which should have the same performance. -->
+    <exclude name="UseCollectionIsEmpty"/>
+    
+    <exclude name="EmptyMethodInAbstractClassShouldBeAbstract" />
+    <exclude name="ReturnEmptyArrayRatherThanNull" />
+    <exclude name="AbstractClassWithoutAnyMethod" />
+    <exclude name="PreserveStackTrace" />
+  </rule>
+  
+  <rule ref="rulesets/design.xml/AvoidDeeplyNestedIfStmts">
+    <properties>
+      <property name="problemDepth" value="5"/>
+    </properties>
+  </rule>
+  
+  
+  <!--
+  ======================================
+  Rule Set: Finalizers
+  ======================================
+  -->
+  <rule ref="rulesets/finalizers.xml">
+  </rule>
+  
+  <!--
+  ======================================
+  Rule Set: Imports
+  ======================================
+  -->
+  <rule ref="rulesets/imports.xml">
+  	<exclude name="TooManyStaticImports"/>
+  </rule>
+  
+  <!--
+  ======================================
+  Rule Set: JSP
+  ======================================
+  -->
+  <!-- <rule ref="rulesets/basic-jsp.xml">
+  </rule> -->
+  
+  <!--
+  ======================================
+  Rule Set: J2EE
+  ======================================
+  -->
+  <rule ref="rulesets/j2ee.xml">
+  </rule>
+  
+  <!--
+  ======================================
+  Rule Set: JUnit
+  ======================================
+  -->
+  <rule ref="rulesets/junit.xml">
+    <!-- =========== IGNORE =========== -->
+    <!-- we use assertions in methods that check whole data structures at
+         once, which causes some test methods not having any assertions
+         themselves -->
+    <exclude name="JUnitTestsShouldIncludeAssert"/>
+    <!-- most of the time you have to look at the test anyway to see what's
+         going on, so I think we can live without this. -->
+    <exclude name="JUnitAssertionsShouldIncludeMessage"/>
+  </rule>
+  
+  <!--
+  ======================================
+  Rule Set: Naming
+  ======================================
+  -->
+  <rule ref="rulesets/naming.xml">
+    <!-- =========== IGNORE =========== -->
+    <!-- you don't always need to point out that a class is abstract -->
+    <exclude name="AbstractNaming"/>
+    <!-- we like our variables (esp. constants) to tell us what they are -->
+    <exclude name="LongVariable"/>
+    <!-- short variables can be ok, if their scope is small. -->
+    <exclude name="ShortVariable"/>
+    <!-- we have some camel case naming. It's not conventional, but it shouldn't be a problem. -->
+    <exclude name="PackageCase"/>
+    <!-- produces a warning when non-final static variables have an underscore -->
+    <exclude name="VariableNamingConventions" />
+  </rule>
+  
+  <!--
+  ======================================
+  Rule Set: Optimizations
+  ======================================
+  -->
+  <rule ref="rulesets/optimizations.xml">
+    <!-- =========== AUDIT =========== -->
+    <exclude name="AvoidInstantiatingObjectsInLoops"/>
+    <exclude name="UseStringBufferForStringAppends"/>
+    <!-- =========== IGNORE =========== -->
+    <!-- this leads to an inflation of "final" modifiers where the compiler
+         shouldn't really need the hint -->
+    <exclude name="LocalVariableCouldBeFinal"/>
+    <!-- another one with a "final" inflation -->
+    <exclude name="MethodArgumentCouldBeFinal"/>
+  </rule>
+  
+  <!--
+  ======================================
+  Rule Set: Strict Exceptions
+  ======================================
+  -->
+  <rule ref="rulesets/strictexception.xml">
+    <exclude name="AvoidThrowingNullPointerException"/>
+    <!-- <exclude name="DoNotThrowExceptionInFinally" /> -->
+    <!-- exclude name="SignatureDeclareThrowsException" /-->    
+  </rule>
+    
+  <!--
+  ======================================
+  Rule Set: Strings
+  ======================================
+  -->
+  <rule ref="rulesets/strings.xml">
+    <!-- =========== IGNORE =========== -->
+    <!-- maintainability vs. performance hit -->
+    <exclude name="InefficientEmptyStringCheck"/>
+    <!-- unfortunately this also hits strings in annotations -->
+    <exclude name="AvoidDuplicateLiterals"/>
+  </rule>
+  
+  <!--
+  ======================================
+  Rule Set: Sun Secure
+  ======================================
+  -->
+  <rule ref="rulesets/sunsecure.xml">
+  </rule>
+  
+  <!--
+  ======================================
+  Rule Set: Unused Code
+  ======================================
+  -->
+  <rule ref="rulesets/unusedcode.xml">
+  </rule>
+  
+  <!--
+  ======================================
+  Rule Set: Iteraplan Rules
+  ======================================
+  -->
+  <rule ref="config/qualitytools/iteraplan_rules_pmd.xml">
+  </rule>  
+ 
+  <!--
+     The following rulesets of PMD 3.9 have been excluded as a whole:
+        rulesets/javabeans.xml : we don't do Beans, we don't care about serialization
+		rulesets/logging-jakarta-commons.xml : not applicable since not used
+		rulesets/logging-java.xml : not applicable since not used
+		rulesets/migrating.xml : not applicable
+  -->
+</ruleset>

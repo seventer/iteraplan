@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+      http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+	start-state="start" parent="baseFlow">
+	
+	
+	<decision-state id="start">
+		<if test="requestParameters['_eventId']=='fromInterchange'" then="fromInterchange" />
+		<if test="requestParameters['bbType']!=null" then="initWithType" />
+		<if test="requestParameters['_eventId']=='init'" then="init" />
+		<if test="requestParameters['_eventId']=='closeAll'" then="closeAll" />
+		<if test="requestParameters['_eventId']==null" then="init" />
+	</decision-state>
+	
+	<action-state id="init">
+			<evaluate expression="massUpdateFrontendService.getInitialMemBean()"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="show" />
+	</action-state>
+	
+	<action-state id="initWithType">
+			<evaluate expression="massUpdateFrontendService.getInitialMemBean(requestParameters['bbType'])"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="show" />
+	</action-state>
+	
+	<action-state id="fromInterchange">
+			<evaluate expression="massUpdateFrontendService.fromInterchange(requestParameters['bbType'],requestParameters['idList'])"
+				result="flowScope.memBean" />
+			<transition on="#{true}" to="show" />
+	</action-state>
+	
+	<action-state id="requestReport">
+			<evaluate expression="massUpdateFrontendService.requestReport(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+			<transition on="#{true}" to="show" />
+	</action-state>
+
+	<view-state id="show" model="memBean" view="massupdate/show">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL"
+				value="massUpdateFrontendService.getFlowLabel(null)"
+				type="java.lang.String" />
+		</on-entry>
+		<transition on="changeQueryType" to="show">
+			<evaluate
+				expression="massUpdateFrontendService.changeQueryType(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="expandFirstLevel" to="show">
+			<evaluate
+				expression="massUpdateFrontendService.expandFirstLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="expandSecondLevel" to="show">
+			<evaluate
+				expression="massUpdateFrontendService.expandSecondLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />		
+		</transition>
+		<transition on="shrinkLevel" to="show">
+			<evaluate
+				expression="massUpdateFrontendService.shrinkLevel(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="refreshReport" to="show">
+			<evaluate
+				expression="massUpdateFrontendService.refreshReport(flowScope.memBean, flowRequestContext, flowExecutionContext, true)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="addReportExtension" to="show">
+			<evaluate expression="massUpdateFrontendService.addReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="removeReportExtension" to="show">
+			<evaluate expression="massUpdateFrontendService.removeReportExtension(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="requestReport" to="requestReport">
+		</transition>
+		<transition on="resetReport" to="show">
+			<evaluate expression="massUpdateFrontendService.getInitialMemBean()"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="saveQuery" to="show">
+			<evaluate expression="massUpdateFrontendService.saveQuery(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		<transition on="saveQueryAs" to="show">
+			<evaluate expression="massUpdateFrontendService.saveQueryAs(flowScope.memBean, flowRequestContext)" />
+		</transition>
+		<transition on="loadSavedQuery" to="show">
+			<evaluate expression="massUpdateFrontendService.loadSavedQuery(flowScope.memBean)"
+			result="flowScope.memBean" />
+		</transition>
+		<transition on="deleteSavedQuery" to="show">
+			<evaluate expression="massUpdateFrontendService.deleteSavedQuery(flowScope.memBean)" />
+		</transition>
+		
+		<transition on="massDelete" to="show">
+			<evaluate expression="massUpdateFrontendService.massDelete(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="prepareForMassUpdate" to="prepareForMassUpdateInit">
+			<evaluate expression="massUpdateFrontendService.prepareForMassUpdate(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="runSavedQuery" to="show">
+			<evaluate expression="flowScope.memBean.setSavedQueryId(requestParameters['savedQueryId'])" />
+				<evaluate expression="massUpdateFrontendService.loadSavedQuery(flowScope.memBean)"
+					result="flowScope.memBean" />
+					<evaluate expression="flowScope.memBean.setMassUpdateMode(true)" />
+				<evaluate expression="massUpdateFrontendService.requestReport(flowScope.memBean, flowRequestContext, flowExecutionContext)" 
+					result="flowScope.result"/>
+		</transition>
+		
+		<transition on="massSubscribe" to="show">
+			<evaluate expression="massUpdateFrontendService.massSubscribe(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		
+		<transition on="massUnsubscribe" to="show">
+			<evaluate expression="massUpdateFrontendService.massUnsubscribe(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="fromInterchange" to="fromInterchange" />
+	</view-state>
+	
+	<action-state id="prepareForMassUpdateInit">
+			<evaluate expression="true" result="flowScope.notUsedResult" />
+			<transition on="#{true}" to="prepareForMassUpdate">
+				<set name="flowScope.cachedReportMemBean" value="flowScope.memBean" />
+				<evaluate expression="massUpdateFrontendService.prepareForMassUpdate(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+					result="flowScope.memBean" />
+			</transition>
+	</action-state>
+	
+	<view-state id="prepareForMassUpdate" model="memBean" view="massupdate/prepareForMassUpdate">
+		<transition on="runMassUpdate" to="prepareForMassUpdate">
+			<evaluate expression="massUpdateFrontendService.runMassUpdate(flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="getNewResultSet" to="show">			
+			<evaluate expression="massUpdateFrontendService.refreshReport(flowScope.cachedReportMemBean, flowRequestContext, flowExecutionContext, false)"
+				result="flowScope.memBean" />
+			<evaluate expression="massUpdateFrontendService.requestReport(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+			<evaluate expression="massUpdateFrontendService.leaveEditMode(flowExecutionContext)" />
+		</transition>
+		<transition on="update" to="prepareForMassUpdate">
+			<evaluate expression="massUpdateFrontendService.updateComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="setStandardAttributeValues" to="prepareForMassUpdate">
+			<evaluate expression="massUpdateFrontendService.setStandardAttributeValues(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="setStandardAssociationValues" to="prepareForMassUpdate">
+			<evaluate expression="massUpdateFrontendService.setStandardAssociationValues(flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+			<evaluate expression="massUpdateFrontendService.updateComponentModel(flowScope.memBean, flowRequestContext, flowExecutionContext)" />			
+		</transition>
+		<transition on="fromInterchange" to="fromInterchange" />
+	</view-state>
+	
+	<end-state id="close"
+		view="externalRedirect:contextRelative:/massupdate/show/massupdate" />
+		
+	<end-state id="closeAll" view="externalRedirect:contextRelative:/show/massupdate">
+		<on-entry>
+			<evaluate expression="massUpdateFrontendService.closeAllFlows(flowRequestContext)"></evaluate>
+		</on-entry>
+	</end-state>
+	
+</flow>

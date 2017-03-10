@@ -1,0 +1,907 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="queryFormXML" type="queryForm" />
+
+	<xs:element name="report" type="reportXML" />
+
+	<xs:complexType name="reportXML">
+		<xs:sequence>
+			<xs:element name="informationFlowOptions" type="informationFlowOptions"
+				minOccurs="0" />
+			<xs:element name="masterplanOptions" type="masterplanOptions"
+				minOccurs="0" />
+			<xs:element name="portfolioOptions" type="portfolioOptions"
+				minOccurs="0" />
+			<xs:element name="clusterOptions" type="clusterOptions"
+				minOccurs="0" />
+			<xs:element name="pieBarOptions" type="pieBarOptions"
+				minOccurs="0" />
+			<xs:element name="lineOptions" type="lineOptions"
+				minOccurs="0" />
+			<xs:element name="vbbOptions" type="vbbOptions" minOccurs="0" />
+			<xs:element name="tabularOptions" type="tabularOptions"
+				minOccurs="0" />
+			<xs:element name="queryResults" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="queryResult" type="queryResultXML"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<!-- queryForms and selectedResultIds only for compatibility to older 
+				saved queries -->
+			<xs:element name="queryForms" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="queryForm" type="queryForm"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="selectedResultIds" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="id" type="xs:int" minOccurs="0"
+							maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<!-- compatibility part end -->
+
+			<xs:element name="version" type="xs:string" />
+			<xs:element name="visibleColumns" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="visibleColumn" type="visibleColumn"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="reportType" type="reportTypeXML" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="informationFlowOptions">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="selectedGraphicFormat" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="useColorRange" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="useNamesLegend" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="showSavedQueryInfo" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="selectedNodeLayout" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="colorAttributeId" type="xs:int"
+						minOccurs="0" />
+					<xs:element name="colorAttributeValues" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="value" type="xs:string" minOccurs="0"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="selectedColors" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="color" type="xs:string" minOccurs="0"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="lineTypeAttributeId" type="xs:int"
+						minOccurs="0" />
+					<xs:element name="lineAttributeValues" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="value" type="xs:string" minOccurs="0"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="selectedLineTypes" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="lineType" type="xs:string"
+									minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="edgeCaptionType" type="xs:int"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="edgeAttributeId" type="xs:int"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="showIsBusinessObjects" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="showIsBaseComponents" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="selectedTemplateName" type="xs:string"
+						minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="dialogStep" type="xs:int" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="abstractXMLElement" abstract="true">
+		<xs:sequence />
+	</xs:complexType>
+
+	<xs:complexType name="masterplanOptions">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="colorAttributeId" type="xs:int"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="colorAttributeValues" minOccurs="0"
+						maxOccurs="1">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="value" type="xs:string" minOccurs="0"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="selectedBbType" type="xs:string"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="selectedColors" minOccurs="0"
+						maxOccurs="1">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="color" type="xs:string" minOccurs="0"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="timeSpan" type="queryTimespan"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="selectedGraphicFormat" type="xs:string"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="useColorRange" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="useNamesLegend" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="showSavedQueryInfo" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="selectedRelatedType" type="xs:string"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="useOnlyNeighbouringRelatedElements"
+						type="xs:boolean" minOccurs="0" maxOccurs="1" />
+					<xs:element name="customColumns" minOccurs="0"
+						maxOccurs="1">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="customColumn" type="visibleColumn"
+									minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="level0Options" type="masterplanRowTypeOptions"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="level1Options" type="masterplanRowTypeOptions"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="level2Options" type="masterplanRowTypeOptions"
+						minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="dialogStep" type="xs:int" use="required" />
+				<xs:attribute name="sortMethod" type="sortMethodXML"
+					use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="masterplanRowTypeOptions">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="selectedBbType" type="xs:string"
+						minOccurs="1" maxOccurs="1" />
+					<xs:element name="relationToBbType" type="xs:string"
+						minOccurs="1" maxOccurs="1" />
+					<xs:element name="timelineFeatures" minOccurs="0"
+						maxOccurs="1">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="timelineFeature" type="timelineFeature"
+									minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="useDefaultColoring" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="colorAttributeId" type="xs:int"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="colorAttributeValues" minOccurs="0"
+						maxOccurs="1">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="value" type="xs:string" minOccurs="0"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="selectedColors" minOccurs="0"
+						maxOccurs="1">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="color" type="xs:string" minOccurs="0"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="useColorRange" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="hierarchicalSort" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="buildClosure" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="customColumns" minOccurs="0"
+						maxOccurs="1">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="customColumn" type="visibleColumn"
+									minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="timelineFeature">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="runtimePeriod" type="xs:boolean"
+						minOccurs="1" maxOccurs="1" />
+					<xs:element name="position" type="xs:int" minOccurs="1"
+						maxOccurs="1" />
+					<xs:element name="name" type="xs:string" minOccurs="0"
+						maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="clusterOptions">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="availableLevels" type="xs:int"
+						minOccurs="0" />
+					<xs:element name="colorAttribute" type="xs:int"
+						minOccurs="0" />
+					<xs:element name="colorAttributeValues" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="value" type="xs:string" minOccurs="0"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="colorOptions" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="option" type="colorOption"
+									minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="lowerLevel" type="xs:int" minOccurs="0" />
+					<xs:element name="selectedBbType" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="selectedColors" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="color" type="xs:string" minOccurs="0"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="selectedModus" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="selectedAttributeValues" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="attributeValue" type="xs:string"
+									minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="typeOrder" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="type" type="xs:string" minOccurs="0"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="upperLevel" type="xs:int" minOccurs="0" />
+					<xs:element name="selectedGraphicsFormat" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="useColorRange" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="useNamesLegend" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="showSavedQueryInfo" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="swimLanes" type="xs:boolean"
+						minOccurs="0" />
+				</xs:sequence>
+				<xs:attribute name="colorAttribute" type="xs:int" use="required" />
+				<xs:attribute name="dialogStep" type="xs:int" use="required" />
+				<xs:attribute name="selectedAttributeType" type="xs:int"
+					use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="pieBarOptions">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="selectedBbType" type="xs:string"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="selectedAttributeType" type="xs:int"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="selectedModus" type="xs:string"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="diagramKeyType" type="xs:string"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="valuesSource" type="xs:string"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="diagramValuesType" type="xs:string"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="colorAttributeId" type="xs:int"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="colorAssociation" type="xs:string"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="colorAttributeValues" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="value" type="xs:string" minOccurs="0"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="selectedColors" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="color" type="xs:string" minOccurs="0"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="colorOptions" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="option" type="singleBarColorOption"
+									minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="associationTopLevel" type="xs:int"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="associationBottomLevel" type="xs:int"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="showEmptyBars" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="showSegmentLabels" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="showBarSizeLabels" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="barsOrderMethod" type="xs:string"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="selectedGraphicsFormat" type="xs:string"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="useColorRange" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="useNamesLegend" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="showSavedQueryInfo" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="dialogStep" type="xs:int" use="required" />
+				<xs:attribute name="selectedKeyAttributeType" type="xs:int"
+					use="required" />
+				<xs:attribute name="selectedKeyAssociation" type="xs:string"
+					use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="lineOptions">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="selectedBbType" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="timeSpan" type="queryTimespan"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="selectedGraphicsFormat" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="useNamesLegend" type="xs:boolean" />
+					<xs:element name="showSavedQueryInfo" type="xs:boolean" />
+				</xs:sequence>
+				<xs:attribute name="selectedKeyAttributeType" type="xs:int"
+					use="required" />
+				<xs:attribute name="dialogStep" type="xs:int" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="vbbOptions">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="viewpointConfig" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="entry" type="keyValueXML"
+									minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="selectedGraphicFormat" type="xs:string"
+						minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="keyValueXML">
+		<xs:sequence />
+		<xs:attribute name="key" type="xs:string" use="required" />
+		<xs:attribute name="value" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="tabularOptions">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="resultFormat" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="resultFormatTemplate" type="xs:string"
+						minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="colorOption">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" minOccurs="0" />
+			<xs:element name="dimensionKey" type="xs:string"
+				minOccurs="0" />
+			<xs:element name="dimensionType" type="xs:string"
+				minOccurs="0" />
+			<xs:element name="childrenColorAttributeValues" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="childValue" type="xs:string"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="childrenSelectedColors" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="childColor" type="xs:string"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="form" type="xs:string" minOccurs="0" />
+			<xs:element name="useColorRange" type="xs:boolean"
+				minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="colorAttribute" type="xs:int" use="required" />
+		<xs:attribute name="selected" type="xs:boolean" use="required" />
+
+	</xs:complexType>
+
+	<xs:complexType name="singleBarColorOption">
+		<xs:sequence>
+			<xs:element name="label" type="xs:string" minOccurs="0" />
+			<xs:element name="childrenColorAttributeValues" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="childValue" type="xs:string"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="childrenSelectedColors" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="childColor" type="xs:string"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="useColorRange" type="xs:boolean"
+				minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="colorAttribute" type="xs:int" use="required" />
+		<xs:attribute name="selected" type="xs:boolean" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="queryTimespan">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="endDate" type="xs:long" />
+					<xs:element name="endTimeFunction" type="timeFunctionXML" />
+					<xs:element name="startDate" type="xs:long" />
+					<xs:element name="startTimeFunction" type="timeFunctionXML" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="portfolioOptions">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="colorAttributeId" type="xs:int"
+						minOccurs="0" />
+					<xs:element name="colorAttributeValues" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="value" type="xs:string" minOccurs="0"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<!-- This element is deprecated, yet not deleted so that no migration 
+						of the saved queries is necessary. -->
+					<xs:element name="quadrantValues" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="value" type="xs:string" minOccurs="0"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="scalingEnabled" type="xs:boolean" />
+					<xs:element name="selectedBbType" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="selectedColors" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="color" type="xs:string" minOccurs="0"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="sizeAttributeId" type="xs:int"
+						minOccurs="0" />
+					<xs:element name="XAxisAttributeId" type="xs:int"
+						minOccurs="0" />
+					<xs:element name="YAxisAttributeId" type="xs:int"
+						minOccurs="0" />
+					<xs:element name="selectedGraphicsFormat" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="useColorRange" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="useNamesLegend" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="showSavedQueryInfo" type="xs:boolean"
+						minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="dialogStep" type="xs:int" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="queryForm">
+		<xs:sequence>
+			<xs:element name="extension" type="presentationExtension"
+				minOccurs="0" />
+			<xs:element name="postProcessingStrategies" minOccurs="0"
+				type="postProcessingStrategies" />
+			<!-- Deprecated: To be used for backwards-compatibility only. -->
+			<xs:element name="postprocessingStrategy" type="xs:string"
+				minOccurs="0" />
+			<xs:element name="queryUserInput" type="queryUserInput"
+				minOccurs="0" />
+			<xs:element name="secondLevel" type="queryForm" nillable="true"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="typeXML" type="typeXML" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="postProcessingStrategies">
+		<xs:sequence>
+			<xs:element name="postProcessingStrategy" type="postProcessingStrategy"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="postProcessingStrategy">
+		<xs:sequence>
+			<xs:element name="additionalOptions" type="additionalOptions"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="additionalOptions">
+		<xs:sequence>
+			<xs:element name="additionalOption" type="xs:string"
+				minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="presentationExtension">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="queryUserInput">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="noAssignements" type="xs:boolean" />
+					<xs:element name="queryFirstLevels" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="queryFirstLevel" type="queryFirstLevel"
+									minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="statusQueryData" type="queryStatus"
+						minOccurs="0" />
+					<xs:element name="timeSpanQueryData" type="queryTimespan"
+						minOccurs="0" />
+					<xs:element name="sealQueryData" type="querySeal"
+						minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="queryFirstLevel">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="querySecondLevels" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="querySecondLevel" type="queryPart"
+									minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="queryPart">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="chosenAttributeStringId" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="chosenOperationId" type="xs:int"
+						minOccurs="0" />
+					<xs:element name="dateATSelected" type="xs:boolean"
+						minOccurs="0" />
+					<xs:element name="existingCriteria" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="freeTextCriteria" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="freeTextCriteriaSelected" type="xs:boolean"
+						minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="visibleColumn">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="field" type="xs:string" minOccurs="1"
+						maxOccurs="1" />
+					<xs:element name="head" type="xs:string" minOccurs="1"
+						maxOccurs="1" />
+					<xs:element name="type" type="xs:string" minOccurs="1"
+						maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="queryStatus">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="values" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="value" type="booleanKeyValueXML"
+									minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="typeOfStatus" type="typeOfStatusXML"
+					use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="timeseriesQuery">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="qPart" type="queryPart" minOccurs="1" maxOccurs="1" />
+					<xs:element name="quantor" type="timeseriesQuantor" minOccurs="1" maxOccurs="1" />
+					<xs:element name="timespan" type="queryTimespan" minOccurs="1" maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="querySeal">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="values" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="value" type="booleanKeyValueXML"
+									minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="booleanKeyValueXML">
+		<xs:sequence />
+		<xs:attribute name="key" type="xs:string" use="required" />
+		<xs:attribute name="value" type="xs:boolean" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="enumAttribute">
+		<xs:sequence>
+			<xs:element name="attributeValues" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="value" type="xs:string" minOccurs="0"
+							maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="selectedStyles" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="style" type="xs:string" minOccurs="0"
+							maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="attributeName" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="queryResultXML">
+		<xs:complexContent>
+			<xs:extension base="abstractXMLElement">
+				<xs:sequence>
+					<xs:element name="queryForms" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="queryForm" type="queryForm"
+									minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="selectedResultIds" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="id" type="xs:int" minOccurs="0"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="timeseriesQuery" type="timeseriesQuery" minOccurs="0" maxOccurs="1" />
+
+					<!-- visibleColumns are not part of the QueryResultXML java class. Is 
+						this here in the schema for compatibility to old saved queries? -->
+					<xs:element name="visibleColumns" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="visibleColumn" type="visibleColumn"
+									minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+
+				</xs:sequence>
+				<xs:attribute name="queryName" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="reportTypeXML">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="GENERIC" />
+			<xs:enumeration value="PORTFOLIO" />
+			<xs:enumeration value="MASTERPLAN" />
+			<xs:enumeration value="INFORMATIONFLOW" />
+			<xs:enumeration value="CLUSTER" />
+			<xs:enumeration value="PIEBAR" />
+			<xs:enumeration value="VBB" />
+			<xs:enumeration value="LINE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="sortMethodXML">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="HIERARCHICAL" />
+			<xs:enumeration value="NON_HIERARCHICAL" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="timeFunctionXML">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ABSOLUTE" />
+			<xs:enumeration value="NOW" />
+			<xs:enumeration value="RELATIVE_PAST" />
+			<xs:enumeration value="RELATIVE_FUTURE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="typeOfStatusXML">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INFORMATIONSYSTEMRELEASE" />
+			<xs:enumeration value="TECHNICALCOMPONENTRELEASE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="typeXML">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="TECHNICALCOMPONENTRELEASE" />
+			<xs:enumeration value="INFORMATIONSYSTEMINTERFACE" />
+			<xs:enumeration value="INFORMATIONSYSTEMRELEASE" />
+			<xs:enumeration value="INFRASTRUCTUREELEMENT" />
+			<xs:enumeration value="PROJECT" />
+			<xs:enumeration value="BUSINESSUNIT" />
+			<xs:enumeration value="PRODUCT" />
+			<xs:enumeration value="BUSINESSPROCESS" />
+			<xs:enumeration value="BUSINESSOBJECT" />
+			<xs:enumeration value="ARCHITECTURALDOMAIN" />
+			<xs:enumeration value="INFORMATIONSYSTEMDOMAIN" />
+			<xs:enumeration value="BUSINESSFUNCTION" />
+			<xs:enumeration value="BUSINESSDOMAIN" />
+			<xs:enumeration value="BUSINESSMAPPING" />
+		</xs:restriction>
+	</xs:simpleType>
+  
+  <xs:simpleType name="timeseriesQuantor">
+  	<xs:restriction base="xs:string">
+  		<xs:enumeration value="ALL" />
+  		<xs:enumeration value="EXISTS" />
+  	</xs:restriction>
+  </xs:simpleType>
+</xs:schema>

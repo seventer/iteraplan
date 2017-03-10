@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation=
+       "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/util  http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+	
+	<bean id="user" class="de.iteratec.iteraplan.webtests.input.data.User">
+		<property name="username" value="system"/>
+		<property name="password" value="password"/>
+	</bean>
+	
+	<bean id="nonExistingUser" class="de.iteratec.iteraplan.webtests.input.data.User">
+		<property name="username" value="t"/>
+		<property name="password" value="password"/>
+	</bean>
+	
+	<bean id="wrongPasswordUser" class="de.iteratec.iteraplan.webtests.input.data.User">
+		<property name="username" value="system"/>
+		<property name="password" value="passsword"/>
+	</bean>
+	
+	<bean id="userCaseInsensitive" class="de.iteratec.iteraplan.webtests.input.data.User">
+		<property name="username" value="sYsTeM"/>
+		<property name="password" value="password"/>
+	</bean>
+	
+	<bean id="testArchitecturalDomain" class="de.iteratec.iteraplan.webtests.input.data.ArchitecturalDomain">
+		<property name="name" value="aTestAD"/>
+		<property name="parent" ref="testArchitecturalDomainParent"/>
+		<property name="children">
+			<list>
+				<ref local="testArchitecturalDomainChild"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="testArchitecturalDomainParent" class="de.iteratec.iteraplan.webtests.input.data.ArchitecturalDomain">
+		<property name="name" value="aTestADParent"/>
+	</bean>
+	
+	<bean id="testArchitecturalDomainChild" class="de.iteratec.iteraplan.webtests.input.data.ArchitecturalDomain">
+		<property name="name" value="aTestADChild"/>
+	</bean>
+	
+	<bean id="testBusinessDomain" class="de.iteratec.iteraplan.webtests.input.data.BusinessDomain">
+		<property name="name" value="aTestBD"/>
+		<property name="parent" ref="testBusinessDomainParent"/>
+		<property name="children">
+			<list>
+				<ref local="testBusinessDomainChild"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="testBusinessDomainParent" class="de.iteratec.iteraplan.webtests.input.data.BusinessDomain">
+		<property name="name" value="aTestBDParent"/>
+	</bean>
+	
+	<bean id="testBusinessDomainChild" class="de.iteratec.iteraplan.webtests.input.data.BusinessDomain">
+		<property name="name" value="aTestBDChild"/>
+	</bean>
+	
+	<bean id="testBusinessProcess" class="de.iteratec.iteraplan.webtests.input.data.BusinessProcess">
+		<property name="name" value="aTestBP"/>
+		<property name="parent" ref="testBusinessProcessParent"/>
+		<property name="children">
+			<list>
+				<ref local="testBusinessProcessChild"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="testBusinessProcessParent" class="de.iteratec.iteraplan.webtests.input.data.BusinessProcess">
+		<property name="name" value="aTestBPParent"/>
+	</bean>
+	
+	<bean id="testBusinessProcessChild" class="de.iteratec.iteraplan.webtests.input.data.BusinessProcess">
+		<property name="name" value="aTestBPChild"/>
+	</bean>
+	
+	<bean id="testBusinessUnit" class="de.iteratec.iteraplan.webtests.input.data.BusinessUnit">
+		<property name="name" value="aTestBU"/>
+		<property name="parent" ref="testBusinessUnitParent"/>
+		<property name="children">
+			<list>
+				<ref local="testBusinessUnitChild"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="testBusinessUnitParent" class="de.iteratec.iteraplan.webtests.input.data.BusinessUnit">
+		<property name="name" value="aTestBUParent"/>
+	</bean>
+	
+	<bean id="testBusinessUnitChild" class="de.iteratec.iteraplan.webtests.input.data.BusinessUnit">
+		<property name="name" value="aTestBUChild"/>
+	</bean>
+	
+	<bean id="testBusinessFunction" class="de.iteratec.iteraplan.webtests.input.data.BusinessFunction">
+		<property name="name" value="aTestBF"/>
+		<property name="parent" ref="testBusinessFunctionParent"/>
+		<property name="children">
+			<list>
+				<ref local="testBusinessFunctionChild"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="testBusinessFunctionParent" class="de.iteratec.iteraplan.webtests.input.data.BusinessFunction">
+		<property name="name" value="aTestBFParent"/>
+	</bean>
+	
+	<bean id="testBusinessFunctionChild" class="de.iteratec.iteraplan.webtests.input.data.BusinessFunction">
+		<property name="name" value="aTestBFChild"/>
+	</bean>
+	
+	<bean id="testBusinessObject" class="de.iteratec.iteraplan.webtests.input.data.BusinessObject">
+		<property name="name" value="aTestBO"/>
+		<property name="parent" ref="testBusinessObjectParent"/>
+		<property name="children">
+			<list>
+				<ref local="testBusinessObjectChild"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="testBusinessObjectParent" class="de.iteratec.iteraplan.webtests.input.data.BusinessObject">
+		<property name="name" value="aTestBOParent"/>
+	</bean>
+	
+	<bean id="testBusinessObjectChild" class="de.iteratec.iteraplan.webtests.input.data.BusinessObject">
+		<property name="name" value="aTestBOChild"/>
+	</bean>
+	
+	<bean id="testProduct" class="de.iteratec.iteraplan.webtests.input.data.Product">
+		<property name="name" value="aTestProd"/>
+		<property name="parent" ref="testProductParent"/>
+		<property name="children">
+			<list>
+				<ref local="testProductChild"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="testProductParent" class="de.iteratec.iteraplan.webtests.input.data.Product">
+		<property name="name" value="aTestProdParent"/>
+	</bean>
+	
+	<bean id="testProductChild" class="de.iteratec.iteraplan.webtests.input.data.Product">
+		<property name="name" value="aTestProdChild"/>
+	</bean>
+	
+	<bean id="testProject" class="de.iteratec.iteraplan.webtests.input.data.Project">
+		<property name="name" value="aTestProj"/>
+		<property name="parent" ref="testProjectParent"/>
+		<property name="children">
+			<list>
+				<ref local="testProjectChild"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="testProjectParent" class="de.iteratec.iteraplan.webtests.input.data.Project">
+		<property name="name" value="aTestProjParent"/>
+	</bean>
+	
+	<bean id="testProjectChild" class="de.iteratec.iteraplan.webtests.input.data.Project">
+		<property name="name" value="aTestProjChild"/>
+	</bean>
+	
+	<bean id="testISDomain" class="de.iteratec.iteraplan.webtests.input.data.InformationSystemDomain">
+		<property name="name" value="aTestISD"/>
+		<property name="parent" ref="testISDomainParent"/>
+		<property name="children">
+			<list>
+				<ref local="testISDomainChild"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="testISDomainParent" class="de.iteratec.iteraplan.webtests.input.data.InformationSystemDomain">
+		<property name="name" value="aTestISDParent"/>
+	</bean>
+	
+	<bean id="testISDomainChild" class="de.iteratec.iteraplan.webtests.input.data.InformationSystemDomain">
+		<property name="name" value="aTestISDChild"/>
+	</bean>
+	
+	<bean id="testInfrastructureElement" class="de.iteratec.iteraplan.webtests.input.data.InfrastructureElement">
+		<property name="name" value="aTestIE"/>
+		<property name="parent" ref="testInfrastructureElementParent"/>
+		<property name="children">
+			<list>
+				<ref local="testInfrastructureElementChild"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="testInfrastructureElementParent" class="de.iteratec.iteraplan.webtests.input.data.InfrastructureElement">
+		<property name="name" value="aTestIEParent"/>
+	</bean>
+	
+	<bean id="testInfrastructureElementChild" class="de.iteratec.iteraplan.webtests.input.data.InfrastructureElement">
+		<property name="name" value="aTestIEChild"/>
+	</bean>
+	
+	<bean id="project" class="de.iteratec.iteraplan.webtests.input.data.Project">
+		<property name="name" value="aTestProj"/>
+	</bean>
+	
+	<bean id="testSearchWithDifferentSelectedAttributes" class="de.iteratec.iteraplan.webtests.input.data.Project">
+		<property name="name" value="aTestSearchWithDifferentSelectedAttributes"/>
+	</bean>
+	
+	<bean id="subproject" class="de.iteratec.iteraplan.webtests.input.data.Project">
+		<property name="name" value="aTestSubProj"/>
+		<property name="parent" ref="project"/>
+	</bean>
+	
+	<bean id="release" class="de.iteratec.iteraplan.webtests.input.data.InformationSystem">
+		<property name="name" value="aTestISRel"/>
+	</bean>
+	
+	<bean id="testIS" class="de.iteratec.iteraplan.webtests.input.data.InformationSystem">
+		<property name="name" value="aTestIS"/>
+		<property name="buildingBlock" ref="techBB"/>
+	</bean>
+	
+	<bean id="successor" class="de.iteratec.iteraplan.webtests.input.data.InformationSystem">
+		<property name="name" value="aTestISSuccRel"/>
+		<property name="predecessor" ref="release"/>
+	</bean>
+	
+	<bean id="techBB" class="de.iteratec.iteraplan.webtests.input.data.BuildingBlock">
+		<property name="name" value="aTech"/>
+	</bean>
+	
+	<bean id="jpp" class="de.iteratec.iteraplan.webtests.input.data.BuildingBlock">
+		<property name="name" value="aTestJ++"/>
+	</bean>
+	
+	<bean id="jppA" class="de.iteratec.iteraplan.webtests.input.data.BuildingBlock">
+		<property name="name" value="aTestJ++A"/>
+		<property name="uses" ref="jpp"/>
+	</bean>
+	
+	<bean id="jppB" class="de.iteratec.iteraplan.webtests.input.data.BuildingBlock">
+		<property name="name" value="aTestJ++A"/>
+		<property name="releaseName" value="B"/>
+	</bean>
+	
+	<bean id="jppAB" class="de.iteratec.iteraplan.webtests.input.data.BuildingBlock">
+		<property name="name" value="aTestJ++AB"/>
+		<property name="uses">
+			<list>
+				<ref local="jppA"/>
+				<ref local="jppB"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="testAttribute" class="de.iteratec.iteraplan.webtests.input.data.Attribute">
+		<property name="name" value="aTestAttribute"/>
+		<property name="mandatory" value="true"/>
+	</bean>
+	
+	<bean id="testAttributeGroup" class="de.iteratec.iteraplan.webtests.input.data.AttributeGroup">
+		<property name="name" value="aTestAttributeGroup"/>
+		<property name="attributes">
+			<list>
+				<ref local="testAttribute"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="testISITransport" class="de.iteratec.iteraplan.webtests.input.data.Interface">
+		<property name="name" value="aTestISITransport"/>
+	</bean>	
+	
+	<bean id="testISI" class="de.iteratec.iteraplan.webtests.input.data.Interface">
+		<property name="name" value="aTestISI"/>
+	</bean>	
+	
+	<bean id="testBusinessMapping" class="de.iteratec.iteraplan.webtests.input.data.BusinessMapping">
+		<property name="firstBBName" value="-"/>
+		<property name="columnIndex" value="0"/>
+		<property name="rowIndex" value="3"/>
+		<property name="contentBBName" value="Broker # 5.1"/>
+	</bean>
+	
+	<bean id="testBusinessMappingWithTestBusinessUnit" class="de.iteratec.iteraplan.webtests.input.data.BusinessMapping">
+		<property name="firstBBName" value="aTestBUParent"/>
+		<property name="columnIndex" value="0"/>
+		<property name="rowIndex" value="3"/>
+		<property name="contentBBName" value="Broker # 5.1"/>
+	</bean>
+	
+	<bean id="testAttributeForIsr2BoAssoc" class="de.iteratec.iteraplan.webtests.input.data.Attribute">
+		<property name="name" value="aTestAttribute"/>
+		<property name="mandatory" value="true"/>
+		<property name="bbt" value="Beziehung Informationsystem zu Geschäftsobjekt"/>
+	</bean>
+	
+	<bean id="testInformationSystemReleaseWithBoAssoc" class="de.iteratec.iteraplan.webtests.input.data.InformationSystem">
+		<property name="name" value="aTestISRel"/>
+		<property name="boAssoc" ref="isr2BoAssoc"/>
+	</bean>
+	
+	<bean id="testBusinessObjectWithIsrAssoc" class="de.iteratec.iteraplan.webtests.input.data.BusinessObject">
+		<property name="name" value="aTestBO"/>
+		<property name="isrAssoc" ref="isr2BoAssoc"/>
+	</bean>
+	
+	<bean id="isr2BoAssoc" class="de.iteratec.iteraplan.webtests.input.data.Isr2BoAssociation">
+		<property name="isrName" value="aTestISRel"/>
+		<property name="boName" value="aTestBOParent"/>
+		<property name="ava" ref="isr2BoAssoc_ava"/>
+	</bean>
+	
+	<bean id="isr2BoAssoc_ava" class="de.iteratec.iteraplan.webtests.input.data.AttributeValueAssignment">
+		<property name="atName" value="aTestAttribute"/>
+		<property name="type" value="text"/>
+		<property name="value" value="123"/>
+	</bean>
+	
+	<bean id="testIS1" class="de.iteratec.iteraplan.webtests.input.data.InformationSystem">
+		<property name="name" value="aTestIS1"/>
+	</bean>
+	
+	<bean id="testIS2" class="de.iteratec.iteraplan.webtests.input.data.InformationSystem">
+		<property name="name" value="aTestIS2"/>
+		<property name="parent" ref="testIS1"/>
+	</bean>
+	
+	<bean id="testIS3" class="de.iteratec.iteraplan.webtests.input.data.InformationSystem">
+		<property name="name" value="aTestIS3"/>
+		<property name="parent" ref="testIS2"/>
+	</bean>
+	
+	<bean id="is1" class="de.iteratec.iteraplan.webtests.input.data.InformationSystem">
+		<property name="name" value="aTestIS1"/>
+	</bean>
+	
+	<bean id="is2" class="de.iteratec.iteraplan.webtests.input.data.InformationSystem">
+		<property name="name" value="aTestIS2"/>
+	</bean>
+	
+	<bean id="is3" class="de.iteratec.iteraplan.webtests.input.data.InformationSystem">
+		<property name="name" value="aTestIS3"/>
+	</bean>
+	
+	<bean id="is11" class="de.iteratec.iteraplan.webtests.input.data.InformationSystem">
+		<property name="name" value="aTestIS11"/>
+		<property name="parent" ref="is1"/>
+	</bean>
+	
+	<bean id="is111" class="de.iteratec.iteraplan.webtests.input.data.InformationSystem">
+		<property name="name" value="aTestIS111"/>
+		<property name="parent" ref="is11"/>
+	</bean>
+	
+	<bean id="informationFlowDiagram" class="de.iteratec.iteraplan.webtests.input.data.InformationFlowDiagram">
+    	<property name="colorAttribute"><value>${status}</value></property>
+        <property name="lineAttribute"><value>${complexity}</value></property>
+	</bean>
+	
+	<bean id="landscapeDiagram" class="de.iteratec.iteraplan.webtests.input.data.LandscapeDiagram">
+		<property name="content" value="Informationssysteme" />
+		<property name="column" value="Geschäftsobjekte" />
+		<property name="row" value="Geschäftsprozesse" />
+		<property name="colourAttribute"><value>${status}</value></property>
+		<property name="lineAttribute"><value>${operating.expenses}</value></property>
+	</bean>
+	
+	<bean id="masterplanDiagram" class="de.iteratec.iteraplan.webtests.input.data.MasterplanDiagram">
+		<property name="colourAttribute"><value>${status}</value></property>
+	</bean>
+	
+	<bean id="portfolioDiagram" class="de.iteratec.iteraplan.webtests.input.data.PortfolioDiagram">
+		<property name="xAxisAttribute"><value>${status}</value></property>
+    	<property name="yAxisAttribute"><value>${operating.expenses}</value></property>
+    	<property name="sizeAttribute"><value>${complexity}</value></property>
+    	<property name="dimensionAttribute"><value>${accountability}</value></property>
+	</bean>
+	
+	<bean id="clusterDiagram" class="de.iteratec.iteraplan.webtests.input.data.ClusterDiagram">
+		<property name="colourAttribute"><value>${status}</value></property>
+		<property name="colourToSet"><value>${peach}</value></property>
+    	<property name="systems">
+    		<list><value>1</value><value>2</value></list>
+    	</property>
+	</bean>
+	
+	<bean id="isSuccessorList" class="de.iteratec.iteraplan.webtests.input.data.InformationSystem">
+		<property name="name"><value>${is.successor}</value></property>
+	</bean>
+  
+    <bean id="tcSuccessorSystem" class="de.iteratec.iteraplan.webtests.input.data.InformationSystem">
+        <property name="name"><value>${tc.successor}</value></property>
+    </bean>
+	
+</beans>

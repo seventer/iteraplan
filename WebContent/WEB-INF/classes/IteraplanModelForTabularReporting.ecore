@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="model"
+    nsURI="platform:/resource/iteraplan/src/java/main/de/iteratec/iteraplan/xmi/IteraplanModelForTabularReporting.ecore"
+    nsPrefix="de.iteratec.iteraplan.model">
+  <eClassifiers xsi:type="ecore:EClass" name="ArchitecturalDomain">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//ArchitecturalDomain" eOpposite="#//ArchitecturalDomain/children"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="-1" eType="#//ArchitecturalDomain" eOpposite="#//ArchitecturalDomain/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="technicalComponentReleases"
+        unique="false" upperBound="-1" eType="#//TechnicalComponentRelease" eOpposite="#//TechnicalComponentRelease/architecturalDomains"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BusinessDomain">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//BusinessDomain" eOpposite="#//BusinessDomain/children"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="-1" eType="#//BusinessDomain" eOpposite="#//BusinessDomain/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessFunctions" unique="false"
+        upperBound="-1" eType="#//BusinessFunction" eOpposite="#//BusinessFunction/businessDomains"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessUnits" unique="false"
+        upperBound="-1" eType="#//BusinessUnit" eOpposite="#//BusinessUnit/businessDomains"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessObjects" unique="false"
+        upperBound="-1" eType="#//BusinessObject" eOpposite="#//BusinessObject/businessDomains"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessProcesses" unique="false"
+        upperBound="-1" eType="#//BusinessProcess" eOpposite="#//BusinessProcess/businessDomains"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="products" unique="false"
+        upperBound="-1" eType="#//Product" eOpposite="#//Product/businessDomains"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BusinessFunction">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//BusinessFunction" eOpposite="#//BusinessFunction/children"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="-1" eType="#//BusinessFunction" eOpposite="#//BusinessFunction/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessDomains" unique="false"
+        upperBound="-1" eType="#//BusinessDomain" eOpposite="#//BusinessDomain/businessFunctions"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessObjects" unique="false"
+        upperBound="-1" eType="#//BusinessObject" eOpposite="#//BusinessObject/businessFunctions"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemReleases"
+        unique="false" upperBound="-1" eType="#//InformationSystemRelease" eOpposite="#//InformationSystemRelease/businessFunctions"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BusinessMapping">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessProcess" unique="false"
+        eType="#//BusinessProcess" eOpposite="#//BusinessProcess/businessMappings"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessUnit" unique="false"
+        eType="#//BusinessUnit" eOpposite="#//BusinessUnit/businessMappings"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemRelease"
+        eType="#//InformationSystemRelease" eOpposite="#//InformationSystemRelease/businessMappings"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="product" unique="false"
+        eType="#//Product" eOpposite="#//Product/businessMappings"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BusinessUnit">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//BusinessUnit" eOpposite="#//BusinessUnit/children"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//BusinessUnit" eOpposite="#//BusinessUnit/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessMappings" unique="false"
+        upperBound="-1" eType="#//BusinessMapping" eOpposite="#//BusinessMapping/businessUnit"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessDomains" unique="false"
+        upperBound="-1" eType="#//BusinessDomain" eOpposite="#//BusinessDomain/businessUnits"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BusinessObject">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//BusinessObject" eOpposite="#//BusinessObject/children"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="-1" eType="#//BusinessObject" eOpposite="#//BusinessObject/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessDomains" unique="false"
+        upperBound="-1" eType="#//BusinessDomain" eOpposite="#//BusinessDomain/businessObjects"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessFunctions" unique="false"
+        upperBound="-1" eType="#//BusinessFunction" eOpposite="#//BusinessFunction/businessObjects"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="generalisation" unique="false"
+        eType="#//BusinessObject" eOpposite="#//BusinessObject/specialisations"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="specialisations" unique="false"
+        upperBound="-1" eType="#//BusinessObject" eOpposite="#//BusinessObject/generalisation"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemReleaseAssociations"
+        unique="false" upperBound="-1" eType="#//Isr2BoAssociation" eOpposite="#//Isr2BoAssociation/businessObject"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="transports" unique="false"
+        upperBound="-1" eType="#//Transport" eOpposite="#//Transport/businessObject"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BusinessProcess">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//BusinessProcess" eOpposite="#//BusinessProcess/children"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="-1" eType="#//BusinessProcess" eOpposite="#//BusinessProcess/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessDomains" unique="false"
+        upperBound="-1" eType="#//BusinessDomain" eOpposite="#//BusinessDomain/businessProcesses"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessMappings" unique="false"
+        upperBound="-1" eType="#//BusinessMapping" eOpposite="#//BusinessMapping/businessProcess"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InformationSystemDomain">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//InformationSystemDomain" eOpposite="#//InformationSystemDomain/children"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="-1" eType="#//InformationSystemDomain" eOpposite="#//InformationSystemDomain/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemReleases"
+        unique="false" upperBound="-1" eType="#//InformationSystemRelease" eOpposite="#//InformationSystemRelease/informationSystemDomains"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InformationSystemInterface">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="direction" unique="false"
+        eType="#//Direction"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemReleaseA"
+        unique="false" lowerBound="1" eType="#//InformationSystemRelease" eOpposite="#//InformationSystemRelease/interfacesReleaseA"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemReleaseB"
+        unique="false" lowerBound="1" eType="#//InformationSystemRelease" eOpposite="#//InformationSystemRelease/interfacesReleaseB"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="technicalComponentReleases"
+        unique="false" upperBound="-1" eType="#//TechnicalComponentRelease" eOpposite="#//TechnicalComponentRelease/informationSystemInterfaces"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="transports" unique="false"
+        upperBound="-1" eType="#//Transport" eOpposite="#//Transport/informationSystemInterface"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InformationSystemRelease">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="version" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="typeOfStatus" unique="false"
+        eType="#//TypeOfStatus"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="interfacesReleaseA" unique="false"
+        upperBound="-1" eType="#//InformationSystemInterface" eOpposite="#//InformationSystemInterface/informationSystemReleaseA"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="interfacesReleaseB" unique="false"
+        upperBound="-1" eType="#//InformationSystemInterface" eOpposite="#//InformationSystemInterface/informationSystemReleaseB"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemDomains"
+        unique="false" upperBound="-1" eType="#//InformationSystemDomain" eOpposite="#//InformationSystemDomain/informationSystemReleases"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//InformationSystemRelease" eOpposite="#//InformationSystemRelease/children"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="-1" eType="#//InformationSystemRelease" eOpposite="#//InformationSystemRelease/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="successors" unique="false"
+        upperBound="-1" eType="#//InformationSystemRelease" eOpposite="#//InformationSystemRelease/predecessors"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="predecessors" unique="false"
+        upperBound="-1" eType="#//InformationSystemRelease" eOpposite="#//InformationSystemRelease/successors"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessObjectAssociations"
+        unique="false" upperBound="-1" eType="#//Isr2BoAssociation" eOpposite="#//Isr2BoAssociation/informationSystemRelease"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="infrastructureElements"
+        unique="false" upperBound="-1" eType="#//InfrastructureElement" eOpposite="#//InfrastructureElement/informationSystemReleases"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="projects" unique="false"
+        upperBound="-1" eType="#//Project" eOpposite="#//Project/informationSystemReleases"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="technicalComponentReleases"
+        upperBound="-1" eType="#//TechnicalComponentRelease" eOpposite="#//TechnicalComponentRelease/informationSystemReleases"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessMappings" unique="false"
+        upperBound="-1" eType="#//BusinessMapping" eOpposite="#//BusinessMapping/informationSystemRelease"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessFunctions" unique="false"
+        upperBound="-1" eType="#//BusinessFunction" eOpposite="#//BusinessFunction/informationSystemReleases"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="baseComponents" unique="false"
+        upperBound="-1" eType="#//InformationSystemRelease" eOpposite="#//InformationSystemRelease/parentComponents"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parentComponents" unique="false"
+        upperBound="-1" eType="#//InformationSystemRelease" eOpposite="#//InformationSystemRelease/baseComponents"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="runtimePeriod" eType="#//RuntimePeriod"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InfrastructureElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemReleases"
+        unique="false" upperBound="-1" eType="#//InformationSystemRelease" eOpposite="#//InformationSystemRelease/infrastructureElements"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//InfrastructureElement" eOpposite="#//InfrastructureElement/children"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="-1" eType="#//InfrastructureElement" eOpposite="#//InfrastructureElement/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="technicalComponentReleaseAssociations"
+        unique="false" upperBound="-1" eType="#//Tcr2IeAssociation" eOpposite="#//Tcr2IeAssociation/infrastructureElement"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Product">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//Product" eOpposite="#//Product/children"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//Product" eOpposite="#//Product/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessDomains" unique="false"
+        upperBound="-1" eType="#//BusinessDomain" eOpposite="#//BusinessDomain/products"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessMappings" unique="false"
+        upperBound="-1" eType="#//BusinessMapping" eOpposite="#//BusinessMapping/product"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Project">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//Project" eOpposite="#//Project/children"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//Project" eOpposite="#//Project/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemReleases"
+        unique="false" upperBound="-1" eType="#//InformationSystemRelease" eOpposite="#//InformationSystemRelease/projects"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="runtimePeriod" eType="#//RuntimePeriod"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TechnicalComponentRelease">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" unique="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="version" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="availableForInterfaces"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemInterfaces"
+        unique="false" upperBound="-1" eType="#//InformationSystemInterface" eOpposite="#//InformationSystemInterface/technicalComponentReleases"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="typeOfStatus" unique="false"
+        lowerBound="1" eType="#//TypeOfStatus"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="architecturalDomains" unique="false"
+        upperBound="-1" eType="#//ArchitecturalDomain" eOpposite="#//ArchitecturalDomain/technicalComponentReleases"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemReleases"
+        unique="false" upperBound="-1" eType="#//InformationSystemRelease" eOpposite="#//InformationSystemRelease/technicalComponentReleases"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="infrastructureElementAssociations"
+        unique="false" upperBound="-1" eType="#//Tcr2IeAssociation" eOpposite="#//Tcr2IeAssociation/technicalComponentRelease"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="predecessors" unique="false"
+        upperBound="-1" eType="#//TechnicalComponentRelease" eOpposite="#//TechnicalComponentRelease/successors"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="successors" unique="false"
+        upperBound="-1" eType="#//TechnicalComponentRelease" eOpposite="#//TechnicalComponentRelease/predecessors"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="baseComponents" unique="false"
+        upperBound="-1" eType="#//TechnicalComponentRelease" eOpposite="#//TechnicalComponentRelease/parentComponents"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parentComponents" unique="false"
+        upperBound="-1" eType="#//TechnicalComponentRelease" eOpposite="#//TechnicalComponentRelease/baseComponents"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="runtimePeriod" eType="#//RuntimePeriod"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Transport">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="direction" unique="false"
+        eType="#//Direction"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemInterface"
+        unique="false" lowerBound="1" eType="#//InformationSystemInterface" eOpposite="#//InformationSystemInterface/transports"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessObject" unique="false"
+        lowerBound="1" eType="#//BusinessObject" eOpposite="#//BusinessObject/transports"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Tcr2IeAssociation">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="technicalComponentRelease"
+        unique="false" lowerBound="1" eType="#//TechnicalComponentRelease" eOpposite="#//TechnicalComponentRelease/infrastructureElementAssociations"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="infrastructureElement"
+        unique="false" lowerBound="1" eType="#//InfrastructureElement" eOpposite="#//InfrastructureElement/technicalComponentReleaseAssociations"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Isr2BoAssociation">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningUserEntities" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationUser" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastModificationTime" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemRelease"
+        unique="false" lowerBound="1" eType="#//InformationSystemRelease" eOpposite="#//InformationSystemRelease/businessObjectAssociations"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="businessObject" unique="false"
+        lowerBound="1" eType="#//BusinessObject" eOpposite="#//BusinessObject/informationSystemReleaseAssociations"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="TypeOfStatus">
+    <eLiterals name="UNDEFINED" literal="typeOfStatus_undefined"/>
+    <eLiterals name="CURRENT" value="1" literal="typeOfStatus_current"/>
+    <eLiterals name="PLANNED" value="2" literal="typeOfStatus_planned"/>
+    <eLiterals name="TARGET" value="3" literal="typeOfStatus_target"/>
+    <eLiterals name="INACTIVE" value="4" literal="typeOfStatus_inactive"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Direction">
+    <eLiterals name="UNDEFINED" literal=""/>
+    <eLiterals name="NO_DIRECTION" value="1" literal="-"/>
+    <eLiterals name="FIRST_TO_SECOND" value="2" literal="->"/>
+    <eLiterals name="SECOND_TO_FIRST" value="3" literal="&lt;-"/>
+    <eLiterals name="BOTH_DIRECTIONS" value="4" literal="&lt;->"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="RuntimePeriod" instanceClassName="de.iteratec.iteraplan.model.RuntimePeriod"/>
+</ecore:EPackage>

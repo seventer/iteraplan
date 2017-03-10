@@ -1,0 +1,15 @@
+Observe following hints when you update one of the software packages in this directory.
+
+Apache Tomcat
+---------------
+ * Make sure to edit the included server.xml according to the iteraplan installation instructions.
+   That means, all <Connector> elements must be amended with the attribute URIEncoding="UTF-8". 
+   The full-text search feature will not work properly with special characters if you miss this step.
+ * Strip down the contents of the Tomcat bundle. Tomcat ships with webapps with documentation etc. 
+   which are not needed by iteraplan. Remove all web-apps except the ROOT directory from the webapps
+   directory. This helps reduce the download size of iteraplan bundles.
+ * Update the bundle.properties file whenever the file names for Tomcat or HSQLDB changed.
+ 
+HSQLDB
+--------------
+ * There are typically no specialities to consider. Feel free to update this file if you find any.

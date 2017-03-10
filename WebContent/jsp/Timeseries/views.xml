@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+	"-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+	"http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+	
+<tiles-definitions>
+	
+	<definition name="buildingBlockDetailViewWithTimeseriesLayout" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="timeseriesDetailDialog" value="timeseriesDetail"/>
+	</definition>
+
+	<definition name="timeseriesDetail" template="/jsp/Timeseries/TimeseriesDetailTemplate.jsp">
+		<put-attribute name="timeseriesDialogContent" value="/jsp/Timeseries/tiles/TimeseriesDetailsDialogContent.jsp" />
+	</definition>
+
+</tiles-definitions>

@@ -1,0 +1,21 @@
+.ui-button {
+	margin-left: 0px;
+}
+
+.ui-button-icon-only .ui-button-text {
+	padding: 0.35em;
+}
+
+.ui-autocomplete-input {
+	margin: 0;
+	padding: 0.45em 0 0.45em 0.45em;
+}
+
+.ui-autocomplete {
+	max-height: 22em;
+	overflow-y: auto;
+	/* prevent horizontal scrollbar */
+	overflow-x: hidden;
+	/* add padding to account for vertical scrollbar */
+	padding-right: 20px;
+}

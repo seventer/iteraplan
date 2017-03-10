@@ -1,0 +1,359 @@
+<project name="Configuration" default="readme" basedir=".">
+	<description>	
+###############################################################################
+
+		iteraplan build.xml file for deployment and administration
+
+###############################################################################
+  </description>
+	<!-- 
+##########################################################################
+	 properties and paths
+########################################################################## 
+-->
+
+	<property file="${basedir}/build.properties" />
+	<property file="${dir.dbConfig}/db.properties" />
+
+	<path id="project.classpath">
+		<pathelement location="application/WEB-INF/classes" />
+		<fileset dir="application/WEB-INF/lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement location="application/WEB-INF" />
+		<pathelement location="lib" />
+	</path>
+
+	<!-- 
+##########################################################################
+	 taskdefs
+########################################################################## 
+-->
+
+	<!-- Ant-Contrib for things like <propertyregex> -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="various/lib/ant-contrib.jar" />
+		</classpath>
+	</taskdef>
+
+
+	<!-- 
+##########################################################################
+	 targets
+########################################################################## 
+-->
+
+	<target name="readme" description="Print the README file">
+		<loadfile property="readme.contents" srcfile="README">
+		</loadfile>
+		<echo>
+			Contents of the README file:
+			${readme.contents}
+		</echo>
+	</target>
+
+	<target name="prepare" description="Set up the build environment">
+		<tstamp>
+			<format property="TIMESTAMP-FULL" pattern="yyyy-MM-dd-HH-mm-ss" />
+		</tstamp>
+	</target>
+
+	<target name="showDbConfig">
+		<echo message="RDBMS: ${database.rdbmsName}" />
+		<echo message="Server: ${database.serverAddress}" />
+		<echo message="Port: ${database.serverPort}" />
+		<echo message="Name: ${database.name}" />
+		<echo message="User: ${database.login}" />
+		<echo message="Password: ${database.password}" />
+		<echo message="Driver class: ${database.driver}" />
+		<echo message="Validation query: ${database.validationquery}" />
+	</target>
+
+	<target name="build.war" depends="showDbConfig, create.war">
+		<echo message="Creating the iterplan WAR file for deployment to target dir: ${dist.dir}" />
+
+		<copy file="${deploy.warFilename}.war" tofile="${dist.dir}/${deploy.warFilename}.war" overwrite="true" />
+		<delete file="${deploy.warFilename}.war" />
+
+	</target>
+
+	<target name="create.war" depends="handle.context, springconfig, handle.log.file, config.websecurity">
+		<war warfile="${deploy.warFilename}.war" webxml="application/WEB-INF/web.xml" manifest="application/META-INF/MANIFEST.MF">
+			<zipfileset dir="application" prefix="" />
+		</war>
+	</target>
+
+	<target name="handle.context">
+		<copy file="various/context.xml.template" tofile="application/META-INF/context.xml" overwrite="true">
+			<filterset>
+				<filter token="WEBAPP_PATH" value="/${deploy.warFilename}" />
+				<filter token="DB.DATA.SOURCE" value="${login.datasource}" />
+				<filter token="DB.USER.NAME" value="${iturm.database.login}" />
+				<filter token="DB.USER.PASSWORD" value="${iturm.database.password}" />
+				<filter token="DB.DRIVER.CLASS" value="${database.driver}" />
+				<filter token="DB.CONNECT.URL" value="${database.url.prefix}${database.serverAddress}:${database.serverPort}${database.url.separator}${iturm.database.name}" />
+				<filter token="DB.VALIDATIONQUERY" value="${database.validationquery}" />
+			</filterset>
+		</copy>
+	</target>
+
+	<target name="springconfig">
+		<copy file="various/iteraplan-db.properties.template" tofile="application/WEB-INF/classes/iteraplan-db.properties" overwrite="true">
+			<filterset>
+				<filter token="DB_VALIDATIONQUERY" value="${database.validationquery}" />
+				<filter token="DB_DIALECT" value="${hibernate.dialect}" />
+				<filter token="DB_DRIVER" value="${database.driver}" />
+				<filter token="DB_URL" value="${database.url.prefix}${database.serverAddress}:${database.serverPort}${database.url.separator}${database.name}" />
+				<filter token="DB_USER" value="${database.login}" />
+				<filter token="DB_PASSWORD" value="${database.password}" />
+				<filter token="DB_JNDI_DATASOURCE" value="${login.datasource}" />
+			</filterset>
+		</copy>
+	</target>
+
+	<target name="config.websecurity">
+		<copy file="various/web.xml.template" tofile="application/WEB-INF/web.xml" overwrite="true">
+			<filterset>
+				<filter token="WEB.SECURITY.TRANSPORT" value="${web.security.transport}" />
+				<filter token="DWR.DEBUG" value="${dwr.debug}" />
+				<filter token="DB.DATA.SOURCE" value="${login.datasource}" />
+				<filter token="HTTP.ERRORCODE.FILTERED" value="${http.errorcode.filtered}" />
+			</filterset>
+		</copy>
+	</target>
+
+	<target name="handle.log.file" description="">
+
+		<!-- The following unfortunately does not work with antinstaller! "No supported regular pattern matcher found" ... -->
+
+		<!-- Log4J only accepts paths with forward slashes, so the path must be processed -->
+		<!--
+		<property name="log.path.adjusted" value="${log.path}\" />
+		<propertyregex 
+			input="${log.path.adjusted}" 
+			property="log.path.forwardslashes" 
+			regexp="([^\\])(\\)+"
+			replace="\1/"
+		 />			
+		<propertyregex 
+			input="${log.path.forwardslashes}" 
+			property="log.path.proper" 
+			regexp="(.*[^/])(/)*"
+			replace="\1"
+		 />
+		-->
+
+		<!-- Replace all backslashes with forward slashes  -->
+		<echo file="logpath.tmp">log.path.proper=${log.path}</echo>
+		<replace file="logpath.tmp" token="\" value="/" />
+		<property file="logpath.tmp" />
+		<delete file="logpath.tmp" />
+
+		<echo file="auditlogpath.tmp">auditlog.path.proper=${auditlog.path}</echo>
+		<replace file="auditlogpath.tmp" token="\" value="/" />
+		<property file="auditlogpath.tmp" />
+		<delete file="auditlogpath.tmp" />
+
+		<!-- Replace all backslashes with forward slashes  -->
+		<echo file="indexpath.tmp">hibernate.search.index.proper=${hibernate.search.index}</echo>
+		<replace file="indexpath.tmp" token="\" value="/" />
+		<property file="indexpath.tmp" />
+		<delete file="indexpath.tmp" />
+
+		<!-- When audit logging is deactivated, choose the same directory as normal logging for creating the (empty and unused) audit log file. -->
+		<condition property="auditlog.path.final" value="${log.path.proper}">
+			<equals arg1="${auditLogging}" arg2="false" casesensitive="false" />
+		</condition>
+		<property name="auditlog.path.final" value="${auditlog.path.proper}" />
+		<condition property="auditlog.type" value="DEBUG">
+			<istrue value="${auditLogging}" />
+		</condition>
+		<condition property="auditlog.type" value="INFO">
+			<isfalse value="${auditLogging}" />
+		</condition>
+		<copy file="various/log4j.properties.template.production" tofile="application/WEB-INF/classes/log4j.properties" overwrite="true">
+			<filterset>
+				<filter token="LOG_FILE" value="${log.path.proper}/${log.filename}" />
+				<filter token="LOGIN_LOG_FILE" value="${log.path.proper}/${loginLog.filename}" />
+				<filter token="AUDIT.LOGGING.PATH" value="${auditlog.path.final}/${auditLogging.filename}" />
+				<filter token="AUDIT_LOG_TYPE" value="${auditlog.type}" />
+			</filterset>
+		</copy>
+
+		<!-- copy audit log information to iteraplan.properties -->
+		<copy file="various/iteraplan.properties.template" tofile="application/WEB-INF/classes/iteraplan.properties" overwrite="true">
+			<filterset>
+				<filter token="LASTMODIFICATION.LOGGING.ENABLED" value="${lastmodificationLogging}" />
+				<filter token="HIBERNATE.SEARCH.INDEX" value="${hibernate.search.index.proper}" />
+				<filter token="AUDIT.LOGGING.ENABLED" value="${auditLogging}" />
+				<filter token="HISTORY.ENABLED" value="${history.enabled}" />
+				<filter token="ADMIN.EMAIL" value="${admin.email}" />
+			</filterset>
+		</copy>
+	</target>
+
+	<target name="database.init" depends="springconfig, database.insert.schema" description="Inserts initialisation data in the database">
+		<echo>
+           -- inserting initialisation data .... --
+        </echo>
+
+		<echo message="Importing XMI InitialData into the database" />
+		<java classname="de.iteratec.iteraplan.xmi.XmiImport" failonerror="true" fork="true" maxmemory="256m">
+			<classpath refid="project.classpath" />
+
+			<arg value="INITIAL_DATA" />
+		</java>
+		<echo>
+           -- initialisation data successfully added. --
+		</echo>
+	</target>
+
+	<target name="database.insert.schema" description="Creates the database. All old data will be deleted!">
+		<sql driver="${database.driver}" password="${database.password}" userid="${database.login}" src="various/schema-export-${database.rdbmsName}.sql"
+			url="${database.url.prefix}${database.serverAddress}:${database.serverPort}${database.url.separator}${database.name}" onerror="continue">
+			<classpath refid="project.classpath" />
+		</sql>
+	</target>
+
+
+	<!-- iTURM related targets -->
+
+	<target name="turm.build.war" depends="turm.handle.context, turm.handle.security, turm.handle.log, turm.handle.properties, turm.handle.web">
+		<echo message="Creating the iterplan WAR file for deployment" />
+		<echo message="Target dir: ${dist.dir}" />
+		<war warfile="${dist.dir}/${turm.deploy.name}.war" webxml="iturm/explodedWar/WEB-INF/web.xml" manifest="iturm/explodedWar/META-INF/MANIFEST.MF">
+			<zipfileset dir="iturm/explodedWar" prefix="" />
+		</war>
+	</target>
+
+	<target name="turm.handle.context">
+		<echo message="turm ds: ${turm.datasource}" />
+		<copy file="iturm/templates/context.xml.template" tofile="iturm/explodedWar/META-INF/context.xml" overwrite="true">
+			<filterset>
+				<filter token="WEBAPP_PATH" value="/${turm.deploy.name}" />
+				<filter token="DB.JNDI.DATASOURCE" value="${turm.datasource}" />
+				<filter token="DB.USER.NAME" value="${iturm.database.login}" />
+				<filter token="DB.USER.PASSWORD" value="${iturm.database.password}" />
+				<filter token="DB.DRIVER.CLASS" value="${database.driver}" />
+				<filter token="DB.CONNECT.URL" value="${database.url.prefix}${iturm.database.serverAddress}:${iturm.database.serverPort}${database.url.separator}${iturm.database.name}" />
+				<filter token="DB.VALIDATIONQUERY" value="${database.validationquery}" />
+			</filterset>
+		</copy>
+	</target>
+
+	<target name="turm.handle.security">
+		<copy file="iturm/templates/applicationContext-spring-security.xml.template" tofile="iturm/explodedWar/WEB-INF/applicationContext-spring-security.xml" overwrite="true">
+			<filterset>
+				<filter token="DB.JNDI.DATASOURCE" value="${turm.datasource}" />
+			</filterset>
+		</copy>
+	</target>
+
+	<target name="turm.handle.properties">
+		<copy file="iturm/templates/turm.properties.template" tofile="iturm/explodedWar/WEB-INF/classes/turm.properties" overwrite="true">
+			<filterset>
+				<filter token="DB.JNDI.DATASOURCE" value="${turm.datasource}" />
+			</filterset>
+		</copy>
+	</target>
+
+	<target name="turm.handle.web">
+		<copy file="iturm/templates/web.xml.template" tofile="iturm/explodedWar/WEB-INF/web.xml" overwrite="true">
+			<filterset>
+				<filter token="WEB.SECURITY.TRANSPORT" value="${web.security.transport}" />
+				<filter token="DB.DATA.SOURCE" value="${turm.datasource}" />
+			</filterset>
+		</copy>
+	</target>
+
+	<target name="turm.handle.log" description="">
+
+		<!-- Replace all backslashes with forward slashes  -->
+		<echo file="turm.logpath.tmp">turm.log.path.proper=${turm.log.path}</echo>
+		<replace file="turm.logpath.tmp" token="\" value="/" />
+		<property file="turm.logpath.tmp" />
+		<delete file="turm.logpath.tmp" />
+
+		<echo message="Log file: ${turm.log.path.proper}/iturm.log" />
+		<copy file="iturm/templates/log4j.properties.template.production" tofile="iturm/explodedWar/WEB-INF/classes/log4j.properties" overwrite="true">
+			<filterset>
+				<filter token="LOG_FILE" value="${turm.log.path.proper}/iturm.log" />
+			</filterset>
+		</copy>
+
+	</target>
+
+	<target name="turm.database.init" depends="turm.database.insert.schema" description="Inserts iTURM initialisation data in the database">
+		<sql driver="${database.driver}" password="${iturm.database.password}" userid="${iturm.database.login}" src="iturm/sql/${database.rdbmsName}/insertInitialData.sql"
+			url="${database.url.prefix}${iturm.database.serverAddress}:${iturm.database.serverPort}${database.url.separator}${iturm.database.name}" onerror="continue">
+			<classpath refid="project.classpath">
+			</classpath>
+		</sql>
+		<echo>
+			-- initialisation data successfully added. --
+		</echo>
+	</target>
+
+	<target name="turm.database.insert.schema" description="Creates the iTURM database. All old data will be deleted!">
+		<echo> Using Driver ${database.driver} ${database.rdbmsName}</echo>
+		<sql driver="${database.driver}" password="${iturm.database.password}" userid="${iturm.database.login}" src="iturm/sql/${database.rdbmsName}/createSchema.sql"
+			url="${database.url.prefix}${iturm.database.serverAddress}:${iturm.database.serverPort}${database.url.separator}${iturm.database.name}" onerror="continue">
+			<classpath refid="project.classpath">
+			</classpath>
+		</sql>
+	</target>
+
+	<target name="jdbc.drivers.init" description="Copy the JDBC driver libraries to the servlet container engine">
+		<available file="${jdbc.drivers.dir}/lib" type="dir" property="jdbc.copy2lib" />
+		<condition property="jdbc.copy2commonlib">
+			<and>
+				<available file="${jdbc.drivers.dir}/common/lib" type="dir" />
+				<isfalse value="${jdbc.copy2lib}" />
+			</and>
+		</condition>
+		<condition property="jdbc.copy2serverlib">
+			<and>
+				<available file="${jdbc.drivers.dir}/server/lib" type="dir" />
+				<isfalse value="${jdbc.copy2lib}" />
+				<isfalse value="${jdbc.copy2commonlib}" />
+			</and>
+		</condition>
+		<condition property="jdbc.copytargetfound">
+			<or>
+				<istrue value="${jdbc.copy2lib}" />
+				<istrue value="${jdbc.copy2commonlib}" />
+				<istrue value="${jdbc.copy2serverlib}" />
+			</or>
+		</condition>
+		<antcall target="jdbc.drivers.copylib" />
+		<antcall target="jdbc.drivers.copycommonlib" />
+		<antcall target="jdbc.drivers.copyserverlib" />
+		<antcall target="jdbc.drivers.copysuccess" />
+		<antcall target="jdbc.drivers.copyerror" />
+	</target>
+	<target name="jdbc.drivers.copylib" description="Copy the JDBC driver libraries to the servlet container engine lib directory if possible" if="jdbc.copy2lib">
+		<copy file="${jdbc.driver.mysql}" todir="${jdbc.drivers.dir}/lib" overwrite="false" />
+		<copy file="${jdbc.driver.oracle}" todir="${jdbc.drivers.dir}/lib" overwrite="false" />
+		<copy file="${jdbc.driver.sqlserver}" todir="${jdbc.drivers.dir}/lib" overwrite="false" />
+	</target>
+	<target name="jdbc.drivers.copycommonlib" description="Copy the JDBC driver libraries to the servlet container engine common lib directory if possible" if="jdbc.copy2commonlib">
+		<copy file="${jdbc.driver.mysql}" todir="${jdbc.drivers.dir}/common/lib" overwrite="false" />
+		<copy file="${jdbc.driver.oracle}" todir="${jdbc.drivers.dir}/common/lib" overwrite="false" />
+		<copy file="${jdbc.driver.sqlserver}" todir="${jdbc.drivers.dir}/common/lib" overwrite="false" />
+	</target>
+	<target name="jdbc.drivers.copyserverlib" description="Copy the JDBC driver libraries to the servlet container engine server lib directory if possible" if="jdbc.copy2serverlib">
+		<copy file="${jdbc.driver.mysql}" todir="${jdbc.drivers.dir}/server/lib" overwrite="false" />
+		<copy file="${jdbc.driver.oracle}" todir="${jdbc.drivers.dir}/server/lib" overwrite="false" />
+		<copy file="${jdbc.driver.sqlserver}" todir="${jdbc.drivers.dir}/server/lib" overwrite="false" />
+	</target>
+	<target name="jdbc.drivers.copysuccess" description="Show success message if at least one copy operation was done" if="jdbc.copytargetfound">
+		<echo>-- JDBC driver libraries were added successfully. --</echo>
+	</target>
+	<target name="jdbc.drivers.copyerror" description="Show error message if no copy operation were done" unless="jdbc.copytargetfound">
+		<echo>-- No appropriate driver library director could be found at the given servlet enginge location! --</echo>
+	</target>
+</project>

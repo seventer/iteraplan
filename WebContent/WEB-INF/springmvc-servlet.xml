@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+           http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd
+           http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd">
+
+
+	<context:annotation-config />
+	<!-- Enable autowiring -->
+	<context:component-scan base-package="de.iteratec.iteraplan.presentation" />
+
+	<dwr:controller id="dwrController" debug="false" />
+
+	<aop:config proxy-target-class="true">
+		<aop:pointcut id="saveComponentModel"
+			expression="execution(* de.iteratec.iteraplan.presentation.dialog.BuildingBlockFrontendService.saveComponentModel(..))" />
+		<aop:pointcut id="saveNewComponentModel"
+			expression="execution(* de.iteratec.iteraplan.presentation.dialog.BuildingBlockFrontendService.saveNewComponentModel(..))" />
+		<aop:pointcut id="saveNewReleaseComponentModelISR"
+			expression="execution(* de.iteratec.iteraplan.presentation.dialog.InformationSystem.InformationSystemReleaseFrontendService.saveNewReleaseComponentModel(..))" />
+		<aop:pointcut id="saveNewReleaseComponentModelTCR"
+			expression="execution(* de.iteratec.iteraplan.presentation.dialog.TechnicalComponent.TechnicalComponentReleaseFrontendService.saveNewReleaseComponentModel(..))" />
+		<aop:pointcut id="saveCopyReleaseComponentModelISR"
+			expression="execution(* de.iteratec.iteraplan.presentation.dialog.InformationSystem.InformationSystemReleaseFrontendService.saveCopyReleaseComponentModel(..))" />
+		<aop:pointcut id="saveCopyReleaseComponentModelTCR"
+			expression="execution(* de.iteratec.iteraplan.presentation.dialog.TechnicalComponent.TechnicalComponentReleaseFrontendService.saveCopyReleaseComponentModel(..))" />
+
+		<aop:aspect ref="subscriptionsAspect">
+			<aop:around pointcut-ref="saveComponentModel" method="saveComponentModelAdvice" />
+			<aop:around pointcut-ref="saveNewComponentModel" method="saveNewComponentModelAdvice" />
+			<aop:around pointcut-ref="saveNewReleaseComponentModelISR"
+				method="saveNewReleaseComponentModelAdvice" />
+			<aop:around pointcut-ref="saveNewReleaseComponentModelTCR"
+				method="saveNewReleaseComponentModelAdvice" />
+			<aop:around pointcut-ref="saveCopyReleaseComponentModelISR"
+				method="saveCopyReleaseComponentModelAdvice" />
+			<aop:around pointcut-ref="saveCopyReleaseComponentModelTCR"
+				method="saveCopyReleaseComponentModelAdvice" />
+		</aop:aspect>
+	</aop:config>
+
+	<!--
+		=================================== 
+		==== Handler Mappers: Infer Responsible controller from requested URIs
+		==== Following beans are ordered by their precedence (see 'order' property)
+		===================================
+	-->
+
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="order" value="-1" />
+		<property name="alwaysUseFullPath" value="true" />
+		<property name="interceptors">
+			<list>
+				<ref bean="openSessionInViewInterceptor" />
+				<ref bean="localeInterceptor" />
+			</list>
+		</property>
+		<property name="mappings">
+			<props>
+				<prop key="/dwr/call/**/*">dwrController</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="order" value="0" />
+		<property name="alwaysUseFullPath" value="true" />
+		<property name="interceptors">
+			<list>
+				<ref bean="localeInterceptor" />
+			</list>
+		</property>
+		<property name="mappings">
+			<props>
+				<prop key="/dwr/**/*">dwrController</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- Maps request paths to flows in the flowRegistry; e.g. a path of /hotels/booking 
+		looks for a flow with id "hotels/booking" -->
+	<bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping">
+		<property name="order" value="1" />
+		<property name="flowRegistry" ref="flowRegistry" />
+		<property name="interceptors" ref="interceptorChain" />
+		<property name="flowUrlHandler" ref="singleFlowPerEntityFlowUrlHandler" />
+	</bean>
+
+	<bean
+		class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">
+		<property name="order" value="2" />
+		<property name="caseSensitive" value="false" />
+		<property name="urlDecode" value="true" />
+		<property name="interceptors" ref="interceptorChain" />
+	</bean>
+
+	<!-- Enable @Controller annotations -->
+    <!-- Please note:
+         From Spring version 3.1 and higher, there are some new types, which Spring recommends to use
+         in order to be able to use some new features from 3.1 and higher, like for example
+         "RedirectAttributes" parameter in @RequestMapping methods.
+         The old type "DefaultAnnotationHandlerMapping" is not yet deprecated, but it only supports
+         features up to Spring version 3.0.
+         The new types are "RequestMappingHandlerMapping" and "RequestMappingHandlerAdapter".
+         Therefore, when (for example) flash attributes are used like in "GuiController", then the
+         access is realized by "RequestContextUtils.get[Inner|Outer]FlashMap instead of using
+         the the method parameter "RedirectAttributes", until the configuration will be changed accordingly:
+         http://docs.spring.io/spring/docs/3.1.x/spring-framework-reference/html/mvc.html#mvc-ann-requestmapping-31-vs-30  
+       -->
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<description>Use the @RequestMapping defined in Controller beans
+		</description>
+		<property name="order" value="3" />
+		<property name="urlDecode" value="true" />
+		<property name="interceptors" ref="interceptorChain" />
+		<property name="defaultHandler">
+
+			<!-- If no match found in @Controller-s, map path directly to a view to 
+				render; e.g. the "/intro" path would map to the view named "intro" This default 
+				handler should always be put into the HandlerMapping bean with the highest 
+				order value. Otherwise, lower-prio mappings won't get a chance to be called. -->
+			<bean class="org.springframework.web.servlet.mvc.UrlFilenameViewController" />
+		</property>
+	</bean>
+
+	<bean id="interceptorChain" class="java.util.ArrayList">
+		<description>Applies an interceptor chain to each mapped HTTP request
+		</description>
+		<constructor-arg type="java.util.Collection">
+			<list>
+				<!-- Annotated @Service classes, therefore not defined explicitly here -->
+				<ref bean="openSessionInViewInterceptor" />
+				<ref bean="loggingInterceptor" />
+				<ref bean="localeInterceptor" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean name="openSessionInViewInterceptor"
+		class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.SessionLocaleResolver"></bean>
+
+	<bean id="localeInterceptor" class="de.iteratec.iteraplan.presentation.LocaleInterceptor">
+		<property name="paramName" value="locale" />
+	</bean>
+
+	<!-- Enable @RequestMapping annotations -->
+	<!-- Dispatches requests mapped to POJO @Controllers implementations -->
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+
+	<!-- Dispatches requests mapped to org.springframework.web.servlet.mvc.Controller 
+		implementations -->
+	<bean
+		class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+
+	<!-- Handles Multipart file uploads to the web server -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	</bean>
+
+	<!-- Resolves logical view names returned by Controllers to Tiles; a view 
+		name to resolve is treated as the name of a tiles definition -->
+	<bean id="tilesViewResolver" class="org.springframework.js.ajax.AjaxUrlBasedViewResolver">
+		<property name="viewClass"
+			value="org.springframework.webflow.mvc.view.FlowAjaxTilesView" />
+	</bean>
+
+	<!-- Configures the Tiles layout system -->
+	<bean id="tilesConfigurer"
+		class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
+		<property name="definitions">
+			<list>
+				<value>/jsp/layouts/layouts.xml</value>
+				<value>/jsp/CommonViews.xml</value>
+				<value>/jsp/ArchitecturalDomain/views.xml</value>
+				<value>/jsp/AttributeType/views.xml</value>
+				<value>/jsp/DateInterval/views.xml</value>
+				<value>/jsp/AttributeTypeGroup/views.xml</value>
+				<value>/jsp/BusinessDomain/views.xml</value>
+				<value>/jsp/BusinessFunction/views.xml</value>
+				<value>/jsp/BusinessObject/views.xml</value>
+				<value>/jsp/BusinessProcess/views.xml</value>
+				<value>/jsp/BusinessUnit/views.xml</value>
+				<value>/jsp/BusinessMapping/views.xml</value>
+				<value>/jsp/Configuration/views.xml</value>
+				<value>/jsp/ConsistencyCheck/views.xml</value>
+				<value>/jsp/CustomDashboard/views.xml</value>
+				<value>/jsp/Dashboard/views.xml</value>
+				<value>/jsp/ExcelImport/views.xml</value>
+				<value>/jsp/GraphicalReporting/views.xml</value>
+				<value>/jsp/History/views.xml</value>
+				<value>/jsp/Import/views.xml</value>
+				<value>/jsp/InformationSystem/views.xml</value>
+				<value>/jsp/InformationSystemDomain/views.xml</value>
+				<value>/jsp/Interface/views.xml</value>
+				<value>/jsp/InfrastructureElement/views.xml</value>
+				<value>/jsp/IteraQl/views.xml</value>
+				<value>/jsp/MassUpdate/views.xml</value>
+				<value>/jsp/Miscellaneous/views.xml</value>
+				<value>/jsp/ObjectRelatedPermission/views.xml</value>
+				<value>/jsp/Overview/views.xml</value>
+				<value>/jsp/Product/views.xml</value>
+				<value>/jsp/Project/views.xml</value>
+				<value>/jsp/Role/views.xml</value>
+				<value>/jsp/SavedQueries/views.xml</value>
+				<value>/jsp/Search/views.xml</value>
+				<value>/jsp/SuccessorReport/views.xml</value>
+				<value>/jsp/SupportingQuery/views.xml</value>
+				<value>/jsp/TabularReporting/views.xml</value>
+				<value>/jsp/TechnicalComponent/views.xml</value>
+				<value>/jsp/Templates/views.xml</value>
+				<value>/jsp/Timeseries/views.xml</value>
+				<value>/jsp/User/views.xml</value>
+				<value>/jsp/UserGroup/views.xml</value>
+				<value>/jsp/XmiDeserialization/views.xml</value>
+			</list>
+		</property>
+		<property name="tilesProperties">
+			<props>
+				<prop key="org.apache.tiles.evaluator.AttributeEvaluator">
+					org.apache.tiles.evaluator.el.ELAttributeEvaluator
+				</prop>
+				<prop
+					key="org.apache.tiles.context.AbstractTilesApplicationContextFactory">
+					org.apache.tiles.servlet.context.wildcard.WildcardServletTilesApplicationContextFactory
+				</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="jacksonMessageConverter" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="jacksonMessageConverter"
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+
+	<!-- iteraplan flow handler implementation that only allows one flow per 
+		entity-id -->
+	<bean id="singleFlowPerEntityFlowUrlHandler"
+		class="de.iteratec.iteraplan.presentation.flow.SingleFlowPerEntityFlowUrlHandler" />
+
+	<bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter">
+		<property name="flowExecutor" ref="flowExecutor" />
+		<property name="cacheSeconds" value="5" />
+		<property name="flowUrlHandler" ref="singleFlowPerEntityFlowUrlHandler" />
+	</bean>
+
+	<!-- Executes flows: the entry point into the Spring Web Flow system -->
+	<!-- Spring Web Flow Configuration -->
+	<webflow:flow-executor id="flowExecutor"
+		flow-registry="flowRegistry">
+		<!-- Disabled POST-REDIRECT functionality, because of the LazyInitializationException. -->
+		<!-- At the moment there is no solution for that. See http://forum.springframework.org/showthread.php?t=58645 -->
+		<!-- for more information. There are plans in SWF 3.0 to resolve this issue. -->
+		<!-- <webflow:flow-execution-attributes> -->
+		<!-- <webflow:always-redirect-on-pause value="false"/> -->
+		<!-- </webflow:flow-execution-attributes> -->
+		<!-- Limit the number of active Flows/Snapshots per Flow -->
+		<webflow:flow-execution-repository
+			max-executions="-1" max-execution-snapshots="20" />
+		<webflow:flow-execution-listeners>
+			<!-- securityFlowExecutionListener not used atm			
+			<webflow:listener ref="securityFlowExecutionListener"
+				criteria="*" />
+			<webflow:listener ref="hibernateFlowExecutionListener"
+				criteria="*"/>
+			-->
+			<webflow:listener ref="customFlowExecutionListener"
+				criteria="*" />
+		</webflow:flow-execution-listeners>
+	</webflow:flow-executor>
+
+	<bean id="webFlowHelper" class="de.iteratec.iteraplan.presentation.flow.WebFlowHelper">
+		<constructor-arg index="0" ref="flowExecutor" />
+		<property name="lockTimeoutSeconds" value="60" />
+	</bean>
+
+	<webflow:flow-registry id="flowRegistry"
+		flow-builder-services="flowBuilderServices">
+		<webflow:flow-location path="/WEB-INF/flow/baseFlow.xml" />
+		<webflow:flow-location path="/WEB-INF/flow/timeseriesBaseFlow.xml" />
+		<webflow:flow-location path="/WEB-INF/flow/baseGraphicFlow.xml" />
+		<webflow:flow-location path="/WEB-INF/flow/architecturalDomainFlow.xml"
+			id="architecturaldomain/start" />
+		<webflow:flow-location path="/WEB-INF/flow/attributeTypeFlow.xml"
+			id="attributetype/start" />
+		<webflow:flow-location path="/WEB-INF/flow/attributeTypeGroupFlow.xml"
+			id="attributetypegroup/start" />
+		<webflow:flow-location path="/WEB-INF/flow/dateIntervalFlow.xml"
+			id="dateinterval/start" />
+		<webflow:flow-location path="/WEB-INF/flow/businessDomainFlow.xml"
+			id="businessdomain/start" />
+		<webflow:flow-location path="/WEB-INF/flow/businessFunctionFlow.xml"
+			id="businessfunction/start" />
+		<webflow:flow-location path="/WEB-INF/flow/businessObjectFlow.xml"
+			id="businessobject/start" />
+		<webflow:flow-location path="/WEB-INF/flow/businessProcessFlow.xml"
+			id="businessprocess/start" />
+		<webflow:flow-location path="/WEB-INF/flow/businessUnitFlow.xml"
+			id="businessunit/start" />
+		<webflow:flow-location path="/WEB-INF/flow/businessMappingFlow.xml"
+			id="businessmapping/start" />
+		<webflow:flow-location path="/WEB-INF/flow/importFlow.xml"
+			id="import/start" />
+		<webflow:flow-location path="/WEB-INF/flow/graphicalClusterDiagramFlow.xml"
+			id="graphicalreporting/clusterdiagram/start" />
+		<webflow:flow-location
+			path="/WEB-INF/flow/graphicalInformationFlowDiagramFlow.xml" id="graphicalreporting/informationflowdiagram/start" />
+		<webflow:flow-location
+			path="/WEB-INF/flow/graphicalLandscapeDiagramFlow.xml" id="graphicalreporting/landscapediagram/start" />
+		<webflow:flow-location
+			path="/WEB-INF/flow/graphicalMasterplanDiagramFlow.xml" id="graphicalreporting/masterplandiagram/start" />
+		<webflow:flow-location
+			path="/WEB-INF/flow/graphicalPortfolioDiagramFlow.xml" id="graphicalreporting/portfoliodiagram/start" />
+		<webflow:flow-location
+			path="/WEB-INF/flow/graphicalCompositeDiagramFlow.xml" id="graphicalreporting/compositediagram/start" />
+		<webflow:flow-location path="/WEB-INF/flow/graphicalPieBarDiagramFlow.xml"
+			id="graphicalreporting/piebardiagram/start" />
+		<webflow:flow-location
+			path="/WEB-INF/flow/graphicalVbbClusterDiagramFlow.xml" id="graphicalreporting/vbbclusterdiagram/start" />
+		<!-- <webflow:flow-location path="/WEB-INF/flow/graphicalTimelineDiagramFlow.xml" -->
+		<!-- id="graphicalreporting/timelinediagram/start" /> -->
+		<webflow:flow-location path="/WEB-INF/flow/graphicalLineDiagramFlow.xml"
+			id="graphicalreporting/linediagram/start" />
+		<webflow:flow-location path="/WEB-INF/flow/graphicalMatrixDiagramFlow.xml"
+			id="graphicalreporting/matrixdiagram/start" />
+		<webflow:flow-location path="/WEB-INF/flow/informationSystemFlow.xml"
+			id="informationsystem/start" />
+		<webflow:flow-location path="/WEB-INF/flow/informationSystemDomainFlow.xml"
+			id="informationsystemdomain/start" />
+		<webflow:flow-location path="/WEB-INF/flow/interfaceFlow.xml"
+			id="interface/start" />
+		<webflow:flow-location path="/WEB-INF/flow/infrastructureElementFlow.xml"
+			id="infrastructureelement/start" />
+		<webflow:flow-location path="/WEB-INF/flow/massUpdateFlow.xml"
+			id="massupdate/start" />
+		<webflow:flow-location path="/WEB-INF/flow/objectRelatedPermissionFlow.xml"
+			id="objectrelatedpermission/start" />
+		<webflow:flow-location path="/WEB-INF/flow/productFlow.xml"
+			id="product/start" />
+		<webflow:flow-location path="/WEB-INF/flow/projectFlow.xml"
+			id="project/start" />
+		<webflow:flow-location path="/WEB-INF/flow/restartFlow.xml"
+			id="restart/start" />
+		<webflow:flow-location path="/WEB-INF/flow/roleFlow.xml"
+			id="role/start" />
+		<webflow:flow-location path="/WEB-INF/flow/tabularReportingFlow.xml"
+			id="tabularreporting/start" />
+		<webflow:flow-location path="/WEB-INF/flow/technicalComponentFlow.xml"
+			id="technicalcomponent/start" />
+		<webflow:flow-location path="/WEB-INF/flow/userFlow.xml"
+			id="user/start" />
+		<webflow:flow-location path="/WEB-INF/flow/userGroupFlow.xml"
+			id="usergroup/start" />
+	</webflow:flow-registry>
+  
+    <bean id="emails" class="org.springframework.beans.factory.config.MapFactoryBean">
+      <property name="sourceMap">
+        <map>
+          <entry key="" value="" />
+        </map>
+      </property>
+    </bean>
+
+	<!-- Plugs in a custom creator for Web Flow views -->
+	<webflow:flow-builder-services id="flowBuilderServices"
+		view-factory-creator="mvcViewFactoryCreator" development="true" />
+
+	<!-- Configures Web Flow to use Tiles to create views for rendering; Tiles 
+		allows for applying consistent layouts to your views -->
+	<bean id="mvcViewFactoryCreator"
+		class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
+		<property name="viewResolvers" ref="tilesViewResolver" />
+	</bean>
+
+	<!-- Installs a listener to apply Spring Security authorities -->
+	<bean id="securityFlowExecutionListener"
+		class="org.springframework.webflow.security.SecurityFlowExecutionListener" />
+
+	<!--
+		Installs a listener that manages JPA persistence contexts for flows
+		that require them
+	-->
+	<!--
+		<bean id="hibernateFlowExecutionListener"
+		class="de.iteratec.iteraplan.presentation.IteraplanHibernateFlowExecutionListener">
+	<bean id="hibernateFlowExecutionListener"
+		class="org.springframework.webflow.persistence.HibernateFlowExecutionListener">
+		<constructor-arg ref="sessionFactory" />
+		<constructor-arg ref="transactionManager" />
+	</bean>
+	-->
+
+	<bean id="customFlowExecutionListener"
+		class="de.iteratec.iteraplan.presentation.flow.CustomFlowListener" />
+
+	<!-- Custom FlowHandler for the iteraplan flows These beans are consulted 
+		to find the flow ID that is responsible for a given request. For example, 
+		a request for /iteraplan/architecturaldomain/start.flow will be directed 
+		to the bean named architecturaldomain/start (*.flow is part of the servlet 
+		mapping and thus omitted).
+		By (our) convention, the flow ID returned by the 
+		flow handler is identical to the flow handler bean name. The flow IDs are 
+		defined in the webflow-registry element above. -->
+	<bean name="architecturaldomain/start"
+		class="de.iteratec.iteraplan.presentation.flow.architecturalDomain.ArchitecturalDomainFlowHandler" />
+	<bean name="attributetype/start"
+		class="de.iteratec.iteraplan.presentation.flow.attributeType.AttributeTypeFlowHandler" />
+	<bean name="attributetypegroup/start"
+		class="de.iteratec.iteraplan.presentation.flow.attributeTypeGroup.AttributeTypeGroupFlowHandler" />
+	<bean name="dateinterval/start"
+		class="de.iteratec.iteraplan.presentation.flow.dateInterval.DateIntervalFlowHandler" />
+	<bean name="businessdomain/start"
+		class="de.iteratec.iteraplan.presentation.flow.businessDomain.BusinessDomainFlowHandler" />
+	<bean name="businessfunction/start"
+		class="de.iteratec.iteraplan.presentation.flow.businessFunction.BusinessFunctionFlowHandler" />
+	<bean name="businessobject/start"
+		class="de.iteratec.iteraplan.presentation.flow.businessObject.BusinessObjectFlowHandler" />
+	<bean name="businessprocess/start"
+		class="de.iteratec.iteraplan.presentation.flow.businessProcess.BusinessProcessFlowHandler" />
+	<bean name="businessunit/start"
+		class="de.iteratec.iteraplan.presentation.flow.businessUnit.BusinessUnitFlowHandler" />
+
+	<bean name="businessmapping/start"
+		class="de.iteratec.iteraplan.presentation.flow.businessMapping.BusinessMappingFlowHandler" />
+
+	<bean name="excelimport/start"
+		class="de.iteratec.iteraplan.presentation.flow.excelImport2.ImportFlowHandler" />
+
+	<bean name="graphicalreporting/clusterdiagram/start"
+		class="de.iteratec.iteraplan.presentation.flow.graphicalReporting.ClusterDiagramFlowHandler" />
+	<bean name="graphicalreporting/informationflowdiagram/start"
+		class="de.iteratec.iteraplan.presentation.flow.graphicalReporting.InformationflowDiagramFlowHandler" />
+	<bean name="graphicalreporting/landscapediagram/start"
+		class="de.iteratec.iteraplan.presentation.flow.graphicalReporting.LandscapeDiagramFlowHandler" />
+	<bean name="graphicalreporting/masterplandiagram/start"
+		class="de.iteratec.iteraplan.presentation.flow.graphicalReporting.MasterplanDiagramFlowHandler" />
+	<bean name="graphicalreporting/portfoliodiagram/start"
+		class="de.iteratec.iteraplan.presentation.flow.graphicalReporting.PortfolioDiagramFlowHandler" />
+	<bean name="graphicalreporting/compositediagram/start"
+		class="de.iteratec.iteraplan.presentation.flow.graphicalReporting.CompositeDiagramFlowHandler" />
+	<bean name="graphicalreporting/piebardiagram/start"
+		class="de.iteratec.iteraplan.presentation.flow.graphicalReporting.PieBarDiagramFlowHandler" />
+	<bean name="graphicalreporting/vbbclusterdiagram/start"
+		class="de.iteratec.iteraplan.presentation.flow.graphicalReporting.VbbClusterDiagramFlowHandler" />
+	<!-- <bean name="graphicalreporting/timelinediagram/start" -->
+	<!-- class="de.iteratec.iteraplan.presentation.flow.graphicalReporting.TimelineDiagramFlowHandler" 
+		/> -->
+	<bean name="graphicalreporting/linediagram/start"
+		class="de.iteratec.iteraplan.presentation.flow.graphicalReporting.LineDiagramFlowHandler" />
+	<bean name="graphicalreporting/matrixdiagram/start"
+		class="de.iteratec.iteraplan.presentation.flow.graphicalReporting.MatrixDiagramFlowHandler" />
+
+	<bean name="informationsystem/start"
+		class="de.iteratec.iteraplan.presentation.flow.informationSystem.InformationSystemFlowHandler" />
+	<bean name="informationsystemdomain/start"
+		class="de.iteratec.iteraplan.presentation.flow.informationSystemDomain.InformationSystemDomainFlowHandler" />
+	<bean name="interface/start"
+		class="de.iteratec.iteraplan.presentation.flow.informationSystemInterface.InterfaceFlowHandler" />
+	<bean name="infrastructureelement/start"
+		class="de.iteratec.iteraplan.presentation.flow.infrastructureElement.InfrastructureElementFlowHandler" />
+	<bean name="massupdate/start"
+		class="de.iteratec.iteraplan.presentation.flow.massUpdate.MassUpdateFlowHandler" />
+	<bean name="objectrelatedpermission/start"
+		class="de.iteratec.iteraplan.presentation.flow.objectRelatedPermission.ObjectRelatedPermissionFlowHandler" />
+	<bean name="product/start"
+		class="de.iteratec.iteraplan.presentation.flow.product.ProductFlowHandler" />
+	<bean name="project/start"
+		class="de.iteratec.iteraplan.presentation.flow.project.ProjectFlowHandler" />
+	<bean name="restart/start"
+		class="de.iteratec.iteraplan.presentation.flow.restart.RestartFlowHandler" />
+	<bean name="role/start"
+		class="de.iteratec.iteraplan.presentation.flow.role.RoleFlowHandler" />
+	<bean name="tabularreporting/start"
+		class="de.iteratec.iteraplan.presentation.flow.tabularReporting.TabularReportingFlowHandler" />
+	<bean name="technicalcomponent/start"
+		class="de.iteratec.iteraplan.presentation.flow.technicalComponent.TechnicalComponentFlowHandler" />
+	<bean name="user/start"
+		class="de.iteratec.iteraplan.presentation.flow.user.UserFlowHandler" />
+	<bean name="usergroup/start"
+		class="de.iteratec.iteraplan.presentation.flow.userGroup.UserGroupFlowHandler" />
+
+
+	<bean id="flowExceptionHandler"
+		class="de.iteratec.iteraplan.presentation.flow.FlowExceptionHandler" />
+	<bean id="iteraplanBusinessExceptionHandler"
+		class="de.iteratec.iteraplan.presentation.flow.IteraplanBusinessExceptionHandler" />
+	<bean id="iteraplanTechnicalExceptionHandler"
+		class="de.iteratec.iteraplan.presentation.flow.IteraplanTechnicalExceptionHandler" />
+
+	<bean id="configurationController"
+		class="de.iteratec.iteraplan.presentation.dialog.Configuration.ConfigurationController">
+		<property name="resetPage" value="redirect:/show/restart" />
+		<property name="initPage" value="redirect:/configuration/init.do" />
+	</bean>
+	
+</beans>

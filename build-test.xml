@@ -1,0 +1,241 @@
+<project name="iteraplan-test" basedir=".">
+
+	<description>	
+		Build file containing targets related testing and report generation.
+	</description>
+
+	<import file="build-db-misc.xml" />
+	<import file="build.xml" />
+
+	<!--	
+	##########################################################################
+		 MAIN TEST targets
+	##########################################################################	
+	-->
+
+	<target name="coverage.junit" depends="db.generateTestDatabase, coverage.cobertura.instrument.overwrite, test.junitreport" description="Runs all JUnit tests and creates a HTML report for the result">
+	</target>
+
+	<!-- Executes the JUnit tests -->
+	<target name="test.junitreport" depends="db.generateTestDatabase" description="Runs all JUnit tests and creates a HTML report for the result">
+		<echo message="Testing for ${iteraplan.version} version." />
+		<junit showoutput="yes" printsummary="yes" fork="yes" forkmode="once" haltonfailure="no" failureproperty="failed">
+			<sysproperty key="net.sourceforge.cobertura.datafile" file="${cobertura.datafile}" />
+			
+			<!-- Following property is needed for compatibility with Java 7 - - it can be removed once ITERAPLAN-1516 has been fixed -->
+			<sysproperty key="java.util.Arrays.useLegacyMergeSort" value="true" />
+
+			<!-- Our own classes MUST come first in the classpath, as some Hibernate classes have beeen patched 
+			     and must appear BEFORE Hibernate's JARs -->
+			<classpath refid="classpath.project.junit" />
+			<classpath refid="mvn.classpath.test" />
+
+			<formatter type="xml" usefile="yes" />
+			<batchtest todir="${build.generated.junit}">
+				<fileset dir="${src.java.test}" id="fileset.test.junit">
+					<exclude name="de/iteratec/iteraplan/webtests/**" />
+					<exclude name="**/AllTests.java" />
+					<include name="de/iteratec/**/*Test.java" />
+				</fileset>
+			</batchtest>
+			<jvmarg value="-Xmx768m" />
+			<jvmarg value="-XX:MaxPermSize=512m" />
+		</junit>
+
+		<junitreport todir="${build.generated.junitreport}">
+			<fileset dir="${build.generated.junit}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${build.generated.junitreport}" />
+		</junitreport>
+
+		<fail message="At least one JUnit test FAILED" if="failed" />
+	</target>
+
+	<target name="test.compile.jsps" depends="init.mvn" description="call mvn jspc:compile">
+		<artifact:mvn mavenhome="${maven.home}" xmlns:artifact="urn:maven-artifact-ant" fork="true" failonerror="true">
+			<arg value="compile" />
+			<arg value="jspc:compile" />
+		</artifact:mvn>
+	</target>
+
+
+	<target name="coverage.cobertura.report.html">
+		<cobertura-report format="html" datafile="${cobertura.datafile}" destdir="${build.generated.cobertura}">
+			<fileset dir="${src.java.main}">
+				<include name="**/*.java" />
+			</fileset>
+			<fileset dir="${src.java.base}">
+				<include name="**/*.java" />
+			</fileset>
+			<fileset dir="${src.java.graphics}/common">
+				<include name="**/*.java" />
+			</fileset>
+			<fileset dir="${src.java.graphics}/svg">
+				<include name="**/*.java" />
+			</fileset>
+			<fileset dir="${src.java.elasticeam}">
+				<include name="**/*.java" />
+			</fileset>
+			<fileset dir="${src.java.hibernatepatch}">
+				<include name="**/*.java" />
+			</fileset>
+		</cobertura-report>
+	</target>
+
+	<target name="coverage.cobertura.report.xml">
+		<cobertura-report format="xml" datafile="${cobertura.datafile}" destdir="${build.generated.cobertura}">
+			<fileset dir="${src.java.main}">
+				<include name="**/*.java" />
+			</fileset>
+			<fileset dir="${src.java.base}">
+				<include name="**/*.java" />
+			</fileset>
+			<fileset dir="${src.java.graphics}/common">
+				<include name="**/*.java" />
+			</fileset>
+			<fileset dir="${src.java.graphics}/svg">
+				<include name="**/*.java" />
+			</fileset>
+			<fileset dir="${src.java.elasticeam}">
+				<include name="**/*.java" />
+			</fileset>
+			<fileset dir="${src.java.hibernatepatch}">
+				<include name="**/*.java" />
+			</fileset>
+		</cobertura-report>
+	</target>
+
+
+
+
+	<!--	
+	##########################################################################
+		 HELPER TEST targets
+	##########################################################################	
+	-->
+
+	<target name="tomcat.deploy.coverage" depends="dist.war.coverage" description="Deploys iteraplan as WAR file on a local Tomcat installation">
+		<tomcat.deployToTomcat url="${tomcat.managerUrl}" username="${tomcat.adminUser}" password="${tomcat.adminPassword}" path="${tomcat.appPath}" war="file:///${deploy.artifactDir}/${deploy.warFilename}" />
+	</target>
+
+	<target name="dist.war.coverage" depends="build.war-prepare" description="Generate the war-packaged version of the project">
+		<copy todir="${deploy.explodedWar}/WEB-INF/lib">
+			<fileset dir="${lib.cobertura}" includes="**/*.jar" />
+		</copy>
+		<delete file="${cobertura.datafile}" />
+		<cobertura-instrument datafile="${cobertura.datafile}">
+			<fileset dir="${deploy.explodedWar}/WEB-INF/lib" includes="iteraplan-*.jar" />
+		</cobertura-instrument>
+		<copy file="${src.java.test}/de/iteratec/iteraplan/webtests/coverage/cobertura/cobertura.properties.template" tofile="${deploy.explodedWar}/WEB-INF/classes/cobertura.properties" overwrite="true" encoding="${source.encoding}" description="Replace the tokens in the template file.">
+			<filterset>
+				<filter token="COBERTURA_DATAFILE" value="${cobertura.datafile}" />
+			</filterset>
+		</copy>
+		<copy file="${build.classes.test}/de/iteratec/iteraplan/webtests/coverage/cobertura/FlushingSessionListener.class" tofile="${deploy.explodedWar}/WEB-INF/classes/de/iteratec/iteraplan/webtests/coverage/cobertura/FlushingSessionListener.class" overwrite="true" />
+		<replace file="${deploy.explodedWar}/WEB-INF/web.xml">
+			<replacetoken>
+				<![CDATA[<!-- Listeners -->]]></replacetoken>
+			<replacevalue>
+				<![CDATA[<!-- Listeners -->
+				<listener>
+					<listener-class>de.iteratec.iteraplan.webtests.coverage.cobertura.FlushingSessionListener</listener-class>
+				</listener>
+				]]></replacevalue>
+		</replace>
+		<zip destfile="${deploy.artifactDir}/${deploy.warFilename}">
+			<zipfileset dir="${deploy.explodedWar}" includes="**/*" />
+		</zip>
+	</target>
+
+	<target name="coverage.cobertura.instrument.overwrite" depends="build.test" description="Instrument the classes">
+		<echo message="Instrumenting classes in directory: ${build.classes}" />
+		<delete file="${cobertura.datafile}" />
+		<cobertura-instrument datafile="${cobertura.datafile}">
+			<fileset dir="${build.classes}">
+				<include name="**/*.class" />
+				<exclude name="test/**" />
+				<exclude name="tools/**" />
+			</fileset>
+		</cobertura-instrument>
+		<copy file="${cobertura.datafile}" tofile="${cobertura.datafile.copy}" overwrite="true" />
+	</target>
+
+
+
+	<target name="start-selenium-server">
+
+		<property name="absolute.path" location="./tools/webtest/selenium-server-standalone-2.41.0.jar" />
+		<java jar="${absolute.path}" fork="true" spawn="true">
+			<arg line="-port 4444" />
+		</java>
+
+		<waitfor maxwait="30" maxwaitunit="second">
+			<and>
+				<socket server="localhost" port="4444" />
+				<!-- this url will 403, so we say that it should start counting errors at 404 to skip -->
+				<http url="http://localhost:4444/selenium-server/core/index.html" errorsBeginAt="404" />
+			</and>
+		</waitfor>
+	</target>
+
+	<target name="stop-selenium-server">
+		<get taskname="selenium-shutdown" src="http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer" ignoreerrors="true" />
+		<echo taskname="selenium-shutdown" message="DGF Errors during shutdown are expected" />
+	</target>
+	
+	<target name="test.junitwebtestlocal" depends="start-selenium-server, clean.all, deploy.local.full, start-tomact,test.junitwebtest">
+		<antcall target="stop-selenium-server" />
+		<antcall target="stop-tomcat" />
+	</target>
+	
+	<target name="test.junitwebtestserver" depends="clean.all,test.junitwebtest" />
+
+		
+	<target name="start-tomact">
+	    <java jar="${tomcat.installDir}/bin/bootstrap.jar" fork="true">
+	        <jvmarg value="-Dcatalina.home=${tomcat.home}"/>
+	    </java>
+	</target>
+	 
+	<target name="stop-tomcat">
+	    <java jar="${tomcat.installDir}/bin/bootstrap.jar" fork="true">
+	        <jvmarg value="-Dcatalina.home=${tomcat.home}"/>
+	        <arg line="stop"/>
+	    </java>
+	</target>
+	
+	<target name="test.junitwebtest" depends="buildAll, build.deployment.copyResources" description="Runs all JUnit tests and creates a HTML report for the result">
+		<echo message="Testing for ${iteraplan.version} version." />
+
+		<junit showoutput="yes" printsummary="yes" fork="yes" forkmode="once" haltonfailure="no" failureproperty="failed">
+
+			<sysproperty key="net.sourceforge.cobertura.datafile" file="${cobertura.datafile}" />
+			<sysproperty key="browserEnvironment" value="${browserEnvironment}"/>
+			<sysproperty key="baseUrlSelenium" value="${iteraplanUrl}"/>
+			
+			<classpath refid="classpath.project.junit" />
+			<classpath refid="mvn.classpath.test" />
+
+			<formatter type="xml" usefile="yes" />
+			<batchtest todir="${build.generated.webtest}">
+				<fileset dir="${src.java.test}" id="fileset.test.junit">
+					<include name="de/iteratec/iteraplan/webtests/**/*Test.java" />
+					<exclude name="de/iteratec/iteraplan/webtests/**/SeleniumMultipleBrowserTest.java" />
+				</fileset>
+			</batchtest>
+			<jvmarg value="-Xmx768m" />
+			<jvmarg value="-XX:MaxPermSize=512m" />
+		</junit>
+		
+		<junitreport todir="${build.generated.webtestreport}">
+			<fileset dir="${build.generated.webtest}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${build.generated.webtestreport}" />
+		</junitreport>
+		
+		<fail message="At least one JUnit test FAILED" if="failed" />
+	</target>
+
+</project>

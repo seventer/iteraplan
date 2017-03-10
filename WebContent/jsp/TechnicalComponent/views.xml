@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+	"-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+	"http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+
+	<definition name="technicalcomponent/init" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="technicalComponentRelease.plural" />
+		<put-attribute name="title_style" value="global.overview" />
+		<put-attribute name="form_id" value="technicalComponent_search" />
+		<put-attribute name="form_action" value="search.do" />
+		<put-attribute name="form_model" value="dialogMemory" />
+		<put-attribute name="form_method" value="get" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/TechnicalComponent/Search.jsp" />
+		</put-list-attribute>
+	</definition>
+
+	<definition name="technicalcomponent/search" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="technicalComponentRelease.plural" />
+		<put-attribute name="title_style" value="global.overview" />
+		<put-attribute name="form_id" value="technicalComponent_search" />
+		<put-attribute name="form_action" value="search.do" />
+		<put-attribute name="form_model" value="dialogMemory" />
+		<put-attribute name="form_method" value="get" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/TechnicalComponent/Search.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+	<definition name="technicalcomponent/show" extends="buildingBlockDetailViewWithTimeseriesLayout">
+		<put-attribute name="title" value="technicalComponentRelease.plural" />
+		<put-attribute name="title_style" value="details" />
+		<put-attribute name="form_id" value="technicalComponent_show" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/TechnicalComponent/Manage.jsp" />
+			<add-attribute value="/jsp/common/LastModificationInfo.jsp" />
+		</put-list-attribute>
+	</definition>
+
+	<definition name="technicalcomponent/edit" extends="buildingBlockDetailViewWithTimeseriesLayout">
+		<put-attribute name="title" value="technicalComponentRelease.plural" />
+		<put-attribute name="title_style" value="global.edit" />
+		<put-attribute name="form_id" value="technicalComponent_edit" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/TechnicalComponent/Manage.jsp" />
+			<add-attribute value="/jsp/common/LastModificationInfo.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+	<definition name="technicalcomponent/create" extends="buildingBlockDetailViewWithTimeseriesLayout">
+		<put-attribute name="title" value="technicalComponentRelease.plural" />
+		<put-attribute name="title_style" value="global.new" />
+		<put-attribute name="form_id" value="technicalComponent_create" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/TechnicalComponent/Manage.jsp" />
+		</put-list-attribute>
+	</definition>
+
+	<definition name="technicalcomponent/newRelease" extends="buildingBlockDetailViewWithTimeseriesLayout">
+		<put-attribute name="title" value="technicalComponentRelease.plural" />
+		<put-attribute name="title_style" value="global.new" />
+		<put-attribute name="form_id" value="technicalComponent_edit" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/TechnicalComponent/tiles/CopyAllRelease.jsp" />
+			<add-attribute value="/jsp/common/LastModificationInfo.jsp" />
+		</put-list-attribute>
+	</definition>
+
+	<definition name="technicalcomponent/copyRelease" extends="buildingBlockDetailViewWithTimeseriesLayout">
+		<put-attribute name="title" value="technicalComponentRelease.plural" />
+		<put-attribute name="title_style" value="global.new" />
+		<put-attribute name="form_id" value="technicalComponent_edit" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/TechnicalComponent/Manage.jsp" />
+			<add-attribute value="/jsp/common/LastModificationInfo.jsp" />
+		</put-list-attribute>
+	</definition>
+
+</tiles-definitions>

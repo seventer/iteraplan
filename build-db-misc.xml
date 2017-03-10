@@ -1,0 +1,1013 @@
+<project name="iteraplan-db" basedir=".">
+
+	<description>	
+		Build file containing miscellaneous targets used by higher tiers.
+	</description>
+
+	
+	<!--	
+	##########################################################################
+		 DATABASE targets
+	##########################################################################	
+	-->
+	
+	<!--Replace the tokens in the template file.  -->
+	<target name="build.deployment.copyResources">
+		<copy file="${resources.templates}/iteraplan-db.properties.template" tofile="${webinf.classes}/iteraplan-db.properties" overwrite="true" encoding="${source.encoding}">
+			<filterset>
+				<filter token="DB_VALIDATIONQUERY" value="${database.validationquery}" />
+				<filter token="DB_DIALECT" value="${hibernate.dialect}" />
+				<filter token="DB_DRIVER" value="${database.driver}" />
+				<filter token="DB_URL" value="${database.url}" />
+				<filter token="DB_USER" value="${database.login}" />
+				<filter token="DB_PASSWORD" value="${database.password}" />
+				<filter token="DB_JNDI_DATASOURCE" value="${login.datasource}" />
+			</filterset>
+		</copy>
+	</target>
+
+	<target name="db.generate" depends="buildAll, build.deployment.copyResources, db.generateDDLScript">
+	</target>
+	
+	<target name="db.generateDDLScript" depends="build.tools" unless="skipGenerateTarget">
+		<!-- Make sure that there is no DB script left -->
+		<delete file="${build.generated.hibernate}/${schema-export.sql}" />
+
+		<java classname="de.iteratec.iteraplan.db.SchemaGenerationScriptCreator" fork="true" failonerror="true">
+			<classpath refid="classpath.project" />
+			<classpath refid="mvn.classpath.test" />
+			
+			<arg value="${build.generated.hibernate}/schema-export.sql"/>
+		</java>
+
+	</target>
+
+	<!-- Deletes the hibernate search directory -->
+	<target name="clean.hibernate.search">
+		<echo message="Deleting Hibernate Search index: ${hibernate.search.index}" />
+		<delete dir="${hibernate.search.index}" />
+	</target>
+
+	<target name="db.generateTestDatabase" depends="buildAll, build.test.copyResources, db.generateDDLScript">
+		<echo message="Importing XMI InitialData and creating dump file" />
+		<java classname="de.iteratec.iteraplan.xmi.InitialDataDumper" fork="true" failonerror="true">
+			<classpath refid="classpath.project.extended" />
+			<classpath refid="mvn.classpath.test" />
+
+			<arg value="${build.generated.hibernate}/schema-export.sql" />
+			<arg value="${test.driver}" />
+			<arg value="${test.jdbcUrl}" />
+			<arg value="${test.userName}" />
+			<arg value="${test.password}" />
+		</java>
+		<echo message="Initial Data dump file for tests created." />
+		
+		<antcall target="build.test.copyResources" description="NOTE: We need to explicitly call build.test.copyResources, as we generated some resources now and these have not yet been present during the first copy run."/>
+	</target>
+
+	
+	
+	
+	<!--	
+	##########################################################################
+		 BUILD targets
+	##########################################################################	
+	-->
+	
+	<!-- Build the project -->
+	<target name="buildAll" depends="build.base, build.main, build.test"/>
+	
+	<target name="build.base" depends="build.prepare" unless="skipBuildTarget">
+		<echo message="Compiling Base Sources for ${iteraplan.version} version..." />
+		<javac destdir="${build.classes.base}" includes="**/*.java**" debug="${javac.debuginfo}" source="${javac.source.compliance}" target="${javac.target.compliance}" encoding="${source.encoding}" includeantruntime="false">
+			<src path="${src.java.base}" />
+			<classpath refid="classpath.base" />
+			<classpath refid="mvn.classpath.compile" />
+		</javac>
+		
+		<!-- jar.base -->
+		<delete>
+			<fileset dir="${deploy.artifactDir}" includes="${jar.base.filename}" />
+		</delete>
+		<jar jarfile="${deploy.artifactDir}/${jar.base.filename}">
+			<fileset dir="${build.classes.base}" includes="**/*.class" />
+		</jar>
+		
+	</target>
+	
+	<target name="build.main" depends="build.base" unless="skipBuildTarget">
+		<if>
+			<equals arg1="${database.rdbmsName}" arg2="hsqldb-server" />
+			<then>
+				<property name="database.validationquery" value="" />
+			</then>
+		</if>
+
+		<echo message="Compiling Graphics Sources for ${iteraplan.version} version..." />
+		<javac destdir="${build.classes.graphics}" includes="**/*.java**" debug="${javac.debuginfo}" source="${javac.source.compliance}" target="${javac.target.compliance}" encoding="${source.encoding}" includeantruntime="false">
+			<src path="${src.java.graphics}/common" />
+			<src path="${src.java.graphics}/svg" />
+			<classpath refid="classpath.graphics" />
+			<classpath refid="mvn.classpath.compile" />
+		</javac>
+
+		<echo message="Compiling elasticEAM Sources for ${iteraplan.version} version..." />
+		<javac destdir="${build.classes.elasticeam}" includes="**/*.java**" debug="${javac.debuginfo}" source="${javac.source.compliance}" target="${javac.target.compliance}" encoding="${source.encoding}" includeantruntime="false">
+			<src path="${src.java.elasticeam}" />
+			<classpath refid="classpath.elasticeam" />
+			<classpath refid="classpath.main" />
+			<classpath refid="mvn.classpath.compile" />
+		</javac>
+
+		<echo message="Compiling Main Sources for ${iteraplan.version} version..." />
+		<javac destdir="${build.classes.main}" includes="**/*.java**" debug="${javac.debuginfo}" source="${javac.source.compliance}" target="${javac.target.compliance}" encoding="${source.encoding}" includeantruntime="false">
+			<src path="${src.java.main}" />
+			<src path="${src.java.hibernatepatch}" />
+			<classpath refid="classpath.main" />
+			<classpath refid="mvn.classpath.compile" />
+		</javac>
+
+		<!-- copy mapping and properties -->
+		<copy todir="${build.classes.main}" overwrite="true" encoding="${source.encoding}">
+			<fileset dir="${src.java.main}" includes="**/*.hbm.xml" />
+		</copy>
+		
+		<!-- jar.mapping -->
+		<delete>
+			<fileset dir="${deploy.artifactDir}" includes="${jar.mapping.filename}" />
+		</delete>
+		<jar jarfile="${deploy.artifactDir}/${jar.mapping.filename}">
+			<fileset dir="${build.classes.main}" includes="**/*.hbm.xml" />
+		</jar>
+		
+		
+		<!-- jar.main -->
+		<delete>
+			<fileset dir="${deploy.artifactDir}" includes="${jar.all.filename}" />
+		</delete>
+		<jar jarfile="${deploy.artifactDir}/${jar.all.filename}">
+			<fileset dir="${build.classes.main}" includes="**/*.class" />
+			<fileset dir="${build.classes.graphics}" includes="**/*.class" />
+			<fileset dir="${build.classes.elasticeam}" includes="**/*.class" />
+		</jar>
+		
+	</target>
+
+	<target name="build.prepare" depends="init">
+		<echo>Setting up the build environment...</echo>
+		<mkdir dir="${tmp}" />
+		<mkdir dir="${javadoc.dir}" />
+		<mkdir dir="${build}" />
+		<mkdir dir="${build.classes}" />
+		<mkdir dir="${build.classes.main}" />
+		<mkdir dir="${build.classes.base}" />
+		<mkdir dir="${build.classes.test}" />
+		<mkdir dir="${build.classes.tools}" />
+		<mkdir dir="${build.classes.graphics}" />
+		<mkdir dir="${build.classes.elasticeam}" />
+		<mkdir dir="${build.generated}" />
+		<mkdir dir="${build.generated.doc}" />
+		<mkdir dir="${build.generated.hibernate}" />
+		<mkdir dir="${build.generated.junit}" />
+		<mkdir dir="${build.generated.webtest}" />
+		<mkdir dir="${build.generated.junitreport}" />
+		<mkdir dir="${build.generated.webtestreport}" />
+		<mkdir dir="${build.manifest}" />
+		<property name="jdbc.classpath" refid="classpath.project" />
+	</target>
+
+	<target name="build.test" depends="build.prepare, build.tools, build.test.copyResources" unless="skipBuildTarget">
+		<echo message="Compiling Test Sources of ${iteraplan.version} ..." />
+		<javac destdir="${build.classes.test}" includes="**/*.java**" debug="on" source="${javac.source.compliance}" target="${javac.target.compliance}" encoding="${source.encoding}" includeantruntime="false">
+			<src path="${src.java.test}" />
+			<classpath refid="classpath.test" />
+			<classpath refid="mvn.classpath.test" />
+		</javac>
+
+	</target>
+	
+    <target name="build.test.copyResources">
+		<!-- Spring Application Context files -->
+		<copy todir="${src.java}/test" overwrite="true">
+			<fileset dir="${webinf}" includes="applicationC*.xml" />
+			<filterset begintoken="@" endtoken="@">
+				<filter token="HIBERNATE.SEARCH.INDEX" value="${hibernate.search.index}" />
+				<filter token="HISTORY.ENABLED" value="${history.enabled}" />
+				<filter token="ADMIN.EMAIL" value="" />
+			</filterset>
+		</copy>
+
+		<!-- database schema - may not yet be generated -->
+		<copy todir="${src.java}/test" overwrite="true">
+			<fileset dir="${build.generated.hibernate}" includes="schema-export.sql">
+			</fileset>
+		</copy>
+
+		<copy todir="${build.classes.test}" overwrite="true">
+			<fileset dir="${src.java}/test/" includes="*.xml" />
+			<filterset>
+				<filter token="build.version" value="${version.info}" />
+			</filterset>
+			<fileset dir="${src.java}/test/" includes="schema-export.sql" />
+			<fileset dir="${webinf.classes}" includes="emails/**" />
+		</copy>
+
+		<copy file="${resources.templates}/iteraplan.properties.template" tofile="${build.classes.test}/iteraplan.properties" overwrite="true" encoding="${source.encoding}" description="Replace the tokens in the template file.">
+			<filterset>
+				<filter token="BUILD.ID" value="${build.id}" />
+				<filter token="LASTMODIFICATION.LOGGING.ENABLED" value="${lastmodificationLoggingEnabled}" />
+				<filter token="AUDIT.LOGGING.ENABLED" value="${audit.logging.enabled}" />
+				<filter token="HIBERNATE.SEARCH.INDEX" value="${hibernate.search.index}" />
+				<filter token="HISTORY.ENABLED" value="${history.enabled}" />
+				<filter token="ADMIN.EMAIL" value="" />
+			</filterset>
+		</copy>
+
+		<if>
+			<equals arg1="${database.rdbmsName}" arg2="hsqldb-server" />
+			<then>
+				<property name="database.validationquery" value="" />
+			</then>
+		</if>
+
+		<copy file="${resources.templates}/iteraplan-db.properties.template" tofile="${webinf.classes}/iteraplan-db.properties" overwrite="true" encoding="${source.encoding}" description="Replace the tokens in the template file.">
+			<filterset>
+				<filter token="DB_VALIDATIONQUERY" value="${test.database.validationquery}" />
+				<filter token="DB_DIALECT" value="${test.hibernate.dialect}" />
+				<filter token="DB_DRIVER" value="${test.driver}" />
+				<filter token="DB_URL" value="${test.jdbcUrl}" />
+				<filter token="DB_USER" value="${test.userName}" />
+				<filter token="DB_PASSWORD" value="${test.password}" />
+				<filter token="DB_JNDI_DATASOURCE" value="${login.datasource}" />
+			</filterset>
+		</copy>
+
+    </target>
+
+
+	<target name="build.tools" depends="build.main">
+		<echo message="Compiling sources for external tools..." />
+		<javac destdir="${build.classes.tools}" includes="**/*.java**" source="${javac.source.compliance}" target="${javac.target.compliance}" encoding="${source.encoding}" debug="on" includeantruntime="false">
+			<src path="${src.java.tools}" />
+			<classpath refid="classpath.project.extended" />
+			<classpath refid="mvn.classpath.test" />
+		</javac>
+		<copy todir="${build.classes.tools}" overwrite="true">
+			<fileset dir="${src.java.tools}">
+				<include name="**/*.html" />
+				<include name="**/*.css" />
+				<include name="**/*.template" />
+				<include name="**/*.xcli" />
+				<include name="**/*.properties" />
+				<include name="**/*.xmi" />
+			</fileset>
+		</copy>
+		
+		<!-- jar.tools -->
+		<delete>
+			<fileset dir="${deploy.artifactDir}" includes="${jar.tools.filename}" />
+		</delete>
+		<!-- copy message files -->
+		<copy todir="${build.classes.tools}" overwrite="true" encoding="${source.encoding}">
+			<!-- Language files and log4j -->
+			<fileset dir="${src.java.tools}" includes="**/*.properties" />
+		</copy>
+		<jar jarfile="${deploy.artifactDir}/${jar.tools.filename}">
+			<fileset dir="${build.classes.tools}" includes="**/*.class" />
+			<fileset dir="${build.classes.tools}" includes="**/*.properties" />
+			<fileset dir="${build.classes.tools}" includes="**/iteraplanData.xmi" />
+		</jar>		
+		
+	</target>
+	
+	<!-- creates an exploded war in the ${deploy.explodedWar} directory -->
+	<target name="build.war-prepare" depends="build.tools, templates.customization-prepare">
+
+		<!-- Create folders for WAR and copy WebContent-->
+		<mkdir dir="${deploy.explodedWar}" />
+		<copy todir="${deploy.explodedWar}">
+			<fileset dir="${webcontent}">
+				<exclude name="**/c3p0.properties" />
+			</fileset>
+		</copy>
+
+		<!-- Creat the manifest -->
+		<manifest file="${deploy.explodedWar}/META-INF/MANIFEST.MF">
+			<attribute name="Built-By" value="${user.name}" />
+			<attribute name="Implementation-Title" value="${appname}" />
+			<attribute name="Implementation-Vendor" value="iteratec GmbH" />
+			<attribute name="Implementation-Vendor-Id" value="de.iteratec" />
+			<attribute name="Implementation-Name" value="${appname}" />
+			<attribute name="Build-Time" value="${TIMESTAMP-FULL}" />
+			<attribute name="Build-Id" value="${build.id}" />
+		</manifest>
+
+		<!-- classes folder -->
+		<copy todir="${deploy.explodedWar}/WEB-INF/classes">
+			<fileset dir="${build.classes.main}" includes="org/**/*.class" description="Load Hibernate patch from classes dir." />
+		</copy>
+
+		<!-- TODO: check deprecation -->
+		<copy todir="${deploy.explodedWar}/WEB-INF/classes">
+			<fileset dir="${src.java.main}/de/iteratec/iteraplan/businesslogic/exchange/xmi/exporter/ecore" includes="*.ecore" description="Copy Ecore-Model for tabular reporting to classes directory" />
+		</copy>
+
+		<!-- ApplicationResources -->
+		<copy todir="${deploy.explodedWar}/WEB-INF/classes">
+			<fileset dir="${src.java.main}" includes="**/*.properties" />
+		</copy>
+
+		<!-- libs -->
+		<copy todir="${deploy.explodedWar}/WEB-INF/lib">
+			<flattenmapper />
+			<fileset refid="mvn.runtime.fileset" />
+			<fileset dir="${lib.jdbc}/${database.rdbmsName}" includes="**.*" />
+			<fileset file="${deploy.artifactDir}/*.jar" />
+		</copy>
+
+		<!-- copy iteraplan.properties -->
+		<if>
+			<equals arg1="${deploy.type}" arg2="development" />
+			<then>
+				<copy file="${webinf.classes}/iteraplan.properties" tofile="${deploy.explodedWar.classes}/iteraplan.properties" overwrite="true" encoding="${source.encoding}">
+					<filterset>
+						<filter token="BUILD.ID" value="${build.id}" />
+						<filter token="BUILD.VERSION" value="${version.info}" />
+						<filter token="AUDIT.LOGGING.ENABLED" value="${audit.logging.enabled}" />
+						<filter token="HIBERNATE.SEARCH.INDEX" value="${hibernate.search.index}" />
+						<filter token="HISTORY.ENABLED" value="${history.enabled}" />
+						<filter token="ADMIN.EMAIL" value="" />
+					</filterset>
+				</copy>
+			</then>
+			<else>
+				<copy file="${build.templates}/iteraplan.properties.template" tofile="${deploy.explodedWar.classes}/iteraplan.properties" overwrite="true" encoding="${source.encoding}" description="Replace the tokens in the template file.">
+					<filterset>
+						<filter token="BUILD.ID" value="${build.id}" />
+						<filter token="BUILD.VERSION" value="${version.info}" />
+						<filter token="ITERAPLAN.VERSION" value="${iteraplan.version}" />
+						<filter token="LASTMODIFICATION.LOGGING.ENABLED" value="${lastmodificationLoggingEnabled}" />
+						<filter token="AUDIT.LOGGING.ENABLED" value="${audit.logging.enabled}" />
+						<filter token="HIBERNATE.SEARCH.INDEX" value="${hibernate.search.index}" />
+						<filter token="HISTORY.ENABLED" value="${history.enabled}" />
+						<filter token="ADMIN.EMAIL" value="${admin.email}" />
+					</filterset>
+				</copy>
+			</else>
+		</if>
+
+		<!-- copy RELEASE.txt and LICENSE.txt -->
+
+		<copy todir="${deploy.explodedWar}/manuals" file="${doc}/RELEASE.txt" />
+		<copy todir="${deploy.explodedWar}/manuals" file="${bundle}/extras/LICENSE.txt" />
+
+		<!-- copy iteraplan-db.properties -->
+		<copy file="${build.templates}/iteraplan-db.properties.template" tofile="${deploy.explodedWar.classes}/iteraplan-db.properties" overwrite="true" encoding="${source.encoding}" description="Replace the tokens in the template file.">
+			<filterset>
+				<filter token="DB_VALIDATIONQUERY" value="${database.validationquery}" />
+				<filter token="DB_DIALECT" value="${hibernate.dialect}" />
+				<filter token="DB_DRIVER" value="${database.driver}" />
+				<filter token="DB_URL" value="${database.url}" />
+				<filter token="DB_USER" value="${database.login}" />
+				<filter token="DB_PASSWORD" value="${database.password}" />
+				<filter token="DB_JNDI_DATASOURCE" value="${login.datasource}" />
+			</filterset>
+		</copy>
+		<!-- copy log4j.properties -->
+		<!-- When audit logging is deactivated, choose the same directory
+             as normal logging for creating the (empty and unused) audit log file. -->
+		<condition property="audit.logging.path.final" value="${log.path}">
+			<equals arg1="${audit.logging.enabled}" arg2="false" casesensitive="false" />
+		</condition>
+		<property name="audit.logging.path.final" value="${auditLog.path}" />
+		<condition property="auditlog.type" value="DEBUG">
+			<equals arg1="${audit.logging.enabled}" arg2="true" casesensitive="false" />
+		</condition>
+		<condition property="auditlog.type" value="INFO">
+			<equals arg1="${audit.logging.enabled}" arg2="false" casesensitive="false" />
+		</condition>
+		<if>
+			<equals arg1="${deploy.type}" arg2="development" />
+			<then>
+				<copy file="${webinf.classes}/log4j.properties" tofile="${deploy.explodedWar.classes}/log4j.properties" overwrite="true" encoding="${source.encoding}" />
+			</then>
+			<else>
+				<copy file="${build.templates}/log4j.properties.template.production" tofile="${deploy.explodedWar.classes}/log4j.properties" overwrite="true" encoding="${source.encoding}" description="Replace the tokens in the template file.">
+					<filterset>
+						<filter token="LOG_FILE" value="${log.path}/${log.filename}" />
+						<filter token="LOGIN_LOG_FILE" value="${log.path}/${loginLog.filename}" />
+						<filter token="AUDIT.LOGGING.PATH" value="${audit.logging.path.final}/${auditLogging.filename}" />
+						<filter token="AUDIT_LOG_TYPE" value="${auditlog.type}" />
+					</filterset>
+				</copy>
+			</else>
+		</if>
+		<!--
+			Create context configuration for Tomcat.
+
+			This is Tomcat specific. We use the context.xml to
+			set up JNDI ressources. This must be adjusted for other
+			servlet containers.
+		-->
+		<copy file="${build.templates}/context.xml.template" tofile="${deploy.explodedWar}/META-INF/context.xml" overwrite="true">
+			<filterset>
+				<filter token="WEBAPP_PATH" value="${tomcat.appPath}" />
+				<filter token="DB.DRIVER.CLASS" value="${login.database.driver.class}" />
+				<filter token="DB.CONNECT.URL" value="${login.database.connect.url}" />
+				<filter token="DB.USER.NAME" value="${login.database.login}" />
+				<filter token="DB.USER.PASSWORD" value="${login.database.password}" />
+				<filter token="DB.DATA.SOURCE" value="${login.datasource}" />
+				<filter token="DB.VALIDATIONQUERY" value="${login.database.validationquery}" />
+			</filterset>
+		</copy>
+
+		<!-- web.xml -->
+		<copy file="${build.templates}/web.xml.template" tofile="${deploy.explodedWar}/WEB-INF/web.xml" overwrite="true">
+			<filterset>
+				<filter token="WEB.SECURITY.TRANSPORT" value="${web.security.transport}" />
+				<filter token="DB.DATA.SOURCE" value="${login.datasource}" />
+				<filter token="DWR.DEBUG" value="${dwr.debug}" />
+				<filter token="HTTP.ERRORCODE.FILTERED" value="${http.errorcode.filtered}" />
+			</filterset>
+		</copy>
+
+		<!-- Copy WebContent from Customization -->
+		<foreach list="${iteraplan.customizations}" param="customizationAttr" target="build.war.customization" />
+		<!-- Whenever the OSS version is built, apply community customizations -->
+		<if>
+			<not>
+				<isset property="isEnterpriseEdition" />
+			</not>
+			<then>
+				<antcall target="build.war.customization" inheritall="true" inheritrefs="true">
+					<param name="customizationAttr" value="community" />
+				</antcall>
+			</then>
+		</if>
+
+		<!-- check file encoding on deployed files -->
+		<taskdef name="verifyencoding" classname="de.iteratec.iteraplan.ant.VerifyCharsetTask">
+			<classpath refid="classpath.tools" />
+		</taskdef>
+
+		<verifyencoding encoding="UTF-8">
+			<fileset dir="${deploy.explodedWar}/ui">
+				<include name="**/*.css" />
+				<include name="**/*.js" />
+			</fileset>
+			<fileset dir="${deploy.explodedWar}/javascript">
+				<include name="**/*.js**" />
+			</fileset>
+			<fileset dir="${deploy.explodedWar.classes}/de">
+				<include name="**/*.properties" />
+			</fileset>
+			<fileset dir="${deploy.explodedWar}/WEB-INF">
+				<include name="**/*.xml" />
+			</fileset>
+			<fileset dir="${deploy.explodedWar.classes}/de/iteratec">
+				<include name="**/*.properties" />
+			</fileset>
+		</verifyencoding>
+		<verifyencoding encoding="ISO8859-1">
+			<fileset dir="${deploy.explodedWar}/jsp">
+				<include name="**/*.jsp" />
+			</fileset>
+		</verifyencoding>
+
+	</target>
+	
+	<!-- Creates a folder with all the template files that are adapted to the customization configuration -->
+	<target name="templates.customization-prepare">
+		<!-- creates a temporary folder ("build.templates") for template files -->
+		<delete dir="${build.templates}" />
+		<mkdir dir="${build.templates}" />
+
+		<!-- copy the original template files in the temporary folder ("build.templates") -->
+		<copy todir="${build.templates}">
+			<fileset dir="${resources.templates}" />
+		</copy>
+
+		<!-- overwrites the original template files with customized template files when available-->
+		<foreach list="${iteraplan.customizations}" param="customizationAttr" target="copy.customized.templates" />
+	</target>
+
+	<!-- This target should only be called internally from templates.customization-prepare -->
+	<!-- overwrites template files in the template folder with customized template files when available -->
+	<target name="copy.customized.templates">
+		<property name="folderCustom" value="${iteraplan.customizations.basedir}/${customizationAttr}/templates" />
+		<if>
+			<available file="${folderCustom}" type="dir" />
+			<then>
+				<copy todir="${build.templates}" overwrite="yes">
+					<fileset dir="${folderCustom}" />
+				</copy>
+			</then>
+		</if>
+	</target>
+	
+	<!-- This target should only be called internally from build.war-prepare -->
+	<target name="build.war.customization">
+		<if>
+			<available file="${iteraplan.customizations.basedir}/${customizationAttr}" />
+			<then>
+				<echo>Applying customization set '${customizationAttr}'</echo>
+				<copy todir="${deploy.explodedWar}" overwrite="true">
+					<fileset dir="${iteraplan.customizations.basedir}/${customizationAttr}/WebContent" />
+				</copy>
+			</then>
+		</if>
+
+		<runtarget target="customizeLanguageFiles" />
+	</target>
+
+	<!-- Test merge two property files; for internal use from the build.war.customization task only -->
+	<target name="customizeLanguageFiles">
+		<property name="languageFolder" value="/WEB-INF/classes/de/iteratec/iteraplan/presentation/resources/custom" />
+		<property name="languageFolderBuild" value="${deploy.explodedWar}/${languageFolder}" />
+		<property name="languageFolderCustom" value="${iteraplan.customizations.basedir}/${customizationAttr}/language" />
+
+		<if>
+			<available file="${languageFolderCustom}" type="dir" />
+			<then>
+				<copy todir="${languageFolderBuild}" overwrite="true">
+					<fileset dir="${languageFolderCustom}">
+						<include name="ApplicationResourcesCustom*.properties" />
+					</fileset>
+				</copy>
+			</then>
+		</if>
+	</target>
+	
+	<!-- Generate the war-packaged version of the project -->
+	<target name="dist.war" depends="build.war-prepare">
+		<zip destfile="${deploy.artifactDir}/${deploy.warFilename}">
+			<zipfileset dir="${deploy.explodedWar}" includes="**/*" />
+		</zip>
+	</target>
+
+
+	<!-- Generates a file containing all Ant project and Java system properties -->
+	<target name="build.buildInfoFile">
+		<echoproperties destfile="${build}/buildenv.properties">
+			<propertyset>
+				<propertyref prefix="java." />
+				<propertyref prefix="os." />
+				<propertyref prefix="ant." />
+				<propertyref prefix="svn." />
+			</propertyset>
+		</echoproperties>
+	</target>
+
+	<!-- Generates a source distribution of the iteraplan OSS version. -->
+	<target name="build.sourceDist" depends="init" description="Generates a source distribution of the iteraplan OSS version.">
+
+			<echo message="Copying source files to ${srcDist.unzipped}./" />
+
+			<copy todir="${srcDist.unzipped}" verbose="true" overwrite="true">
+				<fileset dir="${basedir}" includes="LICENSE.txt" />
+				<fileset dir="${basedir}" includes="README.txt" />
+				<fileset dir="${basedir}" includes="pom.xml" />
+				<fileset dir="${basedir}/doc/deploy" includes="RELEASE*.txt" />
+			</copy>
+
+			<!-- Source folders -->
+			<mkdir dir="${srcDist.unzipped}/src" />
+			<sync todir="${srcDist.unzipped}/src/" verbose="true" includeEmptyDirs="true">
+				<fileset dir="${src}" includes="java/main/**/*.java" />
+				<fileset dir="${src}" includes="java/main/**/*.properties" />
+				<fileset dir="${src}" includes="java/main/**/*.html" />
+				<fileset dir="${src}" includes="java/main/**/*.hbm.xml" />
+				<fileset dir="${src}" includes="java/base/**/*.java" />
+				<fileset dir="${src}" includes="java/base/**/*.html" />
+				<fileset dir="${src}" includes="java/graphics/**/*.java" />
+				<fileset dir="${src}" includes="java/tools/**/*" />
+				<fileset dir="${src}" includes="java/hibernatepatch/**/*.java" />
+				<fileset dir="${src}" includes="java/elasticeam/**/*.java" />
+				<fileset dir="${src}" includes="java/elasticeam/**/*.g" />
+				<fileset dir="${src}" includes="java/elasticeam/**/*.txt" />
+				<fileset dir="${src}" includes="java/test/**/*.java" />
+				<fileset dir="${src}" includes="java/test/**/*.x*" />
+				<fileset dir="${src}" includes="java/test/**/*.properties" />
+
+				<fileset dir="${src}" includes="antinstaller/**/*" />
+				<fileset dir="${src}" includes="resources/production/**/*" />
+				<fileset dir="${src}" includes="resources/queries/**/*.*" />
+				<fileset dir="${src}" includes="resources/templates/**/*.*" />
+				<fileset dir="${src}" includes="server/.keystore" />
+				<fileset dir="${src}" includes="sql/**/*.sql" />
+				<preserveintarget>
+					<include name="**/.svn/**" />
+				</preserveintarget>
+			</sync>
+
+			<!-- Turm folders -->
+			<!--
+			<mkdir dir="${srcDist.unzipped}/turm" />
+			<sync todir="${srcDist.unzipped}/turm/" verbose="true" includeEmptyDirs="true">
+				<fileset dir="${turm.basedir}">
+	    			<include name="build.*"/>
+					<include name="Readme.txt"/>
+					<include name="lib/hsqldb-*.jar" />
+					<include name="lib/mysql-*.jar" />
+					<include name="sql/hsqldb/*"/>
+					<include name="sql/mysql/*"/>
+					<include name="templates/**/*"/>
+					
+	    			<exclude name="build/**/*"/>
+					<exclude name="explodedWar/**/*"/>
+				</fileset>
+
+				<preserveintarget>
+					<include name="**/.svn/**" />
+				</preserveintarget>
+			</sync>
+			-->
+
+			<!-- WebContent stuff folders -->
+			<mkdir dir="${srcDist.unzipped}/WebContent" />
+			<sync todir="${srcDist.unzipped}/WebContent/" verbose="true" includeEmptyDirs="true">
+				<fileset dir="${webcontent}">
+					<include name="ui/**/*" />
+					<include name="images/**/*" />
+					<include name="javascript/**/*" />
+					<include name="jsp/**/*" />
+					<include name="manuals/**/*" />
+					<include name="META-INF" />
+					<include name="visio/**/*" />
+					<include name="META-INF/**/*" />
+					<include name="WEB-INF/**/*.xml" />
+					<include name="WEB-INF/**/*.vdx*" />
+					<include name="WEB-INF/**/*.svg" />
+					<include name="WEB-INF/**/*.xsd" />
+					<include name="WEB-INF/**/*.stg" />
+					<include name="WEB-INF/**/*.xls*" />
+					<include name="WEB-INF/**/*.ecore" />
+					<include name="WEB-INF/**/*.properties" />
+					<include name="WEB-INF/**/*.PNG" />
+					<include name="WEB-INF/**/*.png" />
+					<include name="WEB-INF/templates/**/*.txt" />
+					<include name="WEB-INF/classes/emails/**/*" />
+					<include name="WEB-INF/tlds/*.tld" />
+					<include name="WEB-INF/lib/**/*" />
+				</fileset>
+				<preserveintarget>
+					<include name="**/.svn/**" />
+				</preserveintarget>
+			</sync>
+
+			<echo>Performing community customization</echo>
+			<copy todir="${srcDist.unzipped}" overwrite="true" verbose="true">
+				<fileset dir="${iteraplan.customizations.basedir}/community" />
+			</copy>
+
+			<echo>Libraries</echo>
+			<mkdir dir="${srcDist.unzipped}/lib" />
+			<sync todir="${srcDist.unzipped}/lib" verbose="true">
+				<fileset dir="${lib}/">
+					<include name="**/*.*" />
+					<exclude name="**/mysql5/**/*" />
+					<exclude name="**/oracle*/**/*" />
+					<exclude name="**/sqlserver*/**/*" />
+					<exclude name="**/pgsql*/**/*" />
+					<exclude name="**/src/**/*" />
+				</fileset>
+				<preserveintarget>
+					<include name="**/.svn/**" />
+				</preserveintarget>
+			</sync>
+
+			<echo>Config files</echo>
+			<mkdir dir="${srcDist.unzipped}/config" />
+			<sync todir="${srcDist.unzipped}/config" verbose="true">
+				<fileset dir="${basedir}/config">
+					<include name="**/hsqldb-mem/*" />
+					<include name="**/hsqldb-server/*" />
+					<include name="database/README" />
+					<include name="project/**/*" />
+					<include name="qualitytools/**/*" />
+					<include name="*.xml" />
+				</fileset>
+				<preserveintarget>
+					<include name="**/.svn/**" />
+				</preserveintarget>
+			</sync>
+
+			<echo>Customization files</echo>
+			<mkdir dir="${srcDist.unzipped}/config/customization/default" />
+			<sync todir="${srcDist.unzipped}/config/customization/default" verbose="true" includeEmptyDirs="true">
+				<fileset dir="${basedir}/config/customization/default" includes="routing_datasource.properties, WebContent, WebContent/**/*" />
+				<preserveintarget>
+					<include name="**/.svn/**" />
+				</preserveintarget>
+			</sync>
+
+			<echo>Bundle files</echo>
+			<mkdir dir="${srcDist.unzipped}/bundle" />
+			<sync todir="${srcDist.unzipped}/bundle" verbose="true">
+				<fileset dir="${basedir}/bundle">
+					<include name="**/*" />
+					<exclude name="build/**" />
+				</fileset>
+				<preserveintarget>
+					<include name="**/.svn/**" />
+				</preserveintarget>
+			</sync>
+			<copy todir="${srcDist.unzipped}/bundle" verbose="true" overwrite="true">
+				<fileset file="${basedir}/bundle/bundle.properties" />
+				<!-- Force the bundle.useiturm property to be set to "false" -->
+				<filterchain>
+					<tokenfilter>
+						<replaceregex pattern="bundle.useiturm=.*" replace="bundle.useiturm=false" />
+					</tokenfilter>
+				</filterchain>
+			</copy>
+
+			<echo>iTURM files</echo>
+			<mkdir dir="${srcDist.unzipped}/turm" />
+			<sync todir="${srcDist.unzipped}/turm" verbose="true">
+				<fileset dir="${basedir}/turm">
+					<include name="**/*" />
+					<exclude name="build/**" />
+				</fileset>
+				<preserveintarget>
+					<include name="**/.svn/**" />
+				</preserveintarget>
+			</sync>
+
+			<echo>Project files</echo>
+			<copy todir="${srcDist.unzipped}" verbose="true">
+				<fileset dir="${basedir}">
+					<include name=".*" />
+					<include name=".settings/**" />
+					<include name="build.login.properties" />
+				</fileset>
+			</copy>
+			<copy todir="${srcDist.unzipped}" verbose="true" overwrite="true">
+				<fileset file="build.properties" />
+				<!-- Force the version property to be set to "oss" -->
+				<filterchain>
+					<tokenfilter>
+						<replacestring from="## either 'oss' or 'enterprise'" to="" />
+						<replaceregex pattern="iteraplan.version=.*" replace="iteraplan.version=oss" />
+					</tokenfilter>
+				</filterchain>
+			</copy>
+			<copy todir="${srcDist.unzipped}/src/resources/templates" verbose="true" overwrite="true">
+				<fileset file="src/resources/templates/build_local.properties.template" />
+				<!-- Force the version property to be set to "oss" -->
+				<filterchain>
+					<tokenfilter>
+						<replaceregex pattern="iteraplan.version=.*" replace="iteraplan.version=oss" />
+					</tokenfilter>
+				</filterchain>
+			</copy>
+			<copy todir="${srcDist.unzipped}" verbose="true" overwrite="true">
+				<fileset dir="${basedir}"> 
+					<include name="build*.xml"/>
+				</fileset>
+				
+				<!-- Remove customization tasks from the ant script -->
+				<!--			<filterchain>
+					<tokenfilter>
+						<replacestring from="Copy WebContent from Customization" to=""/>
+						<replaceregex pattern="&lt;.*target=&quot;build.war.customization&quot;.*/&gt;" 
+							replace=""/>
+					</tokenfilter>
+				</filterchain> -->
+			</copy>
+
+			<echo>Documentation</echo>
+			<mkdir dir="${srcDist.unzipped}/doc/deploy" />
+			<copy todir="${srcDist.unzipped}/doc/deploy" verbose="true" overwrite="true">
+				<fileset dir="${basedir}/doc/deploy/" includes="README.template, RELEASE.txt" />
+			</copy>
+
+		</target>
+
+		
+	
+	
+	
+	<!--	
+	##########################################################################
+		 INIT targets
+	##########################################################################	
+	-->
+	
+	<target name="init" depends="init.define.properties">
+		<echo message="**** Building project '${ant.project.name}' ****" />
+		<echo message="${build.id}" />
+	</target>
+	
+	<target name="init.define.properties" depends="init.taskdefinitions">
+		<tstamp>
+			<format property="TIMESTAMP-FULL" pattern="yyyy-MM-dd-HH-mm-ss" />
+		</tstamp>
+		<if>
+			<!-- svnant 1.0.0 crashes if target is not working copy -->
+			<available file="${basedir}/.svn" />
+			<then>
+				<svn>
+					<status path="${basedir}" lastChangedRevisionProperty="svn.revision" />
+				</svn>
+			</then>
+			<else>
+				<property name="svn.revision" value="UNKNOWN" />
+			</else>
+		</if>
+
+		<!-- marker property to detect whether enterprise features shall be included -->
+		<if>
+			<equals arg1="enterprise" arg2="${iteraplan.version}" />
+			<then>
+				<property name="isEnterpriseEdition" value="true" />
+			</then>
+		</if>
+
+		<if>
+			<isset property="isEnterpriseEdition" />
+			<then>
+				<property name="build.id" value="Enterprise Edition Build-v${version.info}-r${svn.revision} (${TIMESTAMP-FULL})" />
+			</then>
+			<else>
+				<property name="build.id" value="Community Edition Build-v${version.info}-r${svn.revision} (${TIMESTAMP-FULL})" />
+			</else>
+		</if>
+
+	</target>
+
+	<target name="init.taskdefinitions" depends="init.mvn">
+
+		<!-- Tomcat -->
+		<path id="tomcat.classpathTasks">
+			<path refid="classpath.project" />
+			<fileset dir="${tomcat.installDir}">
+				<include name="lib/catalina-ant.jar" />
+				<include name="lib/tomcat-coyote.jar"/>
+				<include name="lib/tomcat-util.jar"/>
+				<include name="bin/tomcat-juli.jar"/>
+			</fileset>
+		</path>
+		<taskdef name="tomcat.deployToTomcat" classname="org.apache.catalina.ant.DeployTask" classpathref="tomcat.classpathTasks" />
+		<taskdef name="tomcat.removeFromTomcat" classname="org.apache.catalina.ant.UndeployTask" classpathref="tomcat.classpathTasks" />
+
+		<!-- Ant-Contrib -->
+		<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+			<classpath refid="mvn.classpath.test" />
+		</taskdef>
+
+		<!-- SVN -->
+		<taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask">
+			<classpath refid="mvn.classpath.test" />
+		</taskdef>
+
+		<!-- Cobertura (task to compute test coverage) -->
+		<taskdef resource="tasks.properties">
+			<classpath refid="classpath.project" />
+			<classpath refid="mvn.classpath.test" />
+		</taskdef>
+
+	</target>
+
+	<target name="init.mvn" unless="init.mvn-called" xmlns:artifact="urn:maven-artifact-ant">
+		<!--	
+		##########################################################################
+			 TASKDEF
+		##########################################################################	
+		-->
+		<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" classpath="lib/dev/ant/maven-ant-tasks-2.1.1.jar" />
+		
+		<!-- 
+		##########################################################################
+		Define Maven Home and Maven repository directories
+		##########################################################################
+		-->
+		<condition property="maven.home" else="${os.M2_HOME}">
+			<isset property="maven.home" />
+		</condition>
+		<echo level="info">maven.home=${maven.home}</echo>
+
+		<condition property="maven.repo.local" value="${maven.repo.local}" else="${user.home}/.m2/repository">
+			<isset property="maven.repo.local" />
+		</condition>
+		<echo level="info">maven.repo.local=${maven.repo.local}</echo>
+
+		<!-- Load Maven dependencies for various scopes -->
+		<artifact:localRepository id="local.repository" path="${maven.repo.local}" />
+		<artifact:pom id="maven.project" file="pom.xml" />
+
+		<!-- Includes scopes compile, system and provided -->
+		<artifact:dependencies pathId="mvn.classpath.compile" filesetId="mvn.compile.fileset" useScope="compile">
+			<pom refid="maven.project" />
+			<localRepository refid="local.repository" />
+		</artifact:dependencies>
+
+		<!-- Includes scopes system, provided, compile, runtime and test -->
+		<artifact:dependencies pathId="mvn.classpath.test" filesetId="mvn.test.fileset" useScope="test">
+			<pom refid="maven.project" />
+			<localRepository refid="local.repository" />
+		</artifact:dependencies>
+
+		<!-- Includes scopes compile and runtime -->
+		<artifact:dependencies pathId="mvn.classpath.runtime" filesetId="mvn.runtime.fileset" useScope="runtime">
+			<pom refid="maven.project" />
+			<localRepository refid="local.repository" />
+		</artifact:dependencies>
+
+		<!-- Sonar ant runner only has these few dependencies -->
+		<artifact:dependencies pathId="mvn.classpath.sonar">
+			<dependency groupId="org.codehaus.sonar-plugins" artifactId="sonar-ant-task" version="2.1" scope="test" />
+		</artifact:dependencies>
+
+		<property name="init.mvn-called" value="true" />
+	</target>
+	
+	
+	
+	<!-- 
+	##########################################################################
+	Other Targets
+	##########################################################################
+	-->
+	
+	<!-- extract relevant part of the path and pass complete path to check.customizationSingle -->
+	<target name="create.standardPath.WebContent">
+		<propertyregex property="tempfile"
+			override="true"
+			input="${customizedfile}"
+			regexp=".*(.WebContent.*)"
+			select="\1"
+			casesensitive="false"/>
+		<var name="standardfile" value="${basedir}${tempfile}" />
+		
+		<antcall target="check.customizationSingle" inheritall="true" inheritrefs="true" />
+	</target>
+	
+	<!-- extract relevant part of the path and pass complete path to check.customizationSingle -->
+	<target name="create.standardPath.Templates">
+		<propertyregex property="tempfile"
+			override="true"
+			input="${customizedfile}"
+			regexp=".*(.templates.*)"
+			select="\1"
+			casesensitive="false"/>
+		<var name="standardfile" value="${basedir}/build${tempfile}" />
+		
+		<antcall target="check.customizationSingle" inheritall="true" inheritrefs="true" />
+	</target>
+	
+	<!-- download status information from SVN and compare revision numbers of both files -->
+	<target name="check.customizationSingle">
+		<echo message="CUSTOM ${customizedfile}" level="verbose" />
+		<echo message="STANDARD ${standardfile}" level="verbose" />
+		<if>
+			<equals arg1="${standardfile}" arg2="" />
+			<then>
+				<echo message="Could not get path of STANDARD file by regular expression." />
+			</then>
+			<else>
+				<if>
+					<available file="${standardfile}" />
+					<then>
+						<svn>
+							<status path="${customizedfile}" lastChangedRevisionProperty="rev.customized" />
+							<status path="${standardfile}" lastChangedRevisionProperty="rev.standard" />
+						</svn>
+						
+						<script language="javascript"><![CDATA[
+						    var v1 = parseInt(project.getProperty('rev.customized'));
+							var v2 = parseInt(project.getProperty('rev.standard'));
+						    project.setProperty('standardfile.newer', v2 > v1);
+							]]>
+						</script>
+						<if>
+							<equals arg1="${standardfile.newer}" arg2="true" />
+							<then>
+								<echo message="##### ${standardfile} is newer than ${customizedfile} (Revision ${rev.standard} > ${rev.customized}). You need to update the customized file as well!"
+									level="error" />
+								<fail if="${standardfile.newer}" 
+									message="${standardfile} is newer than ${customizedfile} (Revision ${rev.standard} > ${rev.customized})." />
+							</then>
+							<else>
+								<if>
+									<equals arg1="${rev.standard}" arg2="" />
+									<then>
+										<echo message="Could not retrieve SVN revision number for ${standardfile}. (File not versioned?)"/>
+									</then>
+								</if>
+								<echo level="verbose">(${rev.customized} > ${rev.standard}). Everything OK.</echo>	
+							</else>
+						</if>
+					</then>
+					<else>
+						<echo level="verbose">File STANDARD ${standardfile} does not exist.</echo>
+					</else>
+				</if>
+			</else>
+		</if>
+	</target>
+	
+	
+	
+	
+</project>

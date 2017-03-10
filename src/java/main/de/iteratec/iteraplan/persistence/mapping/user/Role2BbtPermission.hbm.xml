@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.iteratec.iteraplan.model.user">
+
+  <class name="Role2BbtPermission" table="ROLE_BBT" lazy="false">
+    <id name="id" column="ID" type="java.lang.Integer">
+      <generator class="org.hibernate.id.enhanced.TableGenerator">
+        <param name="segment_value">perm_bbt</param>
+      </generator>
+    </id>
+    <many-to-one name="role" class="Role" column="ID_ROLE" foreign-key="FK_BBT_ROLE" cascade="lock" not-null="true" unique-key="uniquePermission" />
+    <many-to-one name="bbt" class="de.iteratec.iteraplan.model.BuildingBlockType" column="ID_BBT" foreign-key="FK_ROLE_BBT" cascade="lock" not-null="true" unique-key="uniquePermission" />
+    <property name="type" type="enumEditPermissionType" column="TYPE" not-null="true" unique-key="uniquePermission" />
+  </class>
+
+</hibernate-mapping>

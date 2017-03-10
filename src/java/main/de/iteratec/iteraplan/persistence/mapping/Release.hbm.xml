@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+  <query name="getInformationSystemReleasesByNameAndVersion">
+    <![CDATA[select isr from InformationSystemRelease isr join fetch isr.informationSystem ins 
+              where (concat(ins.name, concat(' # ',isr.version)) like :filter escape '|' 
+              or (ins.name like :filter escape '|' and isr.version like :empty escape '|'))]]>
+  </query>
+
+  <query name="getInformationSystemReleasesWithConnections">
+    <![CDATA[select distinct isr from InformationSystemRelease isr 
+              where isr.id in 
+                (select isi.informationSystemReleaseA.id from InformationSystemInterface isi 
+                  where isi.informationSystemReleaseA.typeOfStatus != :ignoreTypeOfStatus 
+                  and isi.informationSystemReleaseB.typeOfStatus != :ignoreTypeOfStatus) 
+              or isr.id in 
+                (select isi.informationSystemReleaseB.id from InformationSystemInterface isi 
+                  where isi.informationSystemReleaseB.typeOfStatus != :ignoreTypeOfStatus 
+                  and isi.informationSystemReleaseA.typeOfStatus != :ignoreTypeOfStatus)]]>
+  </query>
+
+  <query name="getInformationSystemReleasesWithConnectionsAll">
+    <![CDATA[select distinct isr from InformationSystemRelease isr 
+              where isr.id in (select isi.informationSystemReleaseA.id from InformationSystemInterface isi) 
+              or isr.id in (select isi.informationSystemReleaseB.id from InformationSystemInterface isi)]]>
+  </query>
+
+  <query name="getFilteredTechnicalComponentReleases">
+    <![CDATA[select tcr from TechnicalComponentRelease tcr join fetch tcr.technicalComponent tc 
+              where (upper(concat(tc.name, concat(' # ',tcr.version))) like upper(:filter) escape '|' 
+              or (upper(tc.name) like upper(:filter) escape '|' and tcr.version like :empty escape '|')) 
+              and tcr.typeOfStatus != :ignoreTypeOfStatus
+              order by tc.name, tcr.version]]>
+  </query>
+
+  <query name="getFilteredTechnicalComponentReleasesAll">
+    <![CDATA[select tcr from TechnicalComponentRelease tcr join fetch tcr.technicalComponent tc 
+              where (upper(concat(tc.name, concat(' # ',tcr.version))) like upper(:filter) escape '|' 
+              or (upper(tc.name) like upper(:filter) escape '|' and tcr.version like :empty escape '|'))
+              order by tc.name, tcr.version]]>
+  </query>
+
+  <query name="getOutermostInformationSystemReleases">
+    <![CDATA[select isr from InformationSystemRelease isr 
+              where isr.parent is null 
+              order by isr.informationSystem.name, isr.version]]>
+  </query>
+
+</hibernate-mapping>

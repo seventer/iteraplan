@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+      http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+	start-state="start" parent="timeseriesBaseFlow">
+
+	<input name="id" type="java.lang.Integer" />
+
+	<decision-state id="start">
+		<on-entry>
+			<set name="flowScope.entityName"
+				value="informationSystemReleaseFrontendService.getEntityName()" type="java.lang.String" />
+		</on-entry>
+		<if test="requestParameters['_eventId']=='show'" then="show" />
+		<if test="requestParameters['_eventId']=='edit'" then="pre-edit" />
+    	<if test="requestParameters['_eventId']=='delete'" then="pre-delete" />
+    	<if test="requestParameters['_eventId']=='create'" then="initCreate" />
+		<if test="requestParameters['_eventId']=='createRel'" then="relCreate" />
+		<if test="requestParameters['_eventId']=='copyBB'" then="relCopy" />
+		<if test="requestParameters['_eventId']=='closeAll'" then="closeAll" />
+		<if test="requestParameters['_eventId']==null" then="show" />
+	</decision-state>
+
+	<view-state id="show" model="memBean" view="informationsystem/show">
+		<on-entry>
+			<evaluate expression="informationSystemReleaseFrontendService.getMemBean(id)"
+				result="flowScope.memBean" />
+			<set name="flowScope.FLOW_LABEL"
+				value="informationSystemReleaseFrontendService.getFlowLabel(
+					flowScope.memBean.componentModel.releaseNameModel.getName())"
+				type="java.lang.String" />
+			<set name="flowScope.isHistoryEnabled" value="historyService.isHistoryEnabled()" />
+		</on-entry>
+		<transition on="edit" to="edit">
+			<set name="flowScope.setFocusOnTextfield" value="true" type="java.lang.String" />
+			<evaluate
+				expression="informationSystemReleaseFrontendService.
+					getEditMemBean(flowScope.memBean, id, flowRequestContext, flowExecutionContext)"
+				result="flowScope.memBean" />
+		</transition>
+		<transition on="delete" to="delete" />
+		<transition on="copyBB" to="relCopy" />
+		<transition on="createRel" to="relCreate" />
+		<transition on="createSeal" to="show">
+			<evaluate expression="informationSystemReleaseFrontendService.createSeal(id, requestParameters.sealComments)" />
+		</transition>
+	</view-state>
+	
+	<view-state id="edit" model="memBean" view="informationsystem/edit">
+		<transition on="save" to="show" history="invalidate">
+			<evaluate
+				expression="informationSystemReleaseFrontendService.saveComponentModel(
+					flowScope.memBean, id, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="update" to="edit">
+			<set name="flowScope.setFocusOnTextfield" value="false" type="java.lang.String" />
+			<evaluate
+				expression="informationSystemReleaseFrontendService.updateComponentModel(
+					flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="cancel" to="show" validate="false">
+			<evaluate
+				expression="informationSystemReleaseFrontendService.leaveEditMode(flowExecutionContext)" />
+		</transition>
+	</view-state>
+
+	<view-state id="initCreate" model="memBean" view="informationsystem/create">
+		<on-entry> 
+ 	 <set name="flowScope.setFocusOnTextfield" value="true" type="java.lang.String" />
+			<evaluate
+				expression="informationSystemReleaseFrontendService.getCreateMemBean(flowExecutionContext)"
+				result="flowScope.memBean" />
+			<set name="flowScope.FLOW_LABEL" type="java.lang.String"
+				value="informationSystemReleaseFrontendService.getFlowLabel(null)" />
+		</on-entry>
+		<on-render>
+			<evaluate
+				expression="informationSystemReleaseFrontendService.enterEditMode(flowExecutionContext)" />
+		</on-render>
+		<transition on="save" to="refreshAfterSave" history="invalidate">
+			<evaluate
+				expression="informationSystemReleaseFrontendService.saveNewComponentModel(
+					flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.id" />
+		</transition>
+		<transition on="update" to="create"> 
+ 	 <set name="flowScope.setFocusOnTextfield" value="false" type="java.lang.String" />
+			<evaluate
+				expression="informationSystemReleaseFrontendService.updateComponentModel(
+					flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="cancel" to="close" validate="false" />
+	</view-state>
+
+	<view-state id="create" model="memBean" view="informationsystem/create">
+		<on-entry>
+			<set name="flowScope.FLOW_LABEL" type="java.lang.String"
+				value="informationSystemReleaseFrontendService.getFlowLabel(flowScope.memBean.componentModel.releaseNameModel.getName())" />
+		</on-entry>
+		<transition on="save" to="refreshAfterSave" history="invalidate">
+			<evaluate
+				expression="informationSystemReleaseFrontendService.saveNewComponentModel(
+					flowScope.memBean, flowRequestContext, flowExecutionContext)"
+				result="flowScope.id" />
+		</transition>
+		<transition on="update" to="create">
+			<evaluate
+				expression="informationSystemReleaseFrontendService.updateComponentModel(
+					flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="cancel" to="close" validate="false" />
+	</view-state>
+
+	<view-state id="relCreate" model="memBean"
+		view="informationsystem/newRelease">
+		<on-entry>
+			<evaluate
+				expression="informationSystemReleaseFrontendService.getCreateReleaseMemBean(
+					id, flowExecutionContext)"
+				result="flowScope.memBean" />
+			<set name="flowScope.FLOW_LABEL" type="java.lang.String"
+				value="informationSystemReleaseFrontendService.getFlowLabel(null)" />
+		</on-entry>
+		<on-render>
+			<evaluate
+				expression="informationSystemReleaseFrontendService.enterEditMode(flowExecutionContext)" />
+		</on-render>
+		<transition on="save" to="refreshAfterSave" history="invalidate">
+			<evaluate
+				expression="informationSystemReleaseFrontendService.saveNewReleaseComponentModel(
+					flowScope.memBean, id, flowExecutionContext)"
+				result="flowScope.id" />
+		</transition>
+		<transition on="update">
+			<evaluate
+				expression="informationSystemReleaseFrontendService.updateComponentModel(
+					flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="cancel" to="close" validate="false" />
+	</view-state>
+	
+	<view-state id="relCopy" model="memBean"
+		view="informationsystem/copyRelease">
+		<on-entry>
+			<evaluate
+				expression="informationSystemReleaseFrontendService.getCopyReleaseMemBean(
+					id, flowExecutionContext)"
+				result="flowScope.memBean" />
+			<set name="flowScope.FLOW_LABEL" type="java.lang.String"
+				value="informationSystemReleaseFrontendService.getFlowLabel(null)" />
+		</on-entry>
+		<on-render>
+			<evaluate
+				expression="informationSystemReleaseFrontendService.enterEditMode(flowExecutionContext)" />
+		</on-render>
+		<transition on="save" to="refreshAfterSave" history="invalidate">
+			<evaluate
+				expression="informationSystemReleaseFrontendService.saveCopyReleaseComponentModel(
+					flowScope.memBean, flowExecutionContext)"
+				result="flowScope.id" />
+		</transition>
+		<transition on="update">
+			<evaluate
+				expression="informationSystemReleaseFrontendService.updateComponentModel(
+					flowScope.memBean, flowRequestContext, flowExecutionContext)" />
+		</transition>
+		<transition on="cancel" to="close" validate="false" />
+	</view-state>
+	
+	<action-state id="pre-edit">
+  	 <on-entry>
+  		<evaluate expression="informationSystemReleaseFrontendService.getMemBean(id)"
+				result="flowScope.memBean" />
+		<set name="flowScope.FLOW_LABEL"
+				value="informationSystemReleaseFrontendService.getFlowLabel(
+					flowScope.memBean.componentModel.releaseNameModel.getName())"
+				type="java.lang.String" />
+     </on-entry>
+     <evaluate expression="informationSystemReleaseFrontendService.getEditMemBean(flowScope.memBean, id, flowRequestContext, flowExecutionContext)"
+        	result="flowScope.memBean" />
+     <transition on="success" to="edit">
+     	<set name="flowScope.setFocusOnTextfield" value="true" type="java.lang.String" />
+     </transition>
+  </action-state>
+  
+  <action-state id="pre-delete">
+  	 <evaluate expression="informationSystemReleaseFrontendService.getMemBean(id)"
+        	result="flowScope.memBean" />
+     <set name="flowScope.FLOW_LABEL"
+        	value="informationSystemReleaseFrontendService.getFlowLabel(flowScope.memBean.componentModel.nameModel.name)"
+        	type="java.lang.String" />
+  	 <transition on="success" to="delete" />
+  </action-state>
+  
+  <action-state id="delete">
+  	 <evaluate
+        expression="informationSystemReleaseFrontendService.deleteEntity(id, flowRequestContext, flowExecutionContext)" />
+	 <transition on="yes" to="confirmed" />
+	 <transition on="no" to="onError" />
+  </action-state>
+
+	<end-state id="close"
+		view="externalRedirect:contextRelative:/informationsystem/init.do" />
+	<end-state id="confirmed" commit="true"
+		view="externalRedirect:contextRelative:/informationsystem/init.do" />
+	<end-state id="closeAll"
+		view="externalRedirect:contextRelative:/informationsystem/init.do">
+		<on-entry>
+			<evaluate
+				expression="informationSystemReleaseFrontendService.closeAllFlows(flowRequestContext)" />
+		</on-entry>
+	</end-state>
+
+</flow>

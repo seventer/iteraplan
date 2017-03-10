@@ -1,0 +1,249 @@
+###############################################################################
+###############################################################################
+##
+## iteraplan application settings
+## This file contains a number of application-wide settings and allows you to 
+## influence iteraplan's behaviour.
+##
+## Values stated in this file can be overridden by property settings in the file
+## iteraplan_local.properties. That override mechanism makes it easy to copy
+## the relevant settings from one version to the other, as part of an upgrade.
+## Hence, you should not touch settings directly in this file, but make your 
+## adjustments in iteraplan_local.properties.
+##
+###############################################################################
+###############################################################################
+
+
+###############################################################################
+# iteraplan build information: Do not modify this property!
+###############################################################################
+build.id = @BUILD.ID@
+build.version=@BUILD.VERSION@
+
+###############################################################################
+# Administrator's email address.
+###############################################################################
+admin.email=@ADMIN.EMAIL@
+
+###############################################################################
+# Last modification settings. 
+###############################################################################
+lastmodification.logging.enabled=@LASTMODIFICATION.LOGGING.ENABLED@
+
+###############################################################################
+# History settings.
+# Please note: When you want to enable this setting on a existing iteraplan
+# instance, you have to execute a special database initialization script first. 
+###############################################################################
+history.enabled=@HISTORY.ENABLED@
+
+###############################################################################
+# Problem reports.
+# Please note: Only administrators can read problem reports. No information
+# will be sent automatically. If you decide to disable problem reports,
+# set this property to false.
+# More information about problem reports:
+# http://www.iteraplan.de/wiki/display/iteraplan/Problem+Reports
+###############################################################################
+problem.reports.enabled=true
+
+###############################################################################
+# Templates settings
+###############################################################################
+templates.basedir=templates
+
+###############################################################################
+# Property to set an application address that is used for linking in exported
+# reports and graphics as well as bookmarks.
+# Should look like: https://<address>:<port>/<application deployment name>
+###############################################################################
+urlbuilder.application.address=
+
+###############################################################################
+# Properties to configure mass updates. The first integer value indicates how 
+# many properties, associations and attributes may be edited simultaneously in 
+# mass update mode, the second integer value limits the number of building 
+# blocks per update.
+###############################################################################
+maximum.simultaneous.massupdate.properties = 4
+maximum.simultaneous.massupdate.buildingblocks = 40
+
+###############################################################################
+# Properties to configure the Information Flow Export. The property 
+# indicates how many Information Systems can at most be exported in a single
+# graphic. This bound is necessary because of the enormous memory needs of the
+# Visio DOM.
+###############################################################################
+maximum.export.visio.informationsystems = 120
+
+###############################################################################
+# Properties to configure the SVG Information Flow Export. The property 
+# is used to determine the maximal interfaces for information system for which 
+# orthogonal layouting is done. Note that for sub-information systems occuring
+# in the diagram, this number is divided by three (since only one side of the
+# shape is used).
+###############################################################################
+maximum.export.svg.interfaces.for.informationsystem = 12
+
+###############################################################################
+# This property configures the maximum number of data sources that are managed
+# by iteraplan. This is necessary to avoid having too many, possibly unused, 
+# connection pools around.
+#
+# See also: de.iteratec.iteraplan.persistence.RoutingDataSource
+###############################################################################
+maximum.simultaneous.datasources = 20
+
+
+###############################################################################
+# CSV export settings:
+# csv.separator = The separator character for the resulting CSV file.
+# csv.separator.replacement = If the specified separator character appears 
+#    anywhere in an exported field, it is replaced by the value of this 
+#    property.
+# csv.separator.sub = Used for separating several values within one cell of 
+#    the exported CSV. Must not be the same as csv.separator!
+# csv.attr.<number> = Can be set to an existing attribute name. The number 
+#    in the property name defines the order in which the attribute will appear 
+#    in the CSV. 
+###############################################################################
+csv.separator=;
+csv.separator.replacement=.,
+csv.separator.sub=/
+csv.export.description=true
+csv.export.timespan=true
+csv.export.status=true 
+csv.attr.001=Application Owner
+csv.attr.002=System Coordinator
+csv.attr.003=SOA-Relevance
+csv.attr.004=SLA-Number
+csv.attr.005=Supported Corporate Regulations
+csv.attr.006=internal
+
+###############################################################################
+# These are settings for the graphical export
+###############################################################################
+export.graphical.maxElementNumber = 500
+
+export.graphical.masterplan.maxmonths = 300
+export.graphical.masterplan.maxcustomcolumns=3
+export.graphical.cluster.maxcolumns = 50
+export.graphical.cluster.maxrows = 300
+export.graphical.cluster.mincolumns = 1
+export.graphical.cluster.minrows = 1
+
+###############################################################################
+# These are settings for the excel export
+###############################################################################
+excelReport.columnWidth.narrow=22
+excelReport.columnWidth.middle=3500
+excelReport.columnWidth.wide=12000
+excelReport.columnWidth.id=1500
+
+###############################################################################
+# This setting controls whether the content elements of the Landscape Diagram
+# are scaled down to fit in a cell (setting left empty or set to "true"), or the
+# cells are expanded so that all content elements fit in without having to
+# be made smaller (setting "false").
+###############################################################################
+export.graphical.landscape.scaleDownGraphicElements=
+
+#################################################################
+# Audit log configuration                                       #
+#################################################################
+audit.logging.enabled=@AUDIT.LOGGING.ENABLED@
+
+###############################################################################
+# Hibernate Search's index location (typically a relative path)
+###############################################################################
+hibernate.search.index=@HIBERNATE.SEARCH.INDEX@
+
+###############################################################################
+# Filter virtual elements from Hibernate Search results
+###############################################################################
+hibernate.search.filterVirtualElements=true
+
+###############################################################################
+# Default value for showing elements with the inactive status
+###############################################################################
+configuration.show.inactive=true
+
+###############################################################################
+# The default number of search results per page
+# Should be any of the values 10, 20, 50 or -1 (all available results)
+###############################################################################
+searchresults.default.count=20
+searchresults.option.1=10
+searchresults.option.2=20
+searchresults.option.3=50
+
+###############################################################################
+# The default wiki syntax for iteraplan used for description fields
+# Should be any of the values MEDIAWIKI, CONFLUENCE, TWIKI, XWIKI, JSPWIKI, CREOLE,
+# @see de.iteratec.iteraplan.businesslogic.service.wiki.WikiParserService.WikiSyntax
+###############################################################################
+wiki.syntax=XWIKI
+
+###############################################################################
+# The default settings used for e-mail notifications
+###############################################################################
+notification.activated=false
+notification.email.from=iteraplan-change-notifications@yourcompany.com
+notification.smtpserver=mailserver.yourcompany.com
+notification.port=
+notification.ssl.enable=false
+notification.starttls.enable=true
+notification.username=
+notification.password=
+
+###############################################################################
+# Hibernate Cache
+###############################################################################
+hibernate.cache.usesecondlevelcache=true
+hibernate.cache.usequerycache=false
+
+###############################################################################
+# IteraQl
+###############################################################################
+# Controls the time interval between casual wake-ups of the loader thread, i.e.
+# wake-ups when no update has been submitted. The value is given in milliseconds.
+iteraql.loader.timeout.clock=5000
+
+# Controls the time interval between wake-ups of the loader thread when an update
+# has been submitted and the thread waits for further updates. The value is given
+# in milliseconds.
+iteraql.loader.timeout.update=20000
+
+# Controls the time before a forced update of the data is made in case update
+# requests are submitted continuously (can happen e.g. during an excel import).
+# This is used to guarantee that model and data are out-of-date by at most as
+# much time as specified by the property. The value 3600000 milliseconds
+# corresponds to one hour. 
+iteraql.loader.timeout.force=3600000
+
+###############################################################################
+# Seals
+###############################################################################
+seal.expiration.days=180
+
+###############################################################################
+# Tree-View partial loading
+###############################################################################
+treeview.partial.activationThreshold=1000
+treeview.partial.initialElements=10
+
+###############################################################################
+# timeout after which a stalled excel import is removed from the import queue
+###############################################################################
+import.timeout.hours=72
+
+###############################################################################
+# interval for the periodic cleanup of the import queue
+###############################################################################
+import.queue.cleanup.interval.hours=4
+
+###############################################################################
+# VBB version: accepted values: 3.0 and 4.1
+###############################################################################
+vbb.version=3.0

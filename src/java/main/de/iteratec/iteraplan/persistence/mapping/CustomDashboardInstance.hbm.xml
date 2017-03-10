@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="de.iteratec.iteraplan.model.queries">
+ <class lazy="false" name="CustomDashboardInstance" table="DASHB_INST">
+  <id column="ID" name="id" type="java.lang.Integer">
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+    <param name="segment_value">dint</param>
+   </generator>
+  </id>
+  <version column="VERSION" generated="never" name="olVersion"
+   type="integer" unsaved-value="negative"/>
+  <property column="NAME" generated="never" lazy="false" length="255"
+   name="name" not-null="true"/>
+  <property column="DESCRIPTION" generated="never" lazy="false"
+   length="4000" name="description" not-null="true"/>
+  <many-to-one column="ID_QUERY" fetch="select"
+   foreign-key="FK_DASHB_INST_SAVEDQUERIES" lazy="false" name="query"/>
+  <many-to-one
+   class="de.iteratec.iteraplan.model.queries.CustomDashboardTemplate"
+   column="ID_DTMP" fetch="select"
+   foreign-key="FK_DASHB_INST_DASHB_TEMP" lazy="false" name="template"/>
+  <property column="AUTHOR" generated="never" lazy="false" length="255"
+   name="author" not-null="true"/>
+  <property column="CREATION_TIME" generated="never" lazy="false"
+   name="creationTime" not-null="true"/>
+  <property column="LAST_ACCESS_TIME" generated="never" lazy="false"
+   name="lastAccessTime" not-null="true"/>
+ </class>
+</hibernate-mapping>

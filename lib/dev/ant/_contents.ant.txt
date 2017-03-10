@@ -1,0 +1,8 @@
+ant.jar -> Apache Ant Core. Needed for some Ant Tasks (ex. LicenseGeneratorTask) as
+	well as at build time.
+	- Version: 1.7.1
+
+ant-contrib.jar -> Collection of tasks for Apache Ant. Some targets don't work
+	if the library is not present. Also, if the file name is changed, the build.xml
+	has to be updated too.
+	- Version: 1.0b3

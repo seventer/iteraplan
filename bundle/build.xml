@@ -1,0 +1,228 @@
+<?xml version="1.0"?>
+<project name="iteraplan bundle" default="createBundle" basedir=".">
+
+	<description>
+###############################################################################
+
+Distribution build file for iteraplan.
+
+This file is used in conjunction with the normal iteraplan build file to create 
+an all-in-one download that contains Tomcat, hsqldb and iteraplan.
+
+###############################################################################
+	</description>
+
+	<!--
+##########################################################################
+	 properties and paths
+##########################################################################
+	-->
+	<!-- Loads iteraplan properties to get the version information. -->
+	<property file="../build.properties" prefix="iteraplan" />
+
+	<!-- load default settings for build process. -->
+	<property file="${basedir}/bundle_local.properties" />
+
+	<!-- load default settings for build process. -->
+	<property file="${basedir}/bundle.properties" />
+
+
+
+	<!-- classpath for running HSQLDB. -->
+	<path id="hsqldb.classpath">
+		<fileset dir="${bundle.buildDir}/${bundle.input.hsqldbDir}/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<!--
+##########################################################################
+	 targets
+##########################################################################
+	-->
+	
+	<target name="createBundle" depends="setupBaseInstallation,setupDatabase,deployiteraplan,deployiturm" description="Creates a downloadable bundle (demo) version of iteraplan">
+		<zip destfile="${bundle.distFile}" includes="${bundle.buildDir}">
+			<zipfileset dir="${bundle.buildDir}" prefix="iteraplan" />
+		</zip>
+	</target>
+
+	<target name="setupBaseInstallation" depends="prepare,unzipTools,copyScripts,copyExtras,copyReleaseNotes,copyExtraLibs" />
+
+	<target name="prepare" depends="sanityCheck">
+		<delete dir="${bundle.buildDir}" />
+		<mkdir dir="${bundle.buildDir}" />
+	</target>
+
+	<target name="sanityCheck" depends="checkInput,checkIfTomcatMissing,checkIfHsqldbMissing" />
+
+	<target name="checkInput">
+		<available file="${bundle.input.tomcatZip}" property="bundle.tomcatAvailable" />
+		<available file="${bundle.input.hsqldbZip}" property="bundle.hsqldbAvailable" />
+	</target>
+
+	<target name="checkIfTomcatMissing" unless="bundle.tomcatAvailable">
+		<echo message="No Tomcat distribution found, tried ${bundle.input.tomcatZip}" />
+		<echo message="Please set path in bundle_local.properties" />
+		<fail message="Cannot continue without input file" />
+	</target>
+
+	<target name="checkIfHsqldbMissing" unless="bundle.hsqldbAvailable">
+		<echo message="No hsqldb distribution found, tried ${bundle.input.hsqldbZip}" />
+		<echo message="Please set path in bundle_local.properties" />
+		<fail message="Cannot continue without input file" />
+	</target>
+
+	<target name="unzipTools">
+		<unzip src="${bundle.input.tomcatZip}" dest="${bundle.buildDir}" />
+		<unzip src="${bundle.input.hsqldbZip}" dest="${bundle.buildDir}" />
+	</target>
+
+	<target name="copyScripts">
+		<copy todir="${bundle.buildDir}">
+			<fileset dir="${bundle.input.scriptDir}" />
+			<globmapper from="*.template" to="*" />
+			<filterset>
+				<filter token="tomcatDir" value="${bundle.input.tomcatDir}" />
+				<filter token="hsqldbDir" value="${bundle.input.hsqldbDir}" />
+				<filter token="dbDir" value="${bundle.databaseDir}" />
+				<filter token="dbName" value="${database.name}" />
+				<filter token="dbUrl" value="${database.url}" />
+			</filterset>
+		</copy>
+		<fixcrlf srcdir="${bundle.buildDir}" includes="**/*.bat" eol="dos" />
+		<fixcrlf srcdir="${bundle.buildDir}" includes="**/*.sh" eol="unix" />
+		<chmod dir="${bundle.buildDir}" perm="u+x" includes="**/*.sh" />
+	</target>
+
+	<target name="copyExtras">
+		<copy todir="${bundle.buildDir}">
+			<fileset dir="${bundle.input.extrasDir}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="copyReleaseNotes">
+		<copy todir="${bundle.buildDir}">
+			<fileset dir="${bundle.input.releaseNotesDir}">
+				<include name="**/${bundle.input.releaseNotes}" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="copyExtraLibs">
+		<copy file="${bundle.buildDir}/${bundle.input.hsqldbDir}/lib/hsqldb.jar" todir="${bundle.buildDir}/${bundle.input.tomcatDir}/lib" />
+	</target>
+
+	<target name="setupDatabase" depends="startHsqldb,createIteraplanSchemaAndData,createTurmSchemaAndData,createHibernateIndexes,shutdownHsqldb" />
+
+	<target name="startHsqldb" description="Start the HSQLDB Server.">
+		<echo message="Starting HSQLDB Server for database ${database.name} in ${bundle.databaseDir}..." />
+		<!-- Spawn process in order for the Ant build to continue. -->
+		<java classname="org.hsqldb.Server" fork="true" spawn="true" classpathref="hsqldb.classpath">
+			<arg value="-database.0" />
+			<arg value="${bundle.buildDir}/${bundle.databaseDir}" />
+			<arg value="-dbname.0" />
+			<arg value="${database.name}" />
+		</java>
+	</target>
+
+	<target name="createIteraplanSchemaAndData">
+		<ant antfile="${bundle.mainBuildFile}" dir="${bundle.mainBuildDir}" target="db.createDatabaseSchema" />
+		<!-- The schema has been generated. Therefore it does not need to be generated again. -->
+		<property name="skipGenerateTarget" value="true" />
+		<ant antfile="${bundle.mainBuildFile}" dir="${bundle.mainBuildDir}" target="${bundle.dataCreatorTarget}" />
+	</target>
+
+	<target name="createTurmSchemaAndData" depends="turm.check" unless="bundle.noiturm">
+		<ant antfile="${bundle.turmBuildFile}" dir="${bundle.turmDir}" target="createDatabaseSchema">
+			<property name="database.rdbmsName" value="hsqldb" />
+			<property name="database.driver" value="${database.driver}" />
+			<property name="database.url" value="${database.url}" />
+			<property name="database.login" value="${database.login}" />
+			<property name="database.password" value="${database.password}" />
+		</ant>
+		<ant antfile="${bundle.turmBuildFile}" dir="${bundle.turmDir}" target="createInitialData">
+			<property name="database.rdbmsName" value="hsqldb" />
+			<property name="database.driver" value="${database.driver}" />
+			<property name="database.url" value="${database.url}" />
+			<property name="database.login" value="${database.login}" />
+			<property name="database.password" value="${database.password}" />
+		</ant>
+	</target>
+
+	<target name="shutdownHsqldb" description="Shut down the HSQLDB Server.">
+		<echo message="Stopping HSQLDB Server with database url ${database.url}..." />
+		<java classname="org.hsqldb.util.ShutdownServer" classpathref="hsqldb.classpath">
+			<arg value="-url" />
+			<arg value="${database.url}" />
+		</java>
+	</target>
+
+	<target name="deployiteraplan">
+		<ant antfile="${bundle.mainBuildFile}" dir="${bundle.mainBuildDir}" target="deploy.local.full">
+			<property name="database.rdbmsName" value="hsqldb-server" />
+			<property name="database.name" value="${database.name}" />
+			<property name="database.address" value="${database.address}" />
+			<property name="database.login" value="${database.login}" />
+			<property name="database.password" value="${database.password}" />
+			<property name="login.datasource" value="jdbc/iteraplan_login/datasource" />
+			<property name="login.database.driver.class" value="${database.driver}" />
+			<property name="login.database.connect.url" value="${database.url}" />
+			<property name="login.database.login" value="${database.login}" />
+			<property name="login.database.password" value="${database.password}" />
+		</ant>
+		<ant antfile="${bundle.mainBuildFile}" dir="${bundle.mainBuildDir}" target="jar.remove" />
+	</target>
+
+	<target name="deployiturm" depends="turm.check" unless="bundle.noiturm">
+		<ant antfile="${bundle.turmBuildFile}" dir="${bundle.turmDir}" target="war">
+			<property name="security.transport" value="${web.security.transport}" />
+			<property name="database.rdbmsName" value="hsqldb" />
+			<property name="database.driver" value="${database.driver}" />
+			<property name="database.url" value="${database.url}" />
+			<property name="database.login" value="${database.login}" />
+			<property name="database.password" value="${database.password}" />
+		</ant>
+		<copy file="${bundle.turmDir}/build/iturm.war" tofile="${tomcat.local.installDir}/webapps/iturm.war" />
+	</target>
+
+	<target name="turm.check">
+		<condition property="bundle.noiturm">
+			<not>
+				<equals arg1="${bundle.useiturm}" arg2="true" />
+			</not>
+		</condition>
+	</target>
+
+	<target name="clean-build" description="Cleans all relevant build directories.">
+		<delete dir="../build" />
+		<delete dir="${basedir}/build" />
+	</target>
+
+	<!--	
+	##########################################################################
+				 Creates Hibernate Search indexes
+	##########################################################################	
+	-->
+
+	<target name="createHibernateIndexes" description="Creates the Hibernate Search indexes, required for Bundle packages">
+		<!-- The indexes path needs to be converted to unix path style, because of Hibernate Search -->
+		<pathconvert property="indexesPath" targetos="unix">
+			<path location="${basedir}/${bundle.buildDir}/indexes" />
+		</pathconvert>
+
+		<echo message="Writing Hibernate Search indexes into ${indexesPath}" />
+		<ant antfile="${bundle.mainBuildFile}" dir="${bundle.mainBuildDir}" target="dist.createHibernateIndexes">
+			<property name="database.rdbmsName" value="hsqldb-server" />
+			<property name="test.driver" value="${database.driver}" />
+			<property name="test.jdbcUrl" value="${database.url}" />
+			<property name="test.userName" value="${database.login}" />
+			<property name="test.password" value="${database.password}" />
+			<property name="test.database.validationquery" value="" />
+			<property name="hibernate.search.index" value="${indexesPath}" />
+		</ant>
+	</target>
+
+</project>

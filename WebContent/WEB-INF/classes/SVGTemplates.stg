@@ -1,0 +1,96 @@
+group Templates;
+
+CompositeSymbol(Id,Xpos,Ypos,Width,Height,BorderColor,BorderWidth,FillColor,LineStyle,Children,Link,LinkTarget) ::= <<
+>>
+
+EllipseArc(Id,Xpos,Ypos,Width,Height,RoundAmount,BorderColor,BorderWidth,FillColor,LineStyle,Points,Link,LinkTarget) ::= <<
+<path d="$Points$" $if(BorderColor)$stroke="$BorderColor$"$endif$ $if(LineStyle)$stroke-dasharray="$LineStyle$"$endif$ />
+>>
+
+Ellipse(Id,Xpos,Ypos,Width,Height,RoundAmount,BorderColor,BorderWidth,FillColor,LineStyle,RadiusX,RadiusY,Link,LinkTarget) ::= <<
+<ellipse style="fill:url(#linearGradient$Id$);" cx="$Xpos$" cy="$Ypos$" ry="$RadiusX$" rx="$RadiusY$" stroke-dasharray="$LineStyle$" />
+>>
+
+Polygon(Id,Xpos,Ypos,Width,Height,RoundAmount,BorderColor,BorderWidth,FillColor,LineStyle,Points,Link,LinkTarget) ::= <<
+<path d="$Points$" fill="$FillColor$" $if(BorderColor)$stroke="$BorderColor$"$endif$ $if(LineStyle)$stroke-dasharray="$LineStyle$"$endif$ />
+>>
+
+Polyline(Id,Xpos,Ypos,Width,Height,RoundAmount,BorderColor,BorderWidth,FillColor,LineStyle,Points,Link,LinkTarget) ::= <<
+<path d="$Points$" fill="none" $if(BorderColor)$stroke="$BorderColor$"$endif$ $if(LineStyle)$stroke-dasharray="$LineStyle$"$endif$ />
+>>
+
+Rectangle(Id,Xpos,Ypos,Width,Height,RoundAmount,BorderColor,BorderWidth,FillColor,LineStyle,Link,LinkTarget) ::= <<
+<rect
+		style="fill-opacity: 1.0;
+		       fill: $FillColor$;
+		       $if(BorderColor)$stroke: $BorderColor$;$endif$
+		       $if(LineStyle)$stroke-dasharray:$LineStyle$;$endif$
+		       stroke-width: 0.20000000000000001;"
+		id="rect$Id$"
+		width="$Width$"
+		height="$Height$"
+		x="$Xpos$"
+		y="$Ypos$"
+		ry="$RoundAmount$" />
+>>
+
+Group(Link,LinkTarget) ::= <<
+<g>
+$if(Link)$<a xlink:href="$Link$" xlink:show="new">$endif$
+>>
+
+Endgroup(Link) ::= <<
+$if(Link)$</a>$endif$
+</g>
+>>
+
+Text(Id,Xpos,Ypos,Width,Height,RoundAmount,BorderColor,BorderWidth,FillColor,LineStyle,FontName,TextSize,TextColor,Text,TooltipText,TextStyle,HorizontalAlignment,VerticalAlignment,Link,LinkTarget) ::= <<
+<text x="$Xpos$" y="$Ypos$" font-family="$FontName$" font-size="$TextSize$" fill="$TextColor$" text-anchor="$HorizontalAlignment$">
+	<tspan $TextStyle$><![CDATA[$Text$]]></tspan>
+</text>
+>>
+
+Icon(Xpos,Ypos,Width,Height,RoundAmount,BorderColor,BorderWidth,FillColor,LineStyle,Link,LinkTarget,Url) ::= <<
+<image x="$Xpos$" y="$Ypos$" width="$Width$" height="$Height$" xlink:href="$Url$" />
+>>
+
+Maintemplate(Description,title,contents,Width,Height,ViewBoxWidth,ViewBoxHeight,contentEndX,contentEndY,generatedInformationText,Naked) ::= <<
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="$Width$" height="$Height$" style="background-color:#FFFFFF" viewBox="0 0 $ViewBoxWidth$ $ViewBoxHeight$">
+	<desc>$Description$</desc>
+	
+	<defs>
+		<style type="text/css">
+			<![CDATA[
+				.title { fill:#000000; fill-opacity:1; font-family:Arial; font-size:18pt; font-style:normal; font-weight:normal; text-anchor:start; }
+				.generatedInformation { fill:#000000; fill-opacity:1; font-family:Arial; font-size:6pt; font-style:normal; font-weight:normal; text-anchor:end; }
+			]]>
+		</style>
+	</defs>
+
+	<g id="Logo-UpperRightCornerRoot" transform="translate($contentEndX$,35)" style="display:$Naked$">
+		<path d="M 0,0 L 40,0 L 40,40 L 32,40 L 32,8 L 0,8 z" style="fill:#b100af;stroke:#000000;stroke-width:0" />
+	</g>
+
+	<g id="title">
+		<text x="70" y="70">
+			<tspan class="title"><![CDATA[$title$]]></tspan>
+		</text>
+	</g>
+
+	<g id="viewport" transform="translate(70,105)">
+$contents; separator="\n"$
+	</g>
+	
+	<g id="generatedInformation" transform="translate($contentEndX$,$contentEndY$)">
+		<text x="0" y="35">
+			<tspan class="generatedInformation">$generatedInformationText$</tspan>
+		</text>
+	</g>
+
+	<g id="Logo-LowerLeftCornerRoot" transform="translate(30,$contentEndY$)" style="display:$Naked$">
+		<path d="M 0,0 L 0,40 L 40,40 L 40,32 L 8,32 L 8,0 z" style="fill:#000000;stroke:#000000;stroke-width:0" />
+	</g>
+</svg>
+>>

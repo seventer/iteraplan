@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<!-- Restlet configuration -->
+	<bean id="restletComponent" class="org.restlet.ext.spring.SpringComponent">
+		<property name="defaultTarget" ref="restletAppliction" />
+	</bean>
+  
+    <!-- Customize response status for exceptions, which happen inside the restlet framework (for example malformed Json). -->
+    <bean id="iteraplanStatusService" class="de.iteratec.iteraplan.presentation.rest.IteraplanStatusService" />
+
+	<bean id="restletAppliction"
+		class="de.iteratec.iteraplan.presentation.rest.IteraplanRestApplication">
+		<property name="inboundRoot" ref="router" />
+		<property name="statusService" ref="iteraplanStatusService" />
+	</bean>
+
+	<bean name="router"
+		class="de.iteratec.iteraplan.presentation.rest.IteraplanRestRouter"
+		init-method="initResources">
+		<property name="resources">
+			<map>
+				<entry key="/data" value="dataResource" />
+				<entry key="/data/{iteraQlQuery}" value="queryResource" />
+				<entry key="/data/{iteraQlQuery}/{id}" value="objectExpressionResource" />
+				<entry key="/metamodel" value="metamodelResource" />
+				<entry key="/visualizations" value="visualizationResource" />
+				<entry key="/visualizations/{visualizationIdentifier}" value="visualizationResource" />
+				<entry key="/reports" value="reportResource" />
+				<entry key="/reports/{reportIdentifier}" value="reportResource" />
+			</map>
+		</property>
+	</bean>
+
+	<!-- bean name="router" class="org.restlet.ext.spring.SpringBeanRouter" 
+		/> -->
+
+	<!-- Define the resources -->
+	<bean name="dataResource"
+		class="de.iteratec.iteraplan.presentation.rest.resource.data.DataResource"
+		scope="prototype">
+		<property name="representationHandlers" ref="representationHandlers" />
+		<property name="importProcessFactory" ref="importProcessFactory" />
+	</bean>
+
+	<bean name="metamodelResource"
+		class="de.iteratec.iteraplan.presentation.rest.resource.MetamodelResource"
+		scope="prototype">
+		<property name="representationHandlers" ref="representationHandlers" />
+	</bean>
+
+	<bean name="queryResource"
+		class="de.iteratec.iteraplan.presentation.rest.resource.data.QueryResource"
+		scope="prototype">
+		<property name="representationHandlers" ref="representationHandlers" />
+		<property name="importProcessFactory" ref="importProcessFactory" />
+	</bean>
+
+	<bean name="objectExpressionResource"
+		class="de.iteratec.iteraplan.presentation.rest.resource.data.ObjectExpressionResource"
+		scope="prototype">
+		<property name="representationHandlers" ref="representationHandlers" />
+		<property name="importProcessFactory" ref="importProcessFactory" />
+	</bean>
+
+	<bean name="reportResource"
+		class="de.iteratec.iteraplan.presentation.rest.resource.ReportResource"
+		scope="prototype">
+		<property name="representationHandlers" ref="representationHandlers" />
+	</bean>
+
+	<bean name="visualizationResource"
+		class="de.iteratec.iteraplan.presentation.rest.resource.VisualizationResource"
+		scope="prototype">
+		<property name="representationHandlers" ref="representationHandlers" />
+	</bean>
+
+	<!-- Restlet Handlers -->
+	<bean name="representationHandlers"
+		class="de.iteratec.iteraplan.presentation.rest.RepresentationHandlers">
+		<property name="handlers">
+			<map>
+				<entry key="jsonModel" value-ref="jsonModelHandler" />
+				<entry key="jsonQuery" value-ref="jsonQueryHandler" />
+				<entry key="xlsModel" value-ref="excelDataHandler" />
+				<entry key="xlsxModel" value-ref="excelDataHandler" />
+				<entry key="xlsQuery" value-ref="excelQueryHandler" />
+				<entry key="xlsxQuery" value-ref="excelQueryHandler" />
+				<entry key="jsonMetamodel" value-ref="jsonMetamodelHandler" />
+			</map>
+		</property>
+	</bean>
+
+	<bean name="jsonModelHandler"
+		class="de.iteratec.iteraplan.presentation.rest.representation.JsonModelRepresentationHandler">
+	</bean>
+
+	<bean name="jsonQueryHandler"
+		class="de.iteratec.iteraplan.presentation.rest.representation.JsonQueryRepresentationHandler">
+	</bean>
+
+	<bean name="jsonMetamodelHandler"
+		class="de.iteratec.iteraplan.presentation.rest.representation.JsonMetamodelRepresentationHandler">
+	</bean>
+
+
+	<bean name="excelDataHandler"
+		class="de.iteratec.iteraplan.presentation.rest.representation.ExcelDataRepresentationHandler">
+	</bean>
+
+	<bean name="excelQueryHandler"
+		class="de.iteratec.iteraplan.presentation.rest.representation.ExcelQueryRepresentationHandler">
+	</bean>
+
+</beans>

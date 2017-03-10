@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   zoomAndPan="magnify" 
+   contentStyleType="text/css"
+   contentScriptType="text/ecmascript"
+   preserveAspectRatio="xMidYMid meet"
+   version="1.0"
+   width="2376"
+   height="1680"
+   id="svg2"
+   docname="TestDocName">
+
+<defs>
+<style type="text/css">
+  <![CDATA[
+.title {fill: #000000;fill-opacity:1;font-family:Arial;font-size:18pt;font-style:normal;font-weight:normal;text-anchor:start;}
+.generatedInformation {fill:#000000;fill-opacity:1;font-family:Arial;font-size:6pt;font-style:normal;font-weight:normal;text-anchor:end;}
+.axisTitle {fill:#000000;fill-opacity:1;font-family:Arial;font-size:18pt;font-style:normal;font-weight:normal;text-anchor:middle;}
+.gridValue {fill:#000000;fill-opacity:1;font-family:Arial;font-size:10pt;font-style:normal;font-weight:normal;text-anchor:middle;}
+.bubbleText {fill:#000000;fill-opacity:1;font-family:Arial;font-size:8pt;font-style:normal;font-weight:normal;text-anchor:middle;}
+.dimLegendHeaderText {fill:#000000;fill-opacity:1;font-family:Arial;font-size:12pt;font-style:normal;font-weight:normal;text-anchor:start;}
+.dimLegendContentText {fill:#000000;fill-opacity:1;font-family:Arial;font-size:12pt;font-style:normal;font-weight:normal;text-anchor:middle;}
+.legendHeaderText {fill:#000000;fill-opacity:1;font-family:Arial;font-size:12pt;font-style:normal;font-weight:normal;text-anchor:middle;}
+.legendContentText {fill:#000000;fill-opacity:1;font-family:Arial;font-size:12pt;font-style:normal;font-weight:normal;text-anchor:start;}
+.quadrantLabel {fill:#000000;fill-opacity:1;font-family:Arial;font-size:10pt;font-style:normal;font-weight:normal;text-anchor:middle;}
+.linkText {fill:#0000ff;}
+.solidLine{stroke:#000000;stroke-dasharray:none;stroke-width:1;}
+.legendHeaderStyle {fill:#e6e6e6;stroke:#000000;stroke-width:1;}
+.legendContentStyle{fill:#ffffff;stroke:#000000}
+.colorFieldBaseStyle {stroke:#000000;stroke-width:1;}
+.colorSectorBaseStyle {stroke:#000000;stroke-width:0;}
+.colorFieldTransparentStyle {fill-opacity:0;}
+.coordinateSystemBaseStyle {fill:#e6e6e6;stroke:#000000;stroke-width:1}
+      ]]>
+  </style>
+</defs>
+
+<g id="BubbleRoot">
+  <g id="transformNode" owidth="120" oheight="120" ox="0" oy="0">
+	<circle id="shapeProperties" cx="60" cy="60" r="60" style="fill:#ffffff;stroke:#000000;stroke-width:1" class="bubbleBaseStyle" />
+  	<text x="0" y="0" id="textProperties" xml:space="preserve" style="font-size:8pt;fill:#000000" class="bubbleText">
+	  <tspan id="textField" x="0" y="0">
+	  </tspan>
+	</text>
+	</g>
+</g>
+
+<g id="ColorLegendFieldRoot">
+  <g id="transformNode" owidth="120" oheight="120" ox="0" oy="0">
+	<circle id="shapeProperties" cx="60" cy="60" r="60" style="fill:#ffffff;stroke:#000000;stroke-width:1" />
+  	<text x="0" y="0" id="textProperties" xml:space="preserve" style="font-size:3pt;fill:#000000">
+	  <tspan id="textField" x="0" y="0">
+	  </tspan>
+	</text>
+	</g>
+</g>
+
+<g id="LegendBoxRoot">
+  <g id="transformNode" owidth="260" oheight="52" ox="0" oy="0">
+	<path id="shapeProperties" d="M 0,0 L 260,0 L 260,52 L 0,52 z" style="fill:#ffffff;stroke:#000000;stroke-width:1" />
+	<text x="90" y="26" id="textProperties" style="font-size:3pt;fill:#000000">
+	  <tspan id="textField" x="100" y="26">
+	  </tspan>
+	</text>	
+  </g>
+</g>
+
+<g id="LineLegendBoxRoot">
+  <g id="transformNode" owidth="260" oheight="52" ox="0" oy="0">
+	<path id="shapeProperties" d="M 0,0 L 260,0 L 260,52 L 0,52 z" style="fill:#ffffff;stroke:#000000;stroke-width:1" />
+	<text x="140" y="26" id="textProperties" style="font-size:3pt;fill:#000000">
+	  <tspan id="textField" x="156" y="26">
+	  </tspan>
+	</text>	
+  </g>
+</g>
+
+<g id="TitleRoot">
+  <g id="transformNode" owidth="1320" oheight="40" ox="0" oy="0">
+	<g id="shapeProperties" style="fill:#ffffff;stroke:#000000">
+	</g>
+	<text id="textProperties" x="1" y="1" style="font-size:3pt;fill:#000000" class="title">
+	  <tspan id="textField" x="1" y="1">
+	  </tspan>
+	</text>
+  </g>
+</g>
+
+<g id="CoordinateSystemRoot">
+  <g id="transformNode" owidth="1140" oheight="1140" ox="0" oy="0">
+	  <rect id="shapeProperties" class="coordinateSystemBaseStyle" x="0" y="0" width="1140" height="1140" style="fill:#e6e6e6;stroke:#000000;stroke-width:1"/>
+  </g>
+</g>
+
+<g id="Logo-UpperRightCornerRoot">
+  <g id="transformNode" owidth="40" oheight="40" ox="0" oy="0">
+	<path id="shapeProperties" d="M 0,0 L 40,0 L 40,40 L 32,40 L 32,8 L 0,8 z" style="fill:#b100af;stroke:#000000;stroke-width:0" />
+  </g>
+</g>
+
+<g id="Logo-LowerLeftCornerRoot">
+  <g id="transformNode" owidth="40" oheight="40" ox="0" oy="0">
+	<path id="shapeProperties" d="M 0,0 L 0,40 L 40,40 L 40,32 L 8,32 L 8,0 z" style="fill:#000000;stroke:#000000;stroke-width:0" />
+  </g>
+</g>
+
+<g id="Size-EntityRoot">
+  <g id="transformNode" owidth="120" oheight="20" ox="0" oy="0">
+	<line id="shapeProperties" x1="0" y1="10" x2="120" y2="10" style="stroke:#000000;stroke-width:1" />
+	<line x1="0" y1="0" x2="0" y2="20" style="stroke:#000000;stroke-width:1" />
+	<line x1="120" y1="0" x2="120" y2="20" style="stroke:#000000;stroke-width:1" />
+  </g>
+</g>
+
+<g id="LegendDimensionLabelRectangleRoot">
+  <g id="transformNode" owidth="140" oheight="40" ox="0" oy="0">
+	<path id="shapeProperties" d="M 0,0 L 140,0 L 140,40 L 0,40 z" style="fill:#ffffff;stroke:#000000;stroke-width:1" />
+	<text x="15" y="25" id="textProperties" style="font-size:3pt;fill:#000000" class="dimLegendHeaderText">
+	  <tspan id="textField" x="15" y="25">
+	  </tspan>
+	</text>	
+  </g>
+</g>
+
+<g id="LegendDimensionAttributeRectangleRoot">
+  <g id="transformNode" owidth="420" oheight="40" ox="0" oy="0">
+	<path id="shapeProperties" d="M 0,0 L 420,0 L 420,40 L 0,40 z" style="fill:#ffffff;stroke:#000000;stroke-width:1" />
+	<text x="200" y="25" id="textProperties" style="font-size:12pt;fill:#000000" class="dimLegendContentText">
+	  <tspan id="textField" x="200" y="25">
+	  </tspan>
+	</text>	
+  </g>
+</g>
+
+<g id="LabelLargeRoot">
+  <g id="transformNode" owidth="1" oheight="30" ox="0" oy="0">
+    <g id="shapeProperties"/>
+    <text id="textProperties" x="0" y="0">
+      <tspan id="textField" x="0" y="0">
+      </tspan>
+    </text>
+  </g>
+</g>
+<g id="ImageRoot">
+  <g id="transformNode" owidth="1" oheight="1" ox="0" oy="0">
+  	<g id="shapeProperties"/>
+  	<image id="imageField" />
+  </g>
+</g>  
+
+</svg>

@@ -1,0 +1,10 @@
+.draggable { padding: 5px; margin: 2px; text-align: center; color: #000000; background-color: #EEEEEE; cursor: move; z-index: 1500; }
+.draggable span.text { text-decoration: underline; }
+.draggable span.symbol { cursor: pointer; }
+.tagList { list-style: none; margin: 0; padding: 0; border: 0; outline: 0; }
+.tagList li { float: left;}
+.dropList { list-style: none; margin: 0; padding: 0; border: 0; outline: 0; }
+.dropList li { float: center; text-align: center; }
+
+.rootDraggable { color: #AC007C; background-color: #E0D7DE; }
+.childDraggable { display:none; }

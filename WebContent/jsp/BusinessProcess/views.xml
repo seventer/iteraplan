@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+	"-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+	"http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+	
+<tiles-definitions>
+
+	<definition name="businessprocess/init" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="businessProcess.plural" />
+		<put-attribute name="title_style" value="global.overview" />
+		<put-attribute name="form_id" value="businessProcess_search" />
+		<put-attribute name="form_action" value="search.do" />
+		<put-attribute name="form_model" value="dialogMemory" />
+		<put-attribute name="form_method" value="get" />
+		<put-list-attribute name="contents">
+		  <add-attribute value="/jsp/BusinessProcess/Search.jsp" />
+		</put-list-attribute>
+	</definition>
+
+	<definition name="businessprocess/search" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="businessProcess.plural" />
+		<put-attribute name="title_style" value="global.overview" />
+		<put-attribute name="form_id" value="businessProcess_search" />
+		<put-attribute name="form_action" value="search.do" />
+		<put-attribute name="form_model" value="dialogMemory" />
+		<put-attribute name="form_method" value="get" />
+		<put-list-attribute name="contents">
+		  <add-attribute value="/jsp/BusinessProcess/Search.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+	<definition name="businessprocess/show" extends="buildingBlockDetailViewWithTimeseriesLayout">
+		<put-attribute name="title" value="businessProcess.plural" />
+		<put-attribute name="title_style" value="details" />
+  		<put-attribute name="form_id" value="businessProcess_show" />
+  		<put-attribute name="form_model" value="memBean" />
+  		<put-attribute name="form_method" value="post" />
+	    <put-list-attribute name="contents" >
+  		  <add-attribute value="/jsp/BusinessProcess/Manage.jsp" />
+  		  <add-attribute value="/jsp/common/LastModificationInfo.jsp" />
+	    </put-list-attribute>
+	</definition>
+	
+	<definition name="businessprocess/edit" extends="buildingBlockDetailViewWithTimeseriesLayout">
+		<put-attribute name="title" value="businessProcess.plural" />
+		<put-attribute name="title_style" value="global.edit" />
+  		<put-attribute name="form_id" value="businessProcess_edit" />
+  		<put-attribute name="form_model" value="memBean" />
+  		<put-attribute name="form_method" value="post" />
+  		<put-list-attribute name="contents" >
+  		  <add-attribute value="/jsp/BusinessProcess/Manage.jsp" />
+  		  <add-attribute value="/jsp/common/LastModificationInfo.jsp" />
+	    </put-list-attribute>
+	</definition>
+	
+	<definition name="businessprocess/create" extends="buildingBlockDetailViewWithTimeseriesLayout">
+		<put-attribute name="title" value="businessProcess.plural" />
+		<put-attribute name="title_style" value="global.new" />
+  		<put-attribute name="form_id" value="businessProcess_create" />
+  		<put-attribute name="form_model" value="memBean" />
+  		<put-attribute name="form_method" value="post" />
+  		<put-list-attribute name="contents" >
+  		  <add-attribute value="/jsp/BusinessProcess/Manage.jsp" />
+	    </put-list-attribute>
+	</definition>
+	
+</tiles-definitions>

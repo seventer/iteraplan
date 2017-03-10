@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+	"-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+	"http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+
+	<definition name="graphicalreporting/init" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="global.report.graphical" />
+		<put-attribute name="form_id" value="graphicalReporting_show" />
+		<put-attribute name="form_model" value="dialogMemory" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/GraphicalReporting/ChooseDiagram.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+	<definition name="graphicalreporting/clustergraphic" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="graphicalExport.clusterDiagram" />
+		<put-attribute name="form_id" value="graphicalReporting_show" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/GraphicalReporting/ClusterGraphic/Manage.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+	<definition name="graphicalreporting/portfoliographic" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="graphicalExport.portfolioDiagram" />
+		<put-attribute name="form_id" value="graphicalReporting_show" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/GraphicalReporting/PortfolioGraphic/Manage.jsp" />
+		</put-list-attribute>
+	</definition>
+
+	<definition name="graphicalreporting/masterplangraphic" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="graphicalExport.masterplanDiagram" />
+		<put-attribute name="form_id" value="graphicalReporting_show" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/GraphicalReporting/Masterplan/Manage.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+	<definition name="graphicalreporting/informationflowgraphic" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="graphicalExport.informationFlowDiagram" />
+		<put-attribute name="form_id" value="graphicalReporting_show" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/GraphicalReporting/InformationFlow/Manage.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+	<definition name="graphicalreporting/landscapediagram" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="graphicalExport.landscapeDiagram" />
+		<put-attribute name="form_id" value="graphicalReporting_show" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/GraphicalReporting/Landscape/Manage.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+	<definition name="graphicalreporting/compositegraphic" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="graphicalExport.compositeDiagram" />
+		<put-attribute name="form_id" value="graphicalReporting_show" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/GraphicalReporting/Composite/Manage.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+	<definition name="graphicalreporting/piebardiagram" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="graphicalExport.pieBarDiagram" />
+		<put-attribute name="form_id" value="graphicalReporting_show" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/GraphicalReporting/PieBar/Manage.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+	<definition name="graphicalreporting/vbbclustergraphic" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="graphicalExport.vbbClusterDiagram" />
+		<put-attribute name="form_id" value="graphicalReporting_show" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/GraphicalReporting/VbbCluster/Manage.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+<!-- 	<definition name="graphicalreporting/timelinegraphic" extends="defaultHeaderAndFooterLayout"> -->
+<!-- 		<put-attribute name="title" value="graphicalExport.timelineDiagram" /> -->
+<!-- 		<put-attribute name="form_id" value="graphicalReporting_show" /> -->
+<!-- 		<put-attribute name="form_model" value="memBean" /> -->
+<!-- 		<put-attribute name="form_method" value="post" /> -->
+<!-- 		<put-list-attribute name="contents"> -->
+<!-- 			<add-attribute value="/jsp/GraphicalReporting/Timeline/Manage.jsp" /> -->
+<!-- 		</put-list-attribute> -->
+<!-- 	</definition> -->
+
+	<definition name="graphicalreporting/linegraphic" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="graphicalExport.lineDiagram" />
+		<put-attribute name="form_id" value="graphicalReporting_show" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/GraphicalReporting/Line/Manage.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+	<definition name="graphicalreporting/matrixgraphic" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="graphicalExport.matrixDiagram" />
+		<put-attribute name="form_id" value="graphicalReporting_show" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/GraphicalReporting/Matrix/Manage.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+	<!-- backward-compatibility: replace rendering of filter view by specialized filter views with correct page title (see filterLandscape and filterRecursive below) -->
+	<definition name="graphicalreporting/filter" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="graphicalExport.landscapeDiagram" />
+		<put-attribute name="form_id" value="graphicalReporting_show" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/commonReporting/ManageSingleReport.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+	<definition name="graphicalreporting/filterLandscape" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="graphicalExport.landscapeDiagram" />
+		<put-attribute name="form_id" value="graphicalReporting_show" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/commonReporting/ManageSingleReport.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+	<definition name="graphicalreporting/filterRecursive" extends="defaultHeaderAndFooterLayout">
+		<put-attribute name="title" value="graphicalExport.vbbClusterDiagram" />
+		<put-attribute name="form_id" value="graphicalReporting_show" />
+		<put-attribute name="form_model" value="memBean" />
+		<put-attribute name="form_method" value="post" />
+		<put-list-attribute name="contents">
+			<add-attribute value="/jsp/commonReporting/ManageSingleReport.jsp" />
+		</put-list-attribute>
+	</definition>
+	
+</tiles-definitions>

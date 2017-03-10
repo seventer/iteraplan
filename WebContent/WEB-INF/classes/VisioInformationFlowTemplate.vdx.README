@@ -1,0 +1,15 @@
+Wenn das VisioInformationFlowTemplate.vdx angepasst wird, muss in dem Shapesheet 
+der ersten Seite unter dem Abschnitt "User-defined.Cells" die Eigenschaft 
+"User.layoutDone" auf 0 zurückgesetzt werden. Diese wird beim Öffnen des Dokuments 
+per Visual Basic Skript automatisch auf 1 gesetzt. Ansonsten werden die Verbinder 
+nicht mehr richtig dargestellt.
+
+
+Weitere Erläuterung:
+
+Beim Öffnen des Dokuments wird eine Visual Basic Skript ausgeführt, dass die Verbinder
+einmal anstößt, so das Visio sie selber richtig ausrichtet. Das Skript ist unter 
+Extras -> Makros -> Visual Basic-Editor zu sehen. Wenn das getan ist, wird das Flag
+"User.layoutDone" auf 1 gesetzt, so dass bei einem erneuten Öffnen des Dokuments keine
+neue Ausrichtung vorgenommen wird. Dies alles geschieht auch, wenn man das Template öffnet!
+Daher muss man vor dem Speichern das Flag wieder auf 0 setzen.

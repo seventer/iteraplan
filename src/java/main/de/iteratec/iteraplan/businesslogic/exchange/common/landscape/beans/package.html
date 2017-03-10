@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<!--
+
+  @(#)package.html
+
+  Copyright 2008 iteratec GmbH
+  Germany, 82008 Unterhaching.  All Rights Reserved.
+
+-->
+</head>
+<body bgcolor="white">
+
+<p>
+A model used to interface between the domain-specific code and the graphical export
+of matrices.
+</p>
+
+<p>
+This package contains classes that can be used to store all information necessary
+for a landscape export. This is done in a way that is independent of the domain model
+used in iteraplan, thus decoupling the graphic export from the rest of the application.
+Outgoing dependencies of this package are limited to utility classes.
+</p>
+
+<p>
+The main entry point is the {@link de.iteratec.iteraplan.businesslogic.exchange.common.landscape.beans.LandscapeDiagram} class.
+</p>
+
+<!-- Put @see and @since tags down here. -->
+@see de.iteratec.iteraplan.businesslogic.exchange.common.landscape.LandscapeDiagramCreator LandscapeDiagramCreator (fills this model)
+@see de.iteratec.iteraplan.businesslogic.exchange.visio.landscape.VisioLandscapeDiagramExport LandscapeDiagramExporter (main export class)
+
+@since iteraplan 1.x
+
+</body>
+</html>
